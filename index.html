@@ -2384,8 +2384,18 @@ function buildQuerAgendarScript(type){
 function querAgendar(sim){
   document.getElementById('querAgendarPanel').style.display='none';
   if(sim){
-    // Open qualification SDR IA
-    openSdrIa();
+    // Open qualification SDR IA — skip step 0 (identification) since data is pre-filled from lead
+    const l=leads[curIdx];
+    if(l){
+      sdrIaState.fields['nome']=sdrIaState.fields['nome']||l.name||'';
+      sdrIaState.fields['empresa']=sdrIaState.fields['empresa']||l.company||'';
+      // Map lead type to origem
+      const origemMap={quente:'quente',frio:'frio_40k',recuperacao:'frio_mais40k'};
+      sdrIaState.fields['origem']=sdrIaState.fields['origem']||origemMap[l.leadType||'frio']||'frio_40k';
+    }
+    sdrCurrentStep=1; // skip step 0 (identification)
+    document.getElementById('sdrIaOverlay').classList.add('on');
+    renderSdrStep();
   }else{
     // Not interested — register and move on
     endCall('Não Agendou',null);
