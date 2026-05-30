@@ -6,8 +6,8 @@
 <title>GFB Power Dialer</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/jssip@3.10.0/dist/jssip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-/* ═══ TOKENS ═══ */
 :root{
   --bg:#06080d;--s1:#0a0d14;--s2:#0e121c;--s3:#131924;
   --b1:#18202e;--b2:#1e2a3d;--b3:#243350;
@@ -22,14 +22,9 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--txt);font-family:var(--sans)}
-
-/* ═══ NOISE OVERLAY ═══ */
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9998}
-
-/* ═══ LAYOUT ═══ */
 .shell{display:flex;flex-direction:column;height:100vh}
-
-/* ═══ TOPBAR ═══ */
+/* TOPBAR */
 .topbar{background:var(--s1);border-bottom:1px solid var(--b1);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;flex-shrink:0;gap:12px}
 .tb-logo{display:flex;align-items:center;gap:8px}
 .logo-mark{width:28px;height:28px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#000;box-shadow:0 0 16px var(--glow)}
@@ -37,9 +32,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .sip-status{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;border:1px solid var(--b2);background:var(--s2);cursor:pointer;transition:.2s}
 .sip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .sip-dot.ok{background:var(--green);box-shadow:0 0 6px var(--glow)}
-.sip-dot.err{background:var(--red)}
-.sip-dot.conn{background:var(--yellow);animation:blink .5s infinite}
-.sip-dot.idle{background:var(--txt3)}
+.sip-dot.err{background:var(--red)}.sip-dot.conn{background:var(--yellow);animation:blink .5s infinite}.sip-dot.idle{background:var(--txt3)}
 .sip-lbl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--txt2)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .tb-center{display:flex;align-items:center;gap:10px}
@@ -52,52 +45,45 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .sdr-chip{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;background:var(--s2);border:1px solid var(--b2);cursor:pointer}
 .sdr-av{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--green));display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#000}
 .sdr-nm{font-size:11px;font-weight:600}
-
-/* ═══ TABS ═══ */
+/* TABS */
 .tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--b1);flex-shrink:0}
 .tab{flex:1;padding:11px 8px;text-align:center;font-size:12px;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
-.tab:hover{color:var(--txt2)}
-.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.tab:hover{color:var(--txt2)}.tab.active{color:var(--green);border-bottom-color:var(--green)}
 .badge{background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:10px;font-family:var(--mono)}
-
-/* ═══ PAGE ═══ */
+/* PAGES */
 .page{display:none;flex:1;overflow:hidden;flex-direction:column}
 .page.active{display:flex}
-
-/* ══════════════════════════════════════
-   DISCADOR PAGE
-══════════════════════════════════════ */
+/* DIALER */
 .dialer-wrap{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:640px;margin:0 auto;width:100%}
-
-/* Progress */
 .prog-bar{width:100%;display:flex;align-items:center;gap:10px}
 .pb-track{flex:1;height:4px;background:var(--b1);border-radius:2px;overflow:hidden}
 .pb-fill{height:100%;background:var(--green);border-radius:2px;transition:width .5s}
 .pb-txt{font-family:var(--mono);font-size:10px;color:var(--txt3);white-space:nowrap;min-width:80px;text-align:right}
 .pb-txt b{color:var(--green)}
-
-/* Cadence badge */
 .cadence-badge{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--s2);border:1px solid var(--b2);border-radius:20px;font-family:var(--mono);font-size:10px;color:var(--txt2)}
 .cad-day{background:var(--orange);color:#000;padding:1px 7px;border-radius:4px;font-weight:700;font-size:10px}
 .cad-actions{display:flex;gap:5px}
 .cad-tag{padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700}
 .cad-tag.call{background:rgba(0,232,122,.15);color:var(--green)}
-.cad-tag.wa{background:rgba(37,211,102,.15);color:#25d366}
+.cad-tag.whatsapp{background:rgba(37,211,102,.15);color:#25d366}
 .cad-tag.email{background:rgba(59,130,246,.15);color:var(--blue2)}
 .cad-tag.end{background:rgba(239,68,68,.15);color:var(--red)}
-.cad-attempts{font-family:var(--mono);font-size:9px;color:var(--txt3)}
-
-/* Lead card */
+/* TYPE BADGE */
+.lead-type-badge{padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:.5px}
+.ltype-frio{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--blue2)}
+.ltype-quente{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:var(--yellow)}
+.ltype-recuperacao{background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);color:var(--purple)}
+/* LEAD CARD */
 .lead-card{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:16px;padding:22px 24px 18px;position:relative;overflow:hidden}
 .lead-card::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(0,232,122,.05),transparent 70%)}
-.lc-name{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;line-height:1}
+.lc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.lc-name{font-size:28px;font-weight:800;letter-spacing:-.5px;line-height:1}
 .lc-phone{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--txt);margin-bottom:4px}
 .lc-company{font-size:12px;color:var(--txt2);margin-bottom:10px}
 .lc-footer{display:flex;align-items:center;justify-content:space-between}
 .lc-stage{font-size:9px;padding:3px 10px;border-radius:20px;border:1px solid var(--b3);color:var(--txt3);font-family:var(--mono)}
 .lc-att{font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:var(--yellow)}
-
-/* SIP call status */
+/* SIP BAR */
 .sip-bar{width:100%;border-radius:10px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;transition:.3s}
 .sip-bar.idle-bar{background:var(--s3);border:1px solid var(--b1)}
 .sip-bar.dialing-bar{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2)}
@@ -105,28 +91,49 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .sip-bar.ended-bar{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15)}
 .sb-l{display:flex;align-items:center;gap:8px}
 .sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.sb-dot.idle{background:var(--txt3)}
-.sb-dot.dialing{background:var(--yellow);animation:blink .4s infinite}
-.sb-dot.active{background:var(--green);animation:blink 1.2s infinite}
-.sb-dot.ended{background:var(--red)}
+.sb-dot.idle{background:var(--txt3)}.sb-dot.dialing{background:var(--yellow);animation:blink .4s infinite}.sb-dot.active{background:var(--green);animation:blink 1.2s infinite}.sb-dot.ended{background:var(--red)}
 .sb-info{font-size:11px;font-weight:600;font-family:var(--mono)}
 .sb-sub{font-size:9px;color:var(--txt3);margin-top:1px}
 .timer-big{font-family:var(--mono);font-size:30px;font-weight:800;color:var(--yellow)}
-
-/* Result buttons */
+/* SCRIPT PANEL — shown when call is answered */
+.script-panel{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:0;overflow:hidden}
+.sp-header{padding:10px 16px;background:var(--s3);border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between}
+.sp-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:var(--mono)}
+.sp-step-dots{display:flex;gap:4px}
+.sp-dot{width:6px;height:6px;border-radius:50%;background:var(--b3)}
+.sp-dot.active{background:var(--green)}
+.sp-dot.done{background:var(--txt3)}
+.sp-body{padding:14px 16px}
+.sp-step{display:none}
+.sp-step.active{display:block}
+.sp-step-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
+.sp-step-label.frio{color:var(--blue2)}
+.sp-step-label.quente{color:var(--yellow)}
+.sp-step-label.recuperacao{color:var(--purple)}
+.sp-text{font-size:13px;line-height:1.7;color:var(--txt2);font-style:italic;border-left:3px solid;padding-left:10px;margin-bottom:10px}
+.sp-text.frio{border-color:var(--blue2)}
+.sp-text.quente{border-color:var(--yellow)}
+.sp-text.recuperacao{border-color:var(--purple)}
+.sp-text strong{color:var(--txt);font-style:normal}
+.sp-note{font-size:11px;color:var(--txt3);background:var(--s3);border-radius:6px;padding:7px 10px;margin-bottom:8px;line-height:1.5}
+.sp-nav{display:flex;gap:7px;margin-top:8px}
+.sp-prev{flex:0 0 80px;padding:8px;border-radius:8px;border:1px solid var(--b2);background:transparent;color:var(--txt3);font-family:var(--sans);font-size:11px;font-weight:700;cursor:pointer;transition:.15s}
+.sp-prev:hover{border-color:var(--txt3);color:var(--txt2)}
+.sp-next{flex:1;padding:8px;border-radius:8px;border:none;background:var(--green);color:#000;font-family:var(--sans);font-size:12px;font-weight:800;cursor:pointer;transition:.15s}
+.sp-next:hover{background:var(--green-d)}
+.sp-qualify-btn{width:100%;padding:10px;border-radius:8px;border:none;background:var(--yellow);color:#000;font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;margin-top:4px}
+/* RESULT BUTTONS */
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
 .r-btn{padding:16px 10px;border-radius:12px;border:2px solid var(--b2);background:var(--s2);font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;transition:.2s;text-align:center;color:var(--txt2);display:flex;flex-direction:column;align-items:center;gap:4px}
 .r-btn .ri{font-size:22px}
 .r-btn:hover{transform:translateY(-2px)}
-.r-btn:active{transform:translateY(0)}
 .r-agendou{border-color:var(--green)!important;background:rgba(0,232,122,.08)!important;color:var(--green)!important}
 .r-nao-agendou{border-color:var(--yellow)!important;background:rgba(245,158,11,.07)!important;color:var(--yellow)!important}
 .r-remarcar{border-color:var(--blue2)!important;background:rgba(96,165,250,.08)!important;color:var(--blue2)!important}
 .r-nao-atendeu{border-color:var(--b3)!important;color:var(--txt2)!important}
 .r-excluir{border-color:var(--red)!important;background:rgba(239,68,68,.07)!important;color:var(--red)!important}
 .r-caixa{border-color:var(--purple)!important;background:rgba(139,92,246,.07)!important;color:var(--purple)!important}
-
-/* Action row */
+/* ACTION ROW */
 .action-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%}
 .big-btn{padding:14px;border-radius:12px;border:none;font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
 .call-btn{background:var(--green);color:#000;box-shadow:0 0 32px var(--glow)}
@@ -136,26 +143,17 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .hangup-btn:hover{background:#dc2626}
 .wa-quick-btn{background:rgba(37,211,102,.12);border:1.5px solid rgba(37,211,102,.3);color:#25d366;padding:10px;border-radius:10px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px}
 .wa-quick-btn:hover{background:rgba(37,211,102,.2)}
-
-/* Skip/aux row */
 .aux-row{display:flex;gap:7px;width:100%}
 .aux-btn{flex:1;padding:9px 6px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);font-family:var(--sans);font-size:11px;font-weight:700;color:var(--txt3);cursor:pointer;transition:.15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
 .aux-btn .ai{font-size:16px}
 .aux-btn:hover{border-color:var(--txt3);color:var(--txt2)}
-
-/* Pause buttons */
 .pause-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;width:100%}
 .p-btn{padding:10px 6px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);font-family:var(--sans);font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;transition:.15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
 .p-btn .pi{font-size:18px}
 .p-btn:hover{border-color:var(--orange);color:var(--orange)}
-
-/* Mute btn (during call) */
 .mute-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--b2);background:var(--s2);color:var(--txt2);font-family:var(--mono);font-size:10px;font-weight:600;cursor:pointer;transition:.15s}
 .mute-btn.muted{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--red)}
-
-/* ══════════════════════════════════════
-   WHATSAPP PAGE
-══════════════════════════════════════ */
+/* WA PAGE */
 .wa-page{flex:1;overflow-y:auto;padding:16px;max-width:640px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:14px}
 .wa-lead-box{background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:16px 18px}
 .wa-lead-name{font-size:18px;font-weight:800;margin-bottom:2px}
@@ -168,10 +166,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .wa-hist-name{font-size:12px;font-weight:700}
 .wa-hist-meta{font-family:var(--mono);font-size:9px;color:var(--txt3)}
 .wa-hist-day{font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(37,211,102,.1);color:#25d366}
-
-/* ══════════════════════════════════════
-   KANBAN PAGE
-══════════════════════════════════════ */
+/* KANBAN */
 .kanban-page{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .kb-header{padding:12px 16px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .kb-title{font-size:14px;font-weight:700}
@@ -182,20 +177,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .kb-col-title{font-size:11px;font-weight:700}
 .kb-count{font-family:var(--mono);font-size:10px;padding:1px 7px;border-radius:4px;font-weight:700}
 .kb-card{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:9px 10px;margin-bottom:5px;cursor:pointer;transition:.15s}
-.kb-card:hover{border-color:var(--b3)}
-.kb-card.calling{border-color:var(--yellow);background:rgba(245,158,11,.04)}
+.kb-card:hover{border-color:var(--b3)}.kb-card.calling{border-color:var(--yellow);background:rgba(245,158,11,.04)}
 .kb-cn{font-size:11px;font-weight:700;margin-bottom:2px}
 .kb-cm{font-family:var(--mono);font-size:9px;color:var(--txt3)}
 .kb-note{font-size:10px;color:var(--txt2);margin-top:5px;padding:3px 6px;background:var(--s3);border-radius:4px;font-style:italic}
 .kb-empty{font-size:10px;color:var(--txt3);text-align:center;padding:16px;font-family:var(--mono)}
 .kb-cards{overflow-y:auto;max-height:calc(100vh - 190px)}
-
-/* ══════════════════════════════════════
-   RANKING PAGE
-══════════════════════════════════════ */
+/* RANKING */
 .rank-page{flex:1;overflow-y:auto;padding:16px;max-width:680px;margin:0 auto;width:100%}
-
-/* Today's goal */
 .goal-card{background:var(--s2);border:1px solid var(--b2);border-radius:16px;padding:18px 20px;margin-bottom:14px;position:relative;overflow:hidden}
 .goal-card::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(0,232,122,.06),transparent 70%)}
 .goal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -213,15 +202,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .goal-input-row{display:flex;align-items:center;gap:8px;margin-top:10px}
 .goal-input{background:var(--s3);border:1px solid var(--b2);border-radius:6px;padding:5px 10px;color:var(--txt);font-family:var(--mono);font-size:11px;outline:none;width:70px}
 .goal-input:focus{border-color:var(--green)}
-
-/* Streak */
 .streak-row{display:flex;gap:8px;margin-bottom:14px}
 .streak-card{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:12px 14px;text-align:center}
 .streak-val{font-size:28px;font-weight:900;font-family:var(--mono);line-height:1}
 .streak-lbl{font-size:9px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
 .streak-fire{font-size:20px}
-
-/* Achievements */
 .ach-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);font-family:var(--mono);margin-bottom:8px}
 .ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
 .ach{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:10px 8px;text-align:center;transition:.2s}
@@ -231,25 +216,137 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ach-name{font-size:9px;font-weight:700;color:var(--txt3);line-height:1.3}
 .ach.unlocked .ach-name{color:var(--txt2)}
 .ach-pts{font-family:var(--mono);font-size:8px;color:var(--green);margin-top:2px}
-
-/* Ranking table */
 .rank-table-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);font-family:var(--mono);margin-bottom:8px}
 .rank-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;margin-bottom:6px}
 .rank-pos{font-family:var(--mono);font-size:14px;font-weight:800;width:24px;text-align:center}
-.rank-pos.first{color:var(--yellow)}
-.rank-pos.second{color:var(--txt2)}
-.rank-pos.third{color:var(--orange)}
+.rank-pos.first{color:var(--yellow)}.rank-pos.second{color:var(--txt2)}.rank-pos.third{color:var(--orange)}
 .rank-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
 .rank-name{flex:1;font-size:12px;font-weight:700}
 .rank-stats{text-align:right;font-family:var(--mono);font-size:10px;color:var(--txt3)}
 .rank-pts{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--green)}
 .rank-row.me{border-color:rgba(0,232,122,.3);background:rgba(0,232,122,.04)}
-
-/* ══════════════════════════════════════
-   OVERLAYS
-══════════════════════════════════════ */
-
-/* Pause overlay */
+/* ADMIN PAGE */
+.admin-page{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.admin-section{background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:20px}
+.admin-section-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);font-family:var(--mono);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.admin-section-title::after{content:'';flex:1;height:1px;background:var(--b2)}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.type-card{padding:20px 12px;border-radius:10px;border:2px solid var(--b2);background:var(--s3);cursor:pointer;transition:.2s;text-align:center}
+.type-card:hover{border-color:var(--txt3)}
+.type-card.selected-frio{border-color:var(--blue2);background:rgba(59,130,246,.08)}
+.type-card.selected-quente{border-color:var(--yellow);background:rgba(245,158,11,.08)}
+.type-card.selected-recuperacao{border-color:var(--purple);background:rgba(139,92,246,.08)}
+.type-icon{font-size:28px;margin-bottom:6px}
+.type-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.type-desc{font-size:10px;color:var(--txt3)}
+.upload-zone{border:2px dashed var(--b3);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:.2s}
+.upload-zone:hover{border-color:var(--green);background:rgba(0,232,122,.03)}
+.upload-zone-icon{font-size:36px;margin-bottom:8px}
+.upload-zone-text{font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:4px}
+.upload-zone-sub{font-size:11px;color:var(--txt3)}
+.import-btn{width:100%;padding:12px;border-radius:9px;border:none;background:var(--green);color:#000;font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;margin-top:12px;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.import-btn:disabled{background:var(--b2);color:var(--txt3);cursor:not-allowed}
+.import-btn:not(:disabled):hover{background:var(--green-d)}
+.imported-lists-table{width:100%;border-collapse:collapse}
+.ilt-th{text-align:left;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);padding:6px 10px;border-bottom:1px solid var(--b2)}
+.ilt-td{padding:10px;border-bottom:1px solid var(--b1);font-size:12px;vertical-align:middle}
+.ilt-td:last-child{border-bottom:none}
+/* AGENDA / BOOKING */
+.agenda-page{flex:1;overflow-y:auto;padding:16px;max-width:680px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:14px}
+.consultores-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.consultor-card{padding:14px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;text-align:center;transition:.2s}
+.consultor-card:hover{border-color:var(--txt3)}
+.consultor-card.selected{border-color:var(--green);background:rgba(0,232,122,.06)}
+.consultor-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#000;margin:0 auto 8px}
+.consultor-name{font-size:13px;font-weight:700}
+.consultor-role{font-size:10px;color:var(--txt3)}
+.slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot-btn{padding:10px 8px;border-radius:8px;border:1px solid var(--b2);background:var(--s2);color:var(--txt);font-family:var(--mono);font-size:12px;cursor:pointer;transition:.2s;text-align:center}
+.slot-btn:hover{border-color:var(--green);background:rgba(0,232,122,.06);color:var(--green)}
+.slot-btn.selected{border-color:var(--green);background:rgba(0,232,122,.12);color:var(--green);font-weight:700}
+.slot-btn.occupied{border-color:var(--b1);background:var(--s3);color:var(--txt3);cursor:not-allowed;text-decoration:line-through;opacity:.5}
+.confirmar-btn{width:100%;padding:14px;border-radius:10px;border:none;background:var(--green);color:#000;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;transition:.2s}
+.confirmar-btn:disabled{background:var(--b2);color:var(--txt3);cursor:not-allowed}
+.confirmar-btn:not(:disabled):hover{background:var(--green-d)}
+.agenda-interna{background:var(--s2);border:1px solid var(--b2);border-radius:12px;overflow:hidden}
+.ai-header{padding:12px 16px;background:var(--s3);border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between}
+.ai-title{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:var(--mono);color:var(--txt2)}
+.ai-item{padding:10px 16px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:10px}
+.ai-item:last-child{border-bottom:none}
+.ai-time{font-family:var(--mono);font-size:11px;font-weight:700;min-width:80px;color:var(--green)}
+.ai-lead{flex:1}
+.ai-lead-name{font-size:12px;font-weight:700}
+.ai-lead-phone{font-family:var(--mono);font-size:9px;color:var(--txt3)}
+.ai-consultor{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700}
+/* SDR IA WIZARD OVERLAY */
+.sdr-ia-overlay{position:fixed;inset:0;z-index:600;background:rgba(6,8,13,.97);overflow-y:auto;display:none;flex-direction:column}
+.sdr-ia-overlay.on{display:flex}
+.sdr-ia-bar{padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;background:var(--s1);border-bottom:1px solid var(--b2);flex-shrink:0}
+.sdr-ia-close{background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:6px 14px;border-radius:7px;font-family:var(--sans);font-size:12px;cursor:pointer;transition:.15s}
+.sdr-ia-close:hover{border-color:var(--red);color:var(--red)}
+.sdr-ia-body{flex:1;padding:20px;max-width:680px;margin:0 auto;width:100%}
+/* BANT wizard inside SDR IA overlay */
+.sdr-step{display:none}
+.sdr-step.active{display:block}
+.sdr-step-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;background:rgba(0,232,122,.1);border:1px solid rgba(0,232,122,.25);border-radius:100px;font-family:var(--mono);font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.sdr-step-title{font-size:22px;font-weight:800;margin-bottom:4px}
+.sdr-step-dur{font-size:12px;color:var(--txt3);margin-bottom:18px}
+.sdr-script{background:rgba(0,20,10,.6);border:1px solid rgba(0,232,122,.2);border-left:3px solid var(--green);border-radius:8px;padding:16px;margin-bottom:14px}
+.sdr-script-lbl{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--green);letter-spacing:1px;display:block;margin-bottom:8px}
+.sdr-script-text{font-size:13px;line-height:1.8;color:#9ecfb0;font-style:italic}
+.sdr-script-text strong{color:var(--txt);font-style:normal;font-weight:600}
+.sdr-info{background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--txt2);line-height:1.6}
+.sdr-info.warn{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.25);color:#fcd34d}
+.sdr-info.danger{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.25);color:#fca5a5}
+.sdr-fg{margin-bottom:14px}
+.sdr-lbl{display:block;font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-family:var(--mono)}
+.sdr-input,.sdr-select{width:100%;background:var(--bg);border:1px solid var(--b2);border-radius:7px;padding:9px 12px;color:var(--txt);font-family:var(--mono);font-size:12px;outline:none;transition:.15s}
+.sdr-input:focus,.sdr-select:focus{border-color:var(--green)}
+.sdr-textarea{resize:vertical;min-height:80px}
+.sdr-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sdr-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sdr-opt{padding:10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--txt);font-family:var(--sans);font-size:13px;cursor:pointer;transition:.2s;text-align:center}
+.sdr-opt:hover{border-color:var(--green)}
+.sdr-opt.sel{border-color:var(--green);background:rgba(0,232,122,.1);color:var(--green)}
+.sdr-opt.sel-warn{border-color:var(--yellow);background:rgba(245,158,11,.1);color:var(--yellow)}
+.sdr-opt.sel-danger{border-color:var(--red);background:rgba(239,68,68,.1);color:var(--red)}
+.sdr-cond{display:none;margin-top:12px}
+.sdr-cond.show{display:block}
+.sdr-nav{display:flex;gap:10px;margin-top:20px}
+.sdr-btn-next{flex:1;padding:12px;background:var(--green);color:#000;border:none;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer}
+.sdr-btn-prev{padding:12px 20px;background:transparent;border:1px solid var(--b2);color:var(--txt2);border-radius:8px;font-family:var(--sans);font-size:13px;cursor:pointer}
+.sdr-btn-red{flex:1;padding:12px;background:var(--red);color:#fff;border:none;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer}
+.sdr-prog{height:3px;background:var(--b2);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.sdr-prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s}
+/* BANT DISPLAY */
+.bant-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.bant-item{background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:12px;text-align:center}
+.bant-letter{font-size:20px;font-weight:800;margin-bottom:3px;font-family:var(--mono)}
+.bant-name{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-family:var(--mono)}
+.bant-status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-block}
+.bant-ok{color:var(--green);background:rgba(0,232,122,.12)}
+.bant-warn{color:var(--yellow);background:rgba(245,158,11,.12)}
+.bant-no{color:var(--red);background:rgba(239,68,68,.12)}
+.bant-desc{font-size:10px;color:var(--txt3);margin-top:4px}
+/* RESULTADO */
+.result-card{background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:20px;margin-bottom:12px}
+.result-badge{display:inline-flex;align-items:center;padding:4px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.rb-ok{background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.3);color:var(--green)}
+.rb-warn{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--yellow)}
+.rb-no{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+.result-title{font-size:22px;font-weight:800;margin-bottom:14px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.r-card{background:var(--s3);border:1px solid var(--b1);border-radius:8px;padding:14px}
+.r-card-lbl{font-family:var(--mono);font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.r-card-val{font-size:15px;font-weight:700;color:var(--txt)}
+.r-card-val.g{color:var(--green)}.r-card-val.a{color:var(--yellow)}.r-card-val.r{color:var(--red)}
+.action-list-sdr{list-style:none;padding:0}
+.action-list-sdr li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--b1);font-size:13px;color:var(--txt2)}
+.action-list-sdr li:last-child{border-bottom:none}
+.action-num{width:20px;height:20px;border-radius:50%;background:var(--green);color:#000;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+/* AGENDAR button in resultado */
+.agendar-btn{width:100%;padding:14px;border-radius:10px;border:none;background:var(--green);color:#000;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;box-shadow:0 0 24px var(--glow)}
+/* OVERLAYS */
 .pause-overlay{position:fixed;inset:0;z-index:200;background:rgba(6,8,13,.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .po-icon{font-size:80px;line-height:1}
 .po-type{font-size:11px;letter-spacing:3px;text-transform:uppercase;font-family:var(--mono);color:var(--txt3)}
@@ -257,8 +354,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .po-timer{font-size:72px;font-weight:900;font-family:var(--mono);color:var(--orange)}
 .po-resume{background:var(--green);color:#000;border:none;padding:14px 40px;border-radius:12px;font-family:var(--sans);font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 0 28px var(--glow);margin-top:8px}
 .po-resume:hover{transform:translateY(-1px)}
-
-/* Countdown overlay */
 .cd-overlay{position:fixed;inset:0;z-index:150;background:rgba(6,8,13,.95);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;backdrop-filter:blur(4px)}
 .cd-res{font-size:11px;font-weight:700;padding:5px 16px;border-radius:20px;border:1px solid;font-family:var(--mono)}
 .cd-lbl{font-size:10px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase;font-family:var(--mono)}
@@ -270,8 +365,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .cd-next-phone{font-family:var(--mono);font-size:12px;color:var(--txt2);margin-top:3px}
 .cd-cancel{background:transparent;border:1px solid var(--b2);color:var(--txt3);padding:7px 18px;border-radius:7px;font-family:var(--sans);font-size:11px;cursor:pointer;transition:.15s}
 .cd-cancel:hover{border-color:var(--red);color:var(--red)}
-
-/* Alert overlay */
 .alert-overlay{position:fixed;inset:0;z-index:300;background:rgba(6,8,13,.95);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .ao-bell{font-size:80px;animation:shake 1s ease infinite}
 @keyframes shake{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(15deg)}}
@@ -282,15 +375,26 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ao-btns{display:flex;gap:10px;margin-top:6px}
 .ao-call{background:var(--green);color:#000;border:none;padding:13px 28px;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 0 24px var(--glow)}
 .ao-later{background:var(--s2);border:1px solid var(--b2);color:var(--txt2);padding:13px 18px;border-radius:10px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer}
-
-/* Achievement popup */
 .ach-popup{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--s2);border:1px solid rgba(0,232,122,.3);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(10px);transition:.4s;pointer-events:none}
 .ach-popup.on{opacity:1;transform:translateY(0)}
 .ach-popup-icon{font-size:28px}
 .ach-popup-title{font-size:11px;font-weight:700;color:var(--green)}
 .ach-popup-name{font-size:13px;font-weight:800}
-
-/* Modals */
+/* RINGING */
+.ringing-state{display:none;position:fixed;inset:0;z-index:400;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:32px 24px;background:rgba(6,8,13,.97);animation:ring-flash .6s ease infinite}
+@keyframes ring-flash{0%,100%{background:rgba(6,8,13,.97)}50%{background:rgba(245,158,11,.06)}}
+.ring-icon{font-size:72px;animation:ring-shake .35s ease infinite}
+@keyframes ring-shake{0%,100%{transform:rotate(-18deg) scale(1.1)}50%{transform:rotate(18deg) scale(.9)}}
+.ring-urgent-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;font-family:var(--mono);color:var(--yellow);opacity:.7}
+.ring-title{font-size:28px;font-weight:900;color:#fff;line-height:1.15;max-width:320px}
+.ring-title span{color:var(--yellow)}
+.ring-countdown-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ring-countdown{font-family:var(--mono);font-size:80px;font-weight:900;color:var(--yellow);line-height:1;transition:.2s}
+.ring-countdown.urgent{color:var(--red);animation:cd-pulse .4s ease infinite}
+.ring-countdown-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:var(--mono);color:var(--txt3)}
+.ring-cancel-btn{background:transparent;border:1px solid var(--b3);color:var(--txt3);padding:7px 18px;border-radius:8px;font-family:var(--sans);font-size:11px;cursor:pointer;transition:.15s;margin-top:4px}
+.ring-cancel-btn:hover{border-color:var(--red);color:var(--red)}
+/* MODALS */
 .modal-bg{display:none;position:fixed;inset:0;z-index:500;background:rgba(6,8,13,.87);backdrop-filter:blur(8px);align-items:center;justify-content:center}
 .modal-bg.on{display:flex}
 .modal{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:24px;width:420px;max-width:94vw;max-height:90vh;overflow-y:auto}
@@ -309,68 +413,27 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ibox.org{background:rgba(249,115,22,.05);border-color:rgba(249,115,22,.2);color:var(--txt2)}
 .ibox.blue{background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.15);color:var(--txt2)}
 .test-btn{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:var(--blue2);padding:8px;border-radius:7px;font-family:var(--sans);font-size:11px;font-weight:700;cursor:pointer;width:100%;margin-bottom:4px}
-
-/* ═══ EMPTY STATES ═══ */
+/* UTILS */
 .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--txt3);padding:40px;text-align:center}
 .empty-icon{font-size:52px;opacity:.3}
 .empty-title{font-size:18px;font-weight:700;color:var(--txt2)}
 .empty-sub{font-size:12px;line-height:1.7;max-width:260px}
-
-/* ═══ UTILS ═══ */
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);z-index:999;background:var(--s1);border:1px solid var(--b2);border-radius:9px;padding:9px 18px;font-size:12px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);z-index:9999;background:var(--s1);border:1px solid var(--b2);border-radius:9px;padding:9px 18px;font-size:12px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.ok{border-color:rgba(0,232,122,.4);color:var(--green)}
 .toast.err{border-color:rgba(239,68,68,.4);color:var(--red)}
 .toast.warn{border-color:rgba(245,158,11,.4);color:var(--yellow)}
 .toast.win{border-color:rgba(139,92,246,.4);color:var(--purple)}
-
-/* Hide dialer sections */
 .hidden{display:none!important}
-/* Ringing state — FULLSCREEN URGENCY OVERLAY */
-.ringing-state{
-  display:none;position:fixed;inset:0;z-index:400;
-  flex-direction:column;align-items:center;justify-content:center;
-  gap:16px;text-align:center;padding:32px 24px;
-  background:rgba(6,8,13,.97);
-  animation:ring-flash 0.6s ease infinite;
-}
-@keyframes ring-flash{
-  0%,100%{background:rgba(6,8,13,.97);}
-  50%{background:rgba(245,158,11,.06);}
-}
-.ring-icon{font-size:72px;animation:ring-shake 0.35s ease infinite}
-@keyframes ring-shake{0%,100%{transform:rotate(-18deg) scale(1.1)}50%{transform:rotate(18deg) scale(.9)}}
-.ring-urgent-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;font-family:var(--mono);color:var(--yellow);opacity:.7}
-.ring-title{font-size:28px;font-weight:900;color:#fff;line-height:1.15;max-width:320px}
-.ring-title span{color:var(--yellow)}
-.ring-countdown-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
-.ring-countdown{font-family:var(--mono);font-size:80px;font-weight:900;color:var(--yellow);line-height:1;transition:.2s}
-.ring-countdown.urgent{color:var(--red);animation:cd-pulse .4s ease infinite}
-.ring-countdown-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:var(--mono);color:var(--txt3)}
-.ring-step{background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:14px 24px;display:flex;align-items:center;gap:12px;width:100%;max-width:320px}
-.ring-step-num{width:28px;height:28px;border-radius:50%;background:var(--yellow);color:#000;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ring-step-num.done{background:var(--green)}
-.ring-step-txt{font-size:13px;font-weight:700;text-align:left;line-height:1.4}
-.ring-step-txt small{display:block;font-size:10px;color:var(--txt3);font-weight:400;margin-top:1px}
-.ring-auto-note{font-family:var(--mono);font-size:10px;color:var(--txt3)}
-.ring-cancel-btn{background:transparent;border:1px solid var(--b3);color:var(--txt3);padding:7px 18px;border-radius:8px;font-family:var(--sans);font-size:11px;cursor:pointer;transition:.15s;margin-top:4px}
-.ring-cancel-btn:hover{border-color:var(--red);color:var(--red)}
-/* hide old answered btn if any */
-.ring-answered-btn{display:none!important}
 </style>
 </head>
 <body>
 
-<!-- ═══ AUDIO ═══ -->
 <audio id="remoteAudio" autoplay></audio>
-<audio id="ringbackAudio" loop>
-  <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=">
-</audio>
+<div class="toast" id="toast"></div>
 
-<!-- ═══ OVERLAYS ═══ -->
+<!-- PAUSE OVERLAY -->
 <div class="pause-overlay" id="pauseOverlay">
   <div class="po-icon" id="po-icon">⏸</div>
   <div class="po-type">EM PAUSA</div>
@@ -379,6 +442,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <button class="po-resume" onclick="resumeDialer()">▶ RETOMAR DISCAGEM</button>
 </div>
 
+<!-- COUNTDOWN OVERLAY -->
 <div class="cd-overlay" id="cdOverlay">
   <div class="cd-res" id="cd-res">—</div>
   <div class="cd-lbl">próxima ligação em</div>
@@ -391,6 +455,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <button class="cd-cancel" onclick="cancelCD()">✕ Cancelar</button>
 </div>
 
+<!-- ALERT OVERLAY -->
 <div class="alert-overlay" id="alertOverlay">
   <div class="ao-bell">🔔</div>
   <div class="ao-title">⏰ HORA DE LIGAR</div>
@@ -406,13 +471,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 <div class="ach-popup" id="achPopup">
   <div class="ach-popup-icon" id="ach-popup-icon">🏆</div>
-  <div>
-    <div class="ach-popup-title">CONQUISTA DESBLOQUEADA!</div>
-    <div class="ach-popup-name" id="ach-popup-name">—</div>
-  </div>
+  <div><div class="ach-popup-title">CONQUISTA DESBLOQUEADA!</div><div class="ach-popup-name" id="ach-popup-name">—</div></div>
 </div>
 
-<!-- ═══ REMARCAR MODAL ═══ -->
+<!-- REMARCAR MODAL -->
 <div class="modal-bg" id="remarcarModal">
   <div class="modal">
     <div class="modal-title">📅 Agendar retorno</div>
@@ -422,69 +484,84 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       <div><label class="flbl">Hora</label><input type="time" class="fi" id="rm-time"></div>
     </div>
     <div class="fg"><label class="flbl">Observação</label><input type="text" class="fi" id="rm-note" placeholder="Ex: Ligar após reunião da manhã"></div>
-    <div class="fg"><label class="flbl">Tipo</label>
-      <select class="fi" id="rm-type">
-        <option value="callback">📞 Retornar chamada</option>
-        <option value="meeting">📅 Reunião agendada</option>
-      </select>
-    </div>
     <button class="mbtn" onclick="saveRemarcar()">✅ Confirmar agendamento</button>
     <button class="mcancel" onclick="skipRemarcar()">Pular (sem agendar)</button>
     <div style="text-align:center;font-family:var(--mono);font-size:10px;color:var(--txt3);margin-top:6px" id="rm-auto-lbl"></div>
   </div>
 </div>
 
-<!-- ═══ CONFIG MODAL ═══ -->
+<!-- CONFIG MODAL -->
 <div class="modal-bg" id="cfgModal">
   <div class="modal">
     <div class="modal-title">⚙ Configurações</div>
     <div class="modal-sub">SDR, SIP e RD Station</div>
-    <div class="ibox org">🎧 <b>SIP WebRTC</b> — Ligações direto no browser, sem app externo. Use as mesmas credenciais do MicroSIP.</div>
+    <div class="ibox org">🎧 <b>SIP WebRTC</b> — Ligações direto no browser. Use as mesmas credenciais do MicroSIP.</div>
     <div class="sec-lbl">Identidade</div>
     <div class="fg fi-row">
       <div><label class="flbl">Seu Nome (SDR)</label><input type="text" class="fi" id="cfg-name" placeholder="Ex: Marcelo"></div>
-      <div><label class="flbl">Meta diária de ligações</label><input type="number" class="fi" id="cfg-goal" placeholder="30"></div>
+      <div><label class="flbl">Meta diária</label><input type="number" class="fi" id="cfg-goal" placeholder="30"></div>
     </div>
     <div class="sec-lbl">SIP / PABX</div>
     <div class="ibox blue">Servidor: <b>pabx2.integravoip.com.br</b> · Usuário: <b>trialat-201</b></div>
     <div class="fg fi-row">
       <div><label class="flbl">Ramal SIP</label><input type="text" class="fi" id="cfg-sip-user" placeholder="trialat-201"></div>
-      <div><label class="flbl">Senha SIP</label><input type="password" class="fi" id="cfg-sip-pass" placeholder="senha"></div>
+      <div><label class="flbl">Senha SIP</label><input type="password" class="fi" id="cfg-sip-pass"></div>
     </div>
     <div class="fg"><label class="flbl">WebSocket SIP (WSS)</label><input type="text" class="fi" id="cfg-sip-ws" placeholder="wss://pabx2.integravoip.com.br:8089/ws"></div>
     <div class="fg fi-row">
-      <div><label class="flbl">Domínio SIP</label><input type="text" class="fi" id="cfg-sip-domain" placeholder="pabx2.integravoip.com.br"></div>
+      <div><label class="flbl">Domínio SIP</label><input type="text" class="fi" id="cfg-sip-domain"></div>
       <div><label class="flbl">Delay Auto (s)</label><input type="number" class="fi" id="cfg-delay" placeholder="3"></div>
     </div>
     <button class="test-btn" onclick="checkPabxStatus()">🔌 Verificar PABX IntegraVoip</button>
     <div class="sec-lbl">RD Station CRM</div>
     <div class="fg fi-row">
-      <div><label class="flbl">Token</label><input type="password" class="fi" id="cfg-rd" placeholder="Token pessoal"></div>
-      <div><label class="flbl">Pipeline ID</label><input type="text" class="fi" id="cfg-pipe" placeholder="694aabf0..."></div>
+      <div><label class="flbl">Token</label><input type="password" class="fi" id="cfg-rd"></div>
+      <div><label class="flbl">Pipeline ID</label><input type="text" class="fi" id="cfg-pipe"></div>
     </div>
-    <div class="fg"><label class="flbl">Etapas para discar (vírgula)</label><input type="text" class="fi" id="cfg-stages" placeholder="Sem Contato/Lead, Entrar em Contato, Remarcar Reunião"></div>
-    <div class="fg"><label class="flbl">WhatsApp (WA Business número, com DDI)</label><input type="text" class="fi" id="cfg-wa-num" placeholder="5561999999999"></div>
-    <button class="test-btn" onclick="syncRD()">🔄 Sincronizar leads agora</button>
+    <div class="fg"><label class="flbl">Etapas para discar</label><input type="text" class="fi" id="cfg-stages" placeholder="Sem Contato/Lead, Entrar em Contato"></div>
+    <div class="fg"><label class="flbl">WhatsApp (com DDI)</label><input type="text" class="fi" id="cfg-wa-num"></div>
     <button class="mbtn" onclick="saveCfg()">💾 Salvar</button>
     <button class="mcancel" onclick="closeCfg()">Cancelar</button>
   </div>
 </div>
 
-<!-- ═══ ADD LEAD MODAL ═══ -->
+<!-- ADD LEAD MODAL -->
 <div class="modal-bg" id="addModal">
   <div class="modal">
     <div class="modal-title">＋ Adicionar Lead</div>
-    <div class="fg"><label class="flbl">Nome</label><input type="text" class="fi" id="al-name" placeholder="Nome completo"></div>
-    <div class="fg"><label class="flbl">Telefone</label><input type="text" class="fi" id="al-phone" placeholder="5561999999999"></div>
-    <div class="fg"><label class="flbl">Empresa</label><input type="text" class="fi" id="al-co" placeholder="Academia..."></div>
+    <div class="fg"><label class="flbl">Nome</label><input type="text" class="fi" id="al-name"></div>
+    <div class="fg"><label class="flbl">Telefone</label><input type="text" class="fi" id="al-phone"></div>
+    <div class="fg"><label class="flbl">Empresa</label><input type="text" class="fi" id="al-co"></div>
+    <div class="fg"><label class="flbl">Tipo de Lead</label>
+      <select class="fi" id="al-type">
+        <option value="frio">❄️ Frio — Primeiro contato</option>
+        <option value="quente">🔥 Quente — Preencheu aplicação</option>
+        <option value="recuperacao">♻️ Recuperação — Cliente inativo</option>
+      </select>
+    </div>
     <button class="mbtn" onclick="addLead()">Adicionar</button>
     <button class="mcancel" onclick="closeAdd()">Cancelar</button>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- SDR IA WIZARD OVERLAY -->
+<div class="sdr-ia-overlay" id="sdrIaOverlay">
+  <div class="sdr-ia-bar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="logo-mark">G</div>
+      <span style="font-size:13px;font-weight:700;color:var(--txt2)">SDR IA — Qualificação BANT</span>
+    </div>
+    <button class="sdr-ia-close" onclick="closeSdrIa()">✕ Fechar</button>
+  </div>
+  <div class="sdr-ia-body">
+    <div class="sdr-prog"><div class="sdr-prog-fill" id="sdr-prog-fill" style="width:0%"></div></div>
+    <div id="sdr-steps-container"></div>
+    <!-- resultado SDR IA -->
+    <div id="sdr-resultado" style="display:none"></div>
+  </div>
+</div>
 
-<!-- ═══ SHELL ═══ -->
+<!-- SHELL -->
 <div class="shell">
 
   <!-- TOPBAR -->
@@ -494,7 +571,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       <div class="logo-text">Power Dialer</div>
     </div>
     <div class="tb-center">
-      <div class="sip-status" id="sipStatusPill" onclick="checkPabxStatus()" title="Status PABX — clique para verificar">
+      <div class="sip-status" id="sipStatusPill" onclick="checkPabxStatus()">
         <div class="sip-dot idle" id="sip-dot"></div>
         <span class="sip-lbl" id="sip-lbl">SIP offline</span>
       </div>
@@ -518,41 +595,44 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <!-- TABS -->
   <div class="tabs">
     <div class="tab active" onclick="setTab('dialer',this)">📞 Discador</div>
-    <div class="tab" onclick="setTab('wa',this)">💬 WhatsApp <span class="badge" id="wa-badge" style="display:none">0</span></div>
+    <div class="tab" onclick="setTab('wa',this)">💬 WhatsApp</div>
     <div class="tab" onclick="setTab('kanban',this)">⊞ Kanban</div>
     <div class="tab" onclick="setTab('rank',this)">🏆 Ranking</div>
+    <div class="tab" onclick="setTab('agenda',this)">📅 Agenda</div>
+    <div class="tab" onclick="setTab('admin',this)">⚙ Admin</div>
   </div>
 
-  <!-- ═══ DISCADOR ═══ -->
+  <!-- DISCADOR -->
   <div class="page active" id="page-dialer">
-
-    <!-- Empty state -->
     <div class="empty-state" id="dialerEmpty">
       <div class="empty-icon">📞</div>
       <div class="empty-title">Pronto para discagem</div>
-      <div class="empty-sub" id="empty-sub">Configure o RD Station nas ⚙ para carregar os leads automaticamente, ou adicione um lead manualmente.</div>
+      <div class="empty-sub" id="empty-sub">Importe uma lista na aba Admin ou adicione um lead manualmente.</div>
       <button style="background:var(--green);color:#000;border:none;padding:12px 28px;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 0 28px var(--glow)" onclick="startQueue()">▶ Iniciar Fila</button>
       <button style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:8px 20px;border-radius:8px;font-family:var(--sans);font-size:12px;cursor:pointer;margin-top:-4px" onclick="openCfg()">⚙ Configurações</button>
     </div>
 
-    <!-- Active dialer -->
     <div class="dialer-wrap hidden" id="dialerActive">
-
-      <!-- Progress + cadence -->
+      <!-- Progress -->
       <div class="prog-bar">
         <div class="pb-track"><div class="pb-fill" id="pb-fill" style="width:0%"></div></div>
         <div class="pb-txt"><b id="pb-done">0</b>/<span id="pb-total">0</span></div>
       </div>
-      <div class="cadence-badge" id="cadBadge">
-        <span>Cadência</span>
-        <span class="cad-day" id="cad-day">D+0</span>
-        <div class="cad-actions" id="cad-actions"></div>
-        <span class="cad-attempts" id="cad-attempts"></span>
+      <!-- Cadence + type -->
+      <div style="display:flex;gap:8px;width:100%;align-items:center">
+        <div class="cadence-badge" id="cadBadge" style="flex:1">
+          <span>Cadência</span>
+          <span class="cad-day" id="cad-day">D+0</span>
+          <div class="cad-actions" id="cad-actions"></div>
+          <span style="font-family:var(--mono);font-size:9px;color:var(--txt3)" id="cad-attempts"></span>
+        </div>
+        <div class="lead-type-badge ltype-frio" id="lead-type-badge">FRIO</div>
       </div>
-
       <!-- Lead card -->
       <div class="lead-card">
-        <div class="lc-name" id="lc-name">—</div>
+        <div class="lc-header">
+          <div class="lc-name" id="lc-name">—</div>
+        </div>
         <div class="lc-phone" id="lc-phone">—</div>
         <div class="lc-company" id="lc-company">—</div>
         <div class="lc-footer">
@@ -560,7 +640,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
           <span class="lc-att" id="lc-att">1ª tentativa</span>
         </div>
       </div>
-
       <!-- SIP bar -->
       <div class="sip-bar idle-bar" id="sipBar">
         <div class="sb-l">
@@ -573,97 +652,125 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
         <div class="timer-big" id="timer-display">00:00</div>
       </div>
 
-      <!-- Ringing state — FULLSCREEN URGENCY -->
+      <!-- RINGING -->
       <div class="ringing-state" id="ringingState">
         <div class="ring-urgent-label">⚡ Ação imediata</div>
         <div class="ring-icon">📲</div>
-        <div class="ring-title">Atenda o <span>MicroSIP</span><br>AGORA</div>
+        <div class="ring-title">Atenda o <span>MicroSIP</span> AGORA</div>
         <div class="ring-countdown-wrap">
           <div class="ring-countdown" id="ringCountdown">60</div>
           <div class="ring-countdown-lbl">segundos para a chamada cair</div>
         </div>
-        <div class="ring-step" id="ringStep1">
-          <div class="ring-step-num" id="ringStepNum1">1</div>
-          <div class="ring-step-txt">Olhe para o MicroSIP
-            <small>A janela de "Chamada Recebida" apareceu</small>
-          </div>
-        </div>
-        <div class="ring-step" id="ringStep2">
-          <div class="ring-step-num" id="ringStepNum2">2</div>
-          <div class="ring-step-txt">Clique em <b>Atender</b>
-            <small>Após atender, o próximo lead inicia sozinho</small>
-          </div>
-        </div>
-        <div class="ring-auto-note" id="ringAutoNote">Detectando atendimento automaticamente...</div>
         <button class="ring-cancel-btn" onclick="cancelRinging()">✕ Cancelar ligação</button>
+        <button onclick="confirmAnswered()" style="margin-top:8px;background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.3);color:var(--green);padding:8px 20px;border-radius:8px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer">✅ Lead atendeu (manual)</button>
       </div>
 
-      <!-- Call + Hangup buttons -->
+      <!-- SCRIPT PANEL (shown during call, step-by-step by lead type) -->
+      <div class="script-panel hidden" id="scriptPanel">
+        <div class="sp-header">
+          <span class="sp-title" id="sp-title">SCRIPT</span>
+          <div class="sp-step-dots" id="sp-dots"></div>
+        </div>
+        <div class="sp-body" id="sp-body"></div>
+      </div>
+
+      <!-- Idle: call button -->
       <div class="action-row" id="idleActions">
         <button class="big-btn call-btn" id="btn-call" onclick="dial()" style="grid-column:span 2;font-size:16px">
           <span style="font-size:20px">📞</span><span id="btn-call-txt">Ligar</span>
         </button>
       </div>
 
-      <!-- Result buttons (manual override during call) -->
+      <!-- ATENDEU? panel — shown after dialing when PABX doesn't auto-detect -->
+      <div id="atendeuPanel" style="display:none;width:100%">
+        <div style="background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:14px 16px;">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--yellow);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase">📞 O Lead Atendeu?</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button onclick="leadAtendeu(true)" style="padding:14px;border-radius:10px;border:2px solid var(--green);background:rgba(0,232,122,.1);color:var(--green);font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px">
+              <span style="font-size:18px">✅</span> Sim, atendeu
+            </button>
+            <button onclick="leadAtendeu(false)" style="padding:14px;border-radius:10px;border:2px solid var(--b3);background:var(--s3);color:var(--txt2);font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px">
+              <span style="font-size:18px">📵</span> Não atendeu
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUER AGENDAR? panel — shown after lead answers + script -->
+      <div id="querAgendarPanel" style="display:none;width:100%">
+        <div style="background:var(--s2);border:1px solid var(--b2);border-radius:14px;overflow:hidden;">
+          <div style="padding:10px 16px;background:var(--s3);border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--green)" id="qa-script-label">🎙 SCRIPT</span>
+          </div>
+          <div style="padding:14px 16px;" id="qa-script-body"></div>
+          <div style="padding:0 16px 14px">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🗓 Quer agendar a consultoria gratuita?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <button onclick="querAgendar(true)" style="padding:14px;border-radius:10px;border:2px solid var(--green);background:rgba(0,232,122,.12);color:var(--green);font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px">
+                <span style="font-size:18px">📅</span> Sim, quero!
+              </button>
+              <button onclick="querAgendar(false)" style="padding:14px;border-radius:10px;border:2px solid rgba(245,158,11,.4);background:rgba(245,158,11,.08);color:var(--yellow);font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px">
+                <span style="font-size:18px">❌</span> Não, obrigado
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- During call: result buttons (manual override) -->
       <div class="result-grid hidden" id="resultSection">
-        <div style="grid-column:span 2;text-align:center;font-family:var(--mono);font-size:10px;color:var(--yellow);padding:4px 0;min-height:14px;letter-spacing:1px" id="auto-result-lbl">📋 REGISTRAR RESULTADO MANUAL</div>
+        <div style="grid-column:span 2;text-align:center;font-family:var(--mono);font-size:10px;color:var(--yellow);padding:4px 0" id="auto-result-lbl">📋 REGISTRAR RESULTADO</div>
         <button class="r-btn r-agendou" onclick="endCall('Agendou',this)"><span class="ri">📅</span>AGENDOU</button>
         <button class="r-btn r-nao-agendou" onclick="endCall('Não Agendou',this)"><span class="ri">⚠️</span>NÃO AGENDOU</button>
         <button class="r-btn r-remarcar" onclick="endCall('Remarcar',this)"><span class="ri">🔄</span>REMARCAR</button>
         <button class="r-btn r-nao-atendeu" onclick="endCall('Não Atendeu',this)"><span class="ri">📵</span>NÃO ATENDEU</button>
         <button class="r-btn r-caixa" onclick="endCall('Caixa Postal',this)"><span class="ri">📬</span>CAIXA POSTAL</button>
-        <button class="r-btn r-excluir" onclick="endCall('Excluir',this)"><span class="ri">🚫</span>EXCLUIR LISTA</button>
+        <button class="r-btn r-excluir" onclick="endCall('Excluir',this)"><span class="ri">🚫</span>EXCLUIR</button>
       </div>
 
-      <!-- Hangup + Mute (during call) -->
+      <!-- During call: hangup + mute -->
       <div class="action-row hidden" id="callActions">
         <button class="big-btn hangup-btn" onclick="hangupCall()"><span style="font-size:18px">📵</span>Desligar</button>
         <button class="mute-btn" id="muteBtn" onclick="toggleMute()" style="padding:14px">🎤 Mudo</button>
       </div>
 
-      <!-- Skip / no phone -->
+      <!-- Aux row -->
       <div class="aux-row">
         <button class="aux-btn" onclick="skipLead()"><span class="ai">⏭</span>Pular</button>
         <button class="aux-btn" onclick="markNoPhone()"><span class="ai">📵</span>Sem Tel.</button>
-        <button class="wa-quick-btn" onclick="sendWA()" id="waQuickBtn" style="flex:2;font-size:12px">
+        <button class="wa-quick-btn" onclick="sendWA()" id="waQuickBtn" style="flex:2">
           <span style="font-size:16px">💬</span>WhatsApp
         </button>
       </div>
 
-      <!-- Pause buttons -->
+      <!-- Pause row -->
       <div class="pause-row">
         <button class="p-btn" onclick="doPause('pause','⏸','PAUSA')"><span class="pi">⏸</span>Pausar</button>
         <button class="p-btn" onclick="doPause('bathroom','🚿','BANHEIRO')"><span class="pi">🚿</span>Banheiro</button>
         <button class="p-btn" onclick="doPause('lunch','🍽','ALMOÇO')"><span class="pi">🍽</span>Almoço</button>
         <button class="p-btn" onclick="doPause('meeting','📋','REUNIÃO')"><span class="pi">📋</span>Reunião</button>
       </div>
-
     </div>
   </div>
 
-  <!-- ═══ WHATSAPP ═══ -->
+  <!-- WHATSAPP -->
   <div class="page" id="page-wa">
     <div class="wa-page">
-      <div class="wa-lead-box" id="waLeadBox">
+      <div class="wa-lead-box">
         <div class="wa-lead-name" id="wa-lead-name">Nenhum lead ativo</div>
         <div class="wa-lead-phone" id="wa-lead-phone">—</div>
         <div style="font-size:10px;color:var(--txt3);margin-bottom:10px;font-family:var(--mono)" id="wa-cad-lbl">—</div>
         <div class="wa-template-box" id="wa-template">Selecione um lead e inicie a discagem para ver o template.</div>
-        <button class="wa-send-btn" onclick="openWA()">
-          <span style="font-size:18px">💬</span> Abrir WhatsApp
-        </button>
+        <button class="wa-send-btn" onclick="openWA()"><span style="font-size:18px">💬</span> Abrir WhatsApp</button>
       </div>
       <div>
         <div class="wa-history-title">Histórico de WhatsApp</div>
-        <div id="wa-history-list">
-          <div style="font-size:11px;color:var(--txt3);text-align:center;padding:20px">Nenhuma mensagem enviada ainda.</div>
-        </div>
+        <div id="wa-history-list"><div style="font-size:11px;color:var(--txt3);text-align:center;padding:20px">Nenhuma mensagem enviada ainda.</div></div>
       </div>
     </div>
   </div>
 
-  <!-- ═══ KANBAN ═══ -->
+  <!-- KANBAN -->
   <div class="page" id="page-kanban">
     <div class="kanban-page">
       <div class="kb-header">
@@ -674,11 +781,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     </div>
   </div>
 
-  <!-- ═══ RANKING ═══ -->
+  <!-- RANKING -->
   <div class="page" id="page-rank">
     <div class="rank-page">
-
-      <!-- Goal card -->
       <div class="goal-card">
         <div class="goal-header">
           <div>
@@ -696,10 +801,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
           <div class="gs"><div class="gs-val" id="rank-wa" style="color:#25d366">0</div><div class="gs-lbl">WhatsApp</div></div>
         </div>
         <div class="goal-bar-wrap">
-          <div class="goal-bar-lbl">
-            <span id="goal-lbl-done">0 ligações</span>
-            <span id="goal-lbl-meta">Meta: 30</span>
-          </div>
+          <div class="goal-bar-lbl"><span id="goal-lbl-done">0 ligações</span><span id="goal-lbl-meta">Meta: 30</span></div>
           <div class="goal-bar-track"><div class="goal-bar-fill" id="goal-bar-fill" style="width:0%"></div></div>
         </div>
         <div class="goal-input-row">
@@ -708,221 +810,255 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
           <span style="font-size:11px;color:var(--txt3)">ligações/dia</span>
         </div>
       </div>
-
-      <!-- Streak -->
       <div class="streak-row">
-        <div class="streak-card">
-          <div class="streak-fire">🔥</div>
-          <div class="streak-val" id="streak-val" style="color:var(--orange)">0</div>
-          <div class="streak-lbl">Sequência</div>
-        </div>
-        <div class="streak-card">
-          <div class="streak-fire">⚡</div>
-          <div class="streak-val" id="tempo-medio-val" style="color:var(--blue2)">—</div>
-          <div class="streak-lbl">Tempo médio</div>
-        </div>
-        <div class="streak-card">
-          <div class="streak-fire">🎯</div>
-          <div class="streak-val" id="conv-rate-val" style="color:var(--green)">0%</div>
-          <div class="streak-lbl">Taxa agend.</div>
-        </div>
+        <div class="streak-card"><div class="streak-fire">🔥</div><div class="streak-val" id="streak-val" style="color:var(--orange)">0</div><div class="streak-lbl">Sequência</div></div>
+        <div class="streak-card"><div class="streak-fire">⚡</div><div class="streak-val" id="tempo-medio-val" style="color:var(--blue2)">—</div><div class="streak-lbl">Tempo médio</div></div>
+        <div class="streak-card"><div class="streak-fire">🎯</div><div class="streak-val" id="conv-rate-val" style="color:var(--green)">0%</div><div class="streak-lbl">Taxa agend.</div></div>
       </div>
-
-      <!-- Achievements -->
       <div class="ach-title">Conquistas</div>
       <div class="ach-grid" id="ach-grid"></div>
-
-      <!-- Ranking -->
       <div class="rank-table-title">🏅 Ranking — Hoje</div>
       <div id="rank-list"></div>
+    </div>
+  </div>
 
+  <!-- AGENDA -->
+  <div class="page" id="page-agenda">
+    <div class="agenda-page" id="agendaPageContent">
+      <!-- rendered by renderAgenda() -->
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="page" id="page-admin">
+    <div class="admin-page">
+      <div class="admin-section">
+        <div class="admin-section-title">📋 Upload de Lista de Leads</div>
+        <p style="font-size:12px;color:var(--txt3);margin-bottom:14px">Selecione o tipo da lista. O tipo define o script que os SDRs verão ao atender.</p>
+        <div class="type-grid">
+          <div class="type-card" id="tc-frio" onclick="selectLeadType('frio')">
+            <div class="type-icon">❄️</div>
+            <div class="type-name">Leads Frios</div>
+            <div class="type-desc">Primeiro contato</div>
+          </div>
+          <div class="type-card" id="tc-quente" onclick="selectLeadType('quente')">
+            <div class="type-icon">🔥</div>
+            <div class="type-name">Leads Quentes</div>
+            <div class="type-desc">Preencheram aplicação</div>
+          </div>
+          <div class="type-card" id="tc-recuperacao" onclick="selectLeadType('recuperacao')">
+            <div class="type-icon">♻️</div>
+            <div class="type-name">Recuperação</div>
+            <div class="type-desc">Clientes inativos</div>
+          </div>
+        </div>
+        <input type="file" id="csv-file-input" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileSelect(this)">
+        <div class="upload-zone" onclick="document.getElementById('csv-file-input').click()">
+          <div class="upload-zone-icon">📂</div>
+          <div class="upload-zone-text" id="upload-zone-text">Clique para selecionar o arquivo</div>
+          <div class="upload-zone-sub">CSV, XLSX ou XLS · Máx. 10MB</div>
+        </div>
+        <button class="import-btn" id="import-btn" disabled onclick="importLeads()">
+          <span>🚀</span><span>Importar Lista</span>
+        </button>
+      </div>
+      <div class="admin-section">
+        <div class="admin-section-title">📂 Listas Importadas</div>
+        <table class="imported-lists-table" id="imported-table">
+          <thead>
+            <tr>
+              <th class="ilt-th">Nome do arquivo</th>
+              <th class="ilt-th">Tipo</th>
+              <th class="ilt-th">Leads</th>
+              <th class="ilt-th">Data</th>
+              <th class="ilt-th"></th>
+            </tr>
+          </thead>
+          <tbody id="imported-tbody">
+            <tr><td class="ilt-td" colspan="5" style="color:var(--txt3);text-align:center;padding:20px">Nenhuma lista importada ainda.</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
 </div><!-- shell -->
 
 <script>
-// ════════════════════════════════════════════════
-// CONSTANTS & CONFIG
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════
 const LS={get:(k,d='')=>{try{return localStorage.getItem('gfb_'+k)||d}catch{return d}},set:(k,v)=>{try{localStorage.setItem('gfb_'+k,v)}catch{}}};
 
-// SIP credentials — usados pelo JsSIP e preenchidos automaticamente nos campos
-
-let cfg = {
-  name:      LS.get('name'),
-  goal:      parseInt(LS.get('goal','30'))||30,
-  sipUser:   LS.get('sipUser', 'trialat-201'),
-  sipPass:   LS.get('sipPass', '9DmEEqt7qB'),
-  sipWs:     LS.get('sipWs',   'wss://pabx2.integravoip.com.br:8089/ws'),
-  sipDomain: LS.get('sipDom',  'pabx2.integravoip.com.br'),
-  delay:     parseInt(LS.get('delay','3'))||3,
-  rdToken:   LS.get('rdToken'),
-  pipeId:    LS.get('pipeId','694aabf03f1ed8001d44a46b'),
-  stages:    LS.get('stages','Sem Contato/Lead,Entrar em Contato,Remarcar Reunião'),
-  waNum:     LS.get('waNum','')
+// ═══════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════
+let cfg={
+  name:LS.get('name'),goal:parseInt(LS.get('goal','30'))||30,
+  sipUser:LS.get('sipUser','trialat-201'),sipPass:LS.get('sipPass','9DmEEqt7qB'),
+  sipWs:LS.get('sipWs','wss://pabx2.integravoip.com.br:8089/ws'),
+  sipDomain:LS.get('sipDom','pabx2.integravoip.com.br'),
+  delay:parseInt(LS.get('delay','3'))||3,
+  rdToken:LS.get('rdToken'),pipeId:LS.get('pipeId','694aabf03f1ed8001d44a46b'),
+  stages:LS.get('stages','Sem Contato/Lead,Entrar em Contato,Remarcar Reunião'),
+  waNum:LS.get('waNum','')
 };
 
-// Cadence: D+0..D+7
-const CADENCE = [
-  {day:0, actions:['call','whatsapp']},
-  {day:1, actions:['call','whatsapp']},
-  {day:2, actions:['call','email']},
-  {day:3, actions:['call','whatsapp']},
-  {day:4, actions:['call','email']},
-  {day:5, actions:['call','whatsapp']},
-  {day:6, actions:['call','email','whatsapp']},
-  {day:7, actions:['call','end']}
-];
-const MAX_ATTEMPTS_DAY = 5;
+const PABX_RAMAL=201,PABX_TOKEN='be6e3c68-9013-4701-b09e-e828466f9238',PABX_USR_API='gestao-fitness-brasil-api',PABX_BASE_URL='https://pabx2.integravoip.com.br/suite/api';
+const SIP_WS_URL='wss://pabx2.integravoip.com.br:8089/ws',SIP_USER_DEF='trialat-201',SIP_PASS_DEF='9DmEEqt7qB',SIP_DOM_DEF='pabx2.integravoip.com.br';
+const VERCEL_PROXY='https://discadorsdr.vercel.app/api/pabx';
 
-const WA_TEMPLATES = {
-  0: 'Olá {name}! Vi que você se interessou pela Gestão Fitness Brasil 🏋️ Posso te apresentar como já transformamos dezenas de academias como a sua?',
-  1: 'Oi {name}, tudo bem? Estava tentando te ligar. Tenho algo que pode mudar seus resultados na academia. Tem 2 minutos? 💪',
-  3: '{name}, separei um caso de sucesso de uma academia que aumentou 40% do faturamento com a GFB 📈 Posso te enviar?',
-  5: 'Oi {name}! Última tentativa de contato. Temos uma condição especial só até esta semana para academias do seu perfil 🎯',
-  6: '{name}, vou encerrar nosso contato se não receber retorno. Mas antes quero te mostrar algo importante para o futuro da sua academia 💼',
-  7: 'Oi {name}, conforme combinado estou encerrando nosso contato. Se mudar de ideia, pode me chamar a qualquer momento! 👋'
+// ═══════════════════════════════════════════
+// CADENCE & WA TEMPLATES
+// ═══════════════════════════════════════════
+const CADENCE=[
+  {day:0,actions:['call','whatsapp']},{day:1,actions:['call','whatsapp']},
+  {day:2,actions:['call','email']},{day:3,actions:['call','whatsapp']},
+  {day:4,actions:['call','email']},{day:5,actions:['call','whatsapp']},
+  {day:6,actions:['call','email','whatsapp']},{day:7,actions:['call','end']}
+];
+const MAX_ATTEMPTS_DAY=5;
+const WA_TEMPLATES={
+  0:'Olá {name}! Vi que você se interessou pela Gestão Fitness Brasil 🏋️ Posso te apresentar como já transformamos dezenas de academias como a sua?',
+  1:'Oi {name}, tudo bem? Estava tentando te ligar. Tenho algo que pode mudar seus resultados na academia. Tem 2 minutos? 💪',
+  3:'{name}, separei um caso de sucesso de uma academia que aumentou 40% do faturamento com a GFB 📈 Posso te enviar?',
+  5:'Oi {name}! Última tentativa de contato. Temos uma condição especial só até esta semana para academias do seu perfil 🎯',
+  6:'{name}, vou encerrar nosso contato se não receber retorno. Mas antes quero te mostrar algo importante para o futuro da sua academia 💼',
+  7:'Oi {name}, conforme combinado estou encerrando nosso contato. Se mudar de ideia, pode me chamar a qualquer momento! 👋'
 };
 
-const ACHIEVEMENTS_DEF = [
-  {id:'first_call',  name:'Primeira Ligação',  icon:'📞', pts:10,  check:s=>s.totalCalls>=1},
-  {id:'first_sched', name:'1º Agendamento',    icon:'📅', pts:50,  check:s=>s.todaySched>=1},
-  {id:'calls_10',    name:'10 Ligações Hoje',  icon:'⚡', pts:25,  check:s=>s.todayCalls>=10},
-  {id:'calls_20',    name:'20 Ligações Hoje',  icon:'💪', pts:50,  check:s=>s.todayCalls>=20},
-  {id:'calls_30',    name:'30 Ligações Hoje',  icon:'🚀', pts:100, check:s=>s.todayCalls>=30},
-  {id:'sched_3',     name:'3 Agendamentos',    icon:'🎯', pts:75,  check:s=>s.todaySched>=3},
-  {id:'streak_5',    name:'5 em Sequência',    icon:'🔥', pts:30,  check:s=>s.streak>=5},
-  {id:'streak_10',   name:'10 em Sequência',   icon:'☄️', pts:60, check:s=>s.streak>=10},
-  {id:'wa_sent',     name:'1º WhatsApp',       icon:'💬', pts:10,  check:s=>s.todayWA>=1},
+// ═══════════════════════════════════════════
+// SCRIPTS POR TIPO DE LEAD
+// ═══════════════════════════════════════════
+const SCRIPTS = {
+  frio: [
+    {
+      label:'🎙 ABERTURA',
+      text:`Oii, vi que você se inscreveu no nosso workshop para donos de academia.<br><strong>Você conseguiu assistir?</strong>`,
+      note:'Se disser que não assistiu, mostrar empatia antes de continuar.'
+    },
+    {
+      label:'🎙 EMPATIA + GANCHO',
+      text:`Entendo, a correria do dia a dia é grande.<br><br>Inclusive nós liberamos <strong>1 hora de consultoria 100% gratuita</strong> com nosso especialista para te ajudar a crescer o número de alunos e ter maior previsibilidade.<br><br>Tem interesse em agendar? <strong>Tenho 3 vagas disponíveis</strong>... acredito que possa te ajudar.`,
+      note:'Aguarde a resposta. Se mostrar interesse, avançar para qualificação.'
+    },
+    {
+      label:'🎯 QUALIFICAR',
+      text:`Antes de agendar, deixa eu entender melhor o seu negócio para garantir que o nosso especialista possa te ajudar da melhor forma.`,
+      note:'Clique em "Iniciar Qualificação SDR IA" para abrir o wizard completo.',
+      isQualify:true
+    }
+  ],
+  quente: [
+    {
+      label:'🎙 SAUDAÇÃO',
+      text:`<strong>{name}</strong>?<br><br>Aqui é o <strong>[Seu nome]</strong>. Como você está? Tudo bem?<br><br>Vamos começar a nossa entrevista, então. Será uma conversa bem rápida.`,
+      note:'Tom confiante e animado. Início de conversa cordial e objetivo.'
+    },
+    {
+      label:'🎙 OBJETIVO DA LIGAÇÃO',
+      text:`O objetivo dessa ligação é entender melhor o seu negócio e o seu desafio e analisarmos juntos se você tem o perfil de empresa que estou buscando para receber <strong>1 hora de consultoria gratuita</strong>.<br><br>Se eu entender que você tem o perfil, vou passar você para a próxima fase do nosso processo — uma <strong>reunião de 1 hora em vídeo-conferência</strong> com nosso especialista.`,
+      note:'Apresente como processo seletivo, não como venda.'
+    },
+    {
+      label:'🎙 AUTORIDADE GFB',
+      text:`Você já conhece o <strong>Eduardo Lustosa, Ultra Academia ou Gestão Fitness Brasil</strong>?`,
+      note:'Se não conhecer: apresente brevemente — +7.000 alunos, parceiro Sebrae, +1.000 empresários ajudados, G4, MLS com Flávio Augusto.'
+    },
+    {
+      label:'🎯 QUALIFICAR BANT',
+      text:`Me fala um pouco do seu negócio.`,
+      note:'Deixe o lead falar. Depois clique em "Iniciar Qualificação SDR IA" para o wizard completo.',
+      isQualify:true
+    }
+  ],
+  recuperacao: [
+    {
+      label:'🎙 ABERTURA',
+      text:`Oi, aqui é o <strong>[Nome do consultor]</strong> da <strong>Gestão Fitness Brasil</strong>, estou ligando somente para fazer uma pesquisa rápida.<br><br>Vi que você agendou uma reunião com a gente e não conseguiu comparecer — estou ligando somente para saber o <strong>motivo</strong>.`,
+      note:'Tom leve e sem pressão. É uma pesquisa, não uma cobrança.'
+    },
+    {
+      label:'🎙 APÓS OUVIR O MOTIVO',
+      text:`Entendo.<br><br>Nós dificilmente agendamos outra call, pois nosso consultor se prepara com antecedência e separa <strong>1 hora</strong> por conta da nossa agenda muito cheia.<br><br>Mas vou abrir uma exceção para você — nosso consultor tem disponibilidade nos seguintes horários:`,
+      note:'Vá para a aba AGENDA para verificar os horários disponíveis e oferecer ao lead.'
+    },
+    {
+      label:'🎯 QUALIFICAR + AGENDAR',
+      text:`Qual desses horários funciona melhor para você?`,
+      note:'Após confirmar o horário, clique em "Iniciar Qualificação SDR IA" se quiser qualificar antes de passar para o closer.',
+      isQualify:true
+    }
+  ]
+};
+
+// ═══════════════════════════════════════════
+// CONSULTORES E AGENDA
+// ═══════════════════════════════════════════
+const CONSULTORES = [
+  {id:'marcelo',name:'Marcelo',role:'Sócio / Consultor',color:'#00e87a',avatar:'M'},
+  {id:'eduardo',name:'Eduardo',role:'Fundador / Especialista',color:'#f59e0b',avatar:'E'},
+  {id:'ives',name:'Ives',role:'Consultor Senior',color:'#3b82f6',avatar:'I'}
 ];
 
-const KB_STAGES = ['Sem Contato','Tentativa','Remarcado','Agendado','Desqualificado','Excluído'];
-const KB_COLORS = {'Sem Contato':'#7a94b0','Tentativa':'#f59e0b','Remarcado':'#3b82f6','Agendado':'#00e87a','Desqualificado':'#ef4444','Excluído':'#6b7280'};
+// Agenda interna (horários disponíveis, configurados aqui)
+// Estrutura: { consultor: { 'YYYY-MM-DD': ['09:00','10:00',...] } }
+// Ao agendar, o slot é marcado como ocupado
+let agendaSlots = JSON.parse(LS.get('agenda_slots', JSON.stringify({
+  marcelo: {}, eduardo: {}, ives: {}
+})));
 
-// ════════════════════════════════════════════════
+// Agendamentos confirmados
+let agendamentos = JSON.parse(LS.get('agendamentos', '[]'));
+
+// Estado de booking
+let bookingState = { consultor: null, date: null, slot: null, leadName: '', leadPhone: '', origin: 'manual' };
+
+// ═══════════════════════════════════════════
+// CONQUISTAS
+// ═══════════════════════════════════════════
+const ACHIEVEMENTS_DEF=[
+  {id:'first_call',name:'Primeira Ligação',icon:'📞',pts:10,check:s=>s.totalCalls>=1},
+  {id:'first_sched',name:'1º Agendamento',icon:'📅',pts:50,check:s=>s.todaySched>=1},
+  {id:'calls_10',name:'10 Ligações Hoje',icon:'⚡',pts:25,check:s=>s.todayCalls>=10},
+  {id:'calls_20',name:'20 Ligações Hoje',icon:'💪',pts:50,check:s=>s.todayCalls>=20},
+  {id:'calls_30',name:'30 Ligações Hoje',icon:'🚀',pts:100,check:s=>s.todayCalls>=30},
+  {id:'sched_3',name:'3 Agendamentos',icon:'🎯',pts:75,check:s=>s.todaySched>=3},
+  {id:'streak_5',name:'5 em Sequência',icon:'🔥',pts:30,check:s=>s.streak>=5},
+  {id:'streak_10',name:'10 em Sequência',icon:'☄️',pts:60,check:s=>s.streak>=10},
+  {id:'wa_sent',name:'1º WhatsApp',icon:'💬',pts:10,check:s=>s.todayWA>=1}
+];
+const KB_STAGES=['Sem Contato','Tentativa','Remarcado','Agendado','Desqualificado','Excluído'];
+const KB_COLORS={'Sem Contato':'#7a94b0','Tentativa':'#f59e0b','Remarcado':'#3b82f6','Agendado':'#00e87a','Desqualificado':'#ef4444','Excluído':'#6b7280'};
+
+// ═══════════════════════════════════════════
 // STATE
-// ════════════════════════════════════════════════
-let leads       = JSON.parse(LS.get('leads','[]'));
-let scheduled   = JSON.parse(LS.get('scheduled','[]'));
-let waHistory   = JSON.parse(LS.get('waHist','[]'));
+// ═══════════════════════════════════════════
+let leads=JSON.parse(LS.get('leads','[]'));
+let scheduled=JSON.parse(LS.get('scheduled','[]'));
+let waHistory=JSON.parse(LS.get('waHist','[]'));
+let importedLists=JSON.parse(LS.get('imported_lists','[]'));
+let selectedLeadType='frio';
+let selectedFile=null;
 
-let curIdx      = -1;
-let callState   = 'idle';   // idle|calling|paused
-let autoMode    = true;
-let isMuted     = false;
-let timerInt    = null;
-let sessInt     = null;
-let pauseInt    = null;
-let cdInt       = null;
-let alertInt    = null;
-let callStart   = null;
-let sessStart   = Date.now();
-let pendingRes  = null;
-let curAlert    = null;
+let curIdx=-1,callState='idle',autoMode=true,isMuted=false;
+let timerInt=null,sessInt=null,pauseInt=null,cdInt=null,alertInt=null,ringCountdownInt=null;
+let callStart=null,sessStart=Date.now(),pendingRes=null,curAlert=null;
+let sessCalls=0,sessSched=0,sessWA=0,streak=0,durations=[];
+let scriptStep=0;
+let sdrIaState={opts:{},fields:{}};
+let sdrCurrentStep=0;
 
-// Session stats
-let sessCalls   = 0;
-let sessSched   = 0;
-let sessWA      = 0;
-let streak      = 0;
-let durations   = [];
+const TODAY=new Date().toISOString().slice(0,10);
+let dayStats=JSON.parse(LS.get('dayStats_'+TODAY,'{"calls":0,"sched":0,"wa":0,"pts":0,"unlocked":[]}'));
+let totStats=JSON.parse(LS.get('totStats','{"calls":0,"sched":0}'));
 
-// Daily stats (date-keyed)
-const TODAY = new Date().toISOString().slice(0,10);
-let dayStats = JSON.parse(LS.get('dayStats_'+TODAY,'{"calls":0,"sched":0,"wa":0,"pts":0,"unlocked":[]}'));
+let ua=null,sipSession=null,sipRegistered=false,pabxPollInt=null,pabxCallFound=false;
 
-// Total stats (all time)
-let totStats = JSON.parse(LS.get('totStats','{"calls":0,"sched":0}'));
-
-let autoResultInt = null;
-let remarcarAutoInt = null;
-let ringCountdownInt = null; // countdown on ringing overlay
-let ua           = null;
-let sipSession   = null;
-let sipRegistered= false;
-
-
-// ════════════════════════════════════════════════
-// RINGING COUNTDOWN (urgência visual)
-// ════════════════════════════════════════════════
-function startRingCountdown(){
-  clearRingCountdown();
-  let secs = 60; // tempo até chamada cair no PABX
-  const el = document.getElementById('ringCountdown');
-  const note = document.getElementById('ringAutoNote');
-  if(el) el.textContent = secs;
-  ringCountdownInt = setInterval(()=>{
-    secs--;
-    if(el){
-      el.textContent = secs;
-      el.classList.toggle('urgent', secs <= 10);
-    }
-    if(note && secs % 5 === 0){
-      note.textContent = secs <= 10 ? '⚠️ Chamada caindo — próximo lead em breve...' : 'Detectando atendimento automaticamente...';
-    }
-    if(secs <= 0){
-      clearRingCountdown();
-      // Timeout — não atendeu o MicroSIP, avança automaticamente
-      toast('⏱ Tempo esgotado — avançando...','warn');
-      endCallAuto('Não Atendeu');
-    }
-  }, 1000);
-}
-function clearRingCountdown(){
-  clearInterval(ringCountdownInt); ringCountdownInt = null;
-  const el = document.getElementById('ringCountdown');
-  if(el){ el.textContent = '–'; el.classList.remove('urgent'); }
-}
-
-// ════════════════════════════════════════════════
-// AUTO-ADVANCE TIMERS (anti-procrastination)
-// ════════════════════════════════════════════════
-function clearAutoResultTimer(){
-  clearInterval(autoResultInt);autoResultInt=null;
-  const lbl=document.getElementById('auto-result-lbl');
-  if(lbl)lbl.textContent='';
-}
-
-// If atendente doesn't pick a result within 15s, auto-register "Não Atendeu" and advance
-function startAutoResultTimer(){
-  clearAutoResultTimer();
-  let secs=15;
-  const lbl=document.getElementById('auto-result-lbl');
-  if(lbl)lbl.textContent='Auto: Não Atendeu em '+secs+'s';
-  autoResultInt=setInterval(()=>{
-    secs--;
-    if(lbl)lbl.textContent='Auto: Não Atendeu em '+secs+'s';
-    if(secs<=0){
-      clearAutoResultTimer();
-      endCall('Não Atendeu',null);
-    }
-  },1000);
-}
-
-function clearRemarcarAutoTimer(){
-  clearInterval(remarcarAutoInt);remarcarAutoInt=null;
-  const lbl=document.getElementById('rm-auto-lbl');
-  if(lbl)lbl.textContent='';
-}
-
-// If atendente doesn't fill remarcar within 30s, skip it and advance
-function startRemarcarAutoTimer(){
-  clearRemarcarAutoTimer();
-  let secs=30;
-  const lbl=document.getElementById('rm-auto-lbl');
-  if(lbl)lbl.textContent='Pulando em '+secs+'s...';
-  remarcarAutoInt=setInterval(()=>{
-    secs--;
-    if(lbl)lbl.textContent='Pulando em '+secs+'s...';
-    if(secs<=0){skipRemarcar();}
-  },1000);
-}
-
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // TABS
-// ════════════════════════════════════════════════
-function setTab(name, el){
+// ═══════════════════════════════════════════
+function setTab(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
@@ -930,129 +1066,120 @@ function setTab(name, el){
   if(name==='kanban')renderKanban();
   if(name==='wa')renderWAPage();
   if(name==='rank')renderRanking();
+  if(name==='agenda')renderAgenda();
+  if(name==='admin')renderImportedTable();
 }
 
-// connectSIP — verifica status do PABX (credenciais hardcoded)
-function connectSIP(){ checkPabxStatus(); }
-
-function setSipUI(st, lbl){
-  const dot=document.getElementById('sip-dot');
-  const slbl=document.getElementById('sip-lbl');
-  // map 'pcall' -> 'conn' for animation
-  const cls={'ok':'ok','err':'err','conn':'conn','idle':'idle','pcall':'conn'};
-  dot.className='sip-dot '+(cls[st]||'idle');
-  slbl.textContent=lbl;
-}
-
-// ════════════════════════════════════════════════
-// PABX IntegraVoip — CREDENCIAIS FIXAS
-// ════════════════════════════════════════════════
-const PABX_RAMAL   = 201;
-const PABX_TOKEN   = 'be6e3c68-9013-4701-b09e-e828466f9238';
-const PABX_USR_API = 'gestao-fitness-brasil-api';
-const PABX_BASE_URL= 'https://pabx2.integravoip.com.br/suite/api';
-
-// SIP WebRTC credentials (MicroSIP same account, audio via browser)
-const SIP_WS_URL   = 'wss://pabx2.integravoip.com.br:8089/ws';
-const SIP_USER_DEF = 'trialat-201';
-const SIP_PASS_DEF = '9DmEEqt7qB';
-const SIP_DOM_DEF  = 'pabx2.integravoip.com.br';
-
-let pabxPollInt = null;
-let pabxCallFound = false;
-
-// Proxy URL — sempre funciona:
-// - No Vercel: usa rota relativa /api/pabx
-// - Local (file://): aponta para o Vercel deployado
-const VERCEL_PROXY = 'https://discadorsdr.vercel.app/api/pabx';
-function getProxy(){
-  if(cfg.proxy) return cfg.proxy;
-  if(window.location.protocol==='file:') return VERCEL_PROXY;
-  return '/api/pabx'; // relativo no Vercel
-}
-
-// Chamada direta à API do PABX (via proxy Vercel)
-async function pabxAPI(endpoint, method='GET', body=null){
-  const proxy = getProxy();
-  if(!proxy){
-    // Tenta direto (vai falhar CORS em file://, mas tenta)
-    const h={'accept':'application/json','usuario':PABX_USR_API,'token':PABX_TOKEN};
-    if(method==='POST') h['Content-Type']='application/json';
-    const r=await fetch(PABX_BASE_URL+endpoint,{method,headers:h,...(body?{body:JSON.stringify(body)}:{})});
-    const t=await r.text();try{return JSON.parse(t);}catch{return{raw:t};}
-  }
+// ═══════════════════════════════════════════
+// PABX
+// ═══════════════════════════════════════════
+function getProxy(){if(cfg.proxy)return cfg.proxy;if(window.location.protocol==='file:')return VERCEL_PROXY;return'/api/pabx';}
+async function pabxAPI(endpoint,method='GET',body=null){
+  const proxy=getProxy();
+  if(!proxy){const h={'accept':'application/json','usuario':PABX_USR_API,'token':PABX_TOKEN};if(method==='POST')h['Content-Type']='application/json';const r=await fetch(PABX_BASE_URL+endpoint,{method,headers:h,...(body?{body:JSON.stringify(body)}:{})});const t=await r.text();try{return JSON.parse(t);}catch{return{raw:t};}}
   const r=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint,method,body})});
   const t=await r.text();try{return JSON.parse(t);}catch{return{raw:t};}
 }
-
-// STATUS DO PABX no topbar
 async function checkPabxStatus(){
   setSipUI('conn','Verificando PABX...');
-  try{
-    const d=await pabxAPI('/listar_chamadas_online');
-    if(d.raw&&String(d.raw).includes('<html')){
-      const isLocal=window.location.protocol==='file:';
-      if(isLocal) throw new Error('Proxy CORS indisponível. Abra via https://discadorsdr.vercel.app');
-      throw new Error('Proxy não encontrado — verifique o deploy Vercel');
-    }
-    setSipUI('ok','PABX ✓ IntegraVoip');
-  }catch(e){
-    const isLocal=window.location.protocol==='file:';
-    setSipUI('err', 'PABX ✗');
-    toast('❌ PABX: '+e.message.slice(0,60),'err');
-  }
+  try{const d=await pabxAPI('/listar_chamadas_online');setSipUI('ok','PABX ✓ IntegraVoip');}
+  catch(e){setSipUI('err','PABX ✗');toast('❌ PABX: '+e.message.slice(0,60),'err');}
+}
+function setSipUI(st,lbl){
+  const dot=document.getElementById('sip-dot'),slbl=document.getElementById('sip-lbl');
+  const cls={'ok':'ok','err':'err','conn':'conn','idle':'idle','pcall':'conn'};
+  dot.className='sip-dot '+(cls[st]||'idle');slbl.textContent=lbl;
 }
 
-// DISCAR via API PABX → PABX liga para ramal 201 → SDR atende no MicroSIP
+// ═══════════════════════════════════════════
+// SCRIPT PANEL
+// ═══════════════════════════════════════════
+function renderScriptPanel(){
+  const l=leads[curIdx];if(!l)return;
+  const type=l.leadType||'frio';
+  const steps=SCRIPTS[type]||SCRIPTS.frio;
+  const panel=document.getElementById('scriptPanel');
+  const spTitle=document.getElementById('sp-title');
+  const spDots=document.getElementById('sp-dots');
+  const spBody=document.getElementById('sp-body');
+
+  const typeLabels={frio:'❄️ SCRIPT FRIO',quente:'🔥 SCRIPT QUENTE',recuperacao:'♻️ SCRIPT RECUPERAÇÃO'};
+  spTitle.textContent=typeLabels[type]||'SCRIPT';
+
+  spDots.innerHTML=steps.map((_,i)=>`<div class="sp-dot${i<scriptStep?'done':i===scriptStep?'active':''}"></div>`).join('');
+
+  const step=steps[scriptStep];
+  const cls=type;
+  const leadFirstName=(l.name||'').split(' ')[0];
+  const scriptText=(step.text||'').replace(/\{name\}/g,leadFirstName);
+
+  spBody.innerHTML=`
+    <div class="sp-step active">
+      <div class="sp-step-label ${cls}">${step.label}</div>
+      <div class="sp-text ${cls}">${scriptText}</div>
+      ${step.note?`<div class="sp-note">💡 ${step.note}</div>`:''}
+      <div class="sp-nav">
+        ${scriptStep>0?`<button class="sp-prev" onclick="prevScriptStep()">← Voltar</button>`:''}
+        ${step.isQualify
+          ?`<button class="sp-qualify-btn" onclick="openSdrIa()">🎯 Iniciar Qualificação SDR IA →</button>`
+          :`<button class="sp-next" onclick="nextScriptStep()">${scriptStep<steps.length-1?'Próximo passo →':'✅ Concluído'}</button>`
+        }
+      </div>
+    </div>`;
+}
+
+function nextScriptStep(){
+  const l=leads[curIdx];if(!l)return;
+  const steps=SCRIPTS[l.leadType||'frio']||SCRIPTS.frio;
+  if(scriptStep<steps.length-1){scriptStep++;renderScriptPanel();}
+}
+function prevScriptStep(){
+  if(scriptStep>0){scriptStep--;renderScriptPanel();}
+}
+
+// ═══════════════════════════════════════════
+// DIAL
+// ═══════════════════════════════════════════
 async function dial(){
   const l=leads[curIdx];if(!l)return;
   if(!l.phone){toast('Sem telefone','err');return;}
-
   const btn=document.getElementById('btn-call');
   btn.disabled=true;
   document.getElementById('btn-call-txt').textContent='Discando...';
   setSipBarUI('dialing','Enviando ao PABX IntegraVoip...',l.phone);
   setSipUI('conn','Discando...');
-
   const phone=fmtPABX(l.phone);
+
+  // Show atendeu panel immediately — regardless of PABX result
+  // This way the SDR can answer manually even if PABX has CORS issues
+  document.getElementById('idleActions').classList.add('hidden');
+  l.attemptsToday=(l.attemptsToday||0)+1;l.lastAttemptDate=TODAY;
+  LS.set('leads',JSON.stringify(leads));
+  callStart=Date.now();startTimer();
+  callState='calling';
+  document.getElementById('callActions').classList.remove('hidden');
+  showAtendeuPanel();
+  setSipBarUI('active','Ligando — aguardando resposta do lead',l.phone);
 
   try{
     const res=await pabxAPI('/discar_numero','POST',{dados:{numero_ramal_origem:PABX_RAMAL,numero_destino:phone}});
-    console.log('[PABX discar]',res);
-
-    // Verifica erro na resposta
-    console.log('[PABX response]', JSON.stringify(res).slice(0,200));
-    if(res.status==='error'||res.erro||res.error)
-      throw new Error(res.message||res.mensagem||String(res.erro)||'Erro ao discar');
-
-    // Sucesso — PABX está chamando o ramal 201 → SDR precisa atender o MicroSIP
-    setCallUI('ringing');
-    setSipBarUI('dialing','📱 MicroSIP chamando — atenda agora!',l.phone);
+    if(res.status==='error'||res.erro||res.error)throw new Error(res.message||res.mensagem||'Erro ao discar');
+    setSipBarUI('dialing','📱 MicroSIP chamando — aguarde...',l.phone);
     setSipUI('pcall','MicroSIP chamando');
-    toast('📱 Atenda o MicroSIP! Discando: '+phone,'warn');
-    l.attemptsToday=(l.attemptsToday||0)+1;
-    l.lastAttemptDate=TODAY;
-    LS.set('leads',JSON.stringify(leads));
-
-    // Polling: detecta quando SDR atende (chamada aparece no PABX) ou quando cai
+    toast('📱 MicroSIP chamando: '+phone,'warn');
     startPabxPoll(phone);
-
   }catch(e){
-    console.error('[PABX]',e);
-    btn.disabled=false;
-    document.getElementById('btn-call-txt').textContent='Ligar — '+fmtPhone(l.phone);
-    setSipBarUI('idle','Erro — tente novamente');
-    setSipUI('err','PABX ✗');
     const isCors=e.message.includes('Failed to fetch')||e.message.includes('NetworkError');
-    if(isCors) toast('⚠ CORS: abra em https://discadorsdr.vercel.app','warn');
-    else toast('❌ PABX: '+e.message.slice(0,80),'err');
+    setSipBarUI('active','PABX offline — registre manualmente',l.phone);
+    setSipUI('err','PABX ✗');
+    if(isCors)toast('⚠ CORS — registre o resultado manualmente','warn');
+    else toast('⚠ PABX: '+e.message.slice(0,60),'warn');
+    // Panel is already visible — SDR can still register the result
   }
 }
 
-// POLLING — detecta quando a chamada cai no PABX
 function startPabxPoll(destPhone){
-  pabxCallFound=false;
-  let checks=0;
+  pabxCallFound=false;let checks=0;
   clearInterval(pabxPollInt);
   pabxPollInt=setInterval(async()=>{
     if(callState!=='calling'&&callState!=='ringing'){clearInterval(pabxPollInt);return;}
@@ -1060,70 +1187,47 @@ function startPabxPoll(destPhone){
     try{
       const d=await pabxAPI('/listar_chamadas_online');
       const arr=extractArr(d);
-      const myCall=arr.find(c=>
-        String(c.ramal_origem)==String(PABX_RAMAL)||
-        String(c.numero_ramal_origem)==String(PABX_RAMAL)||
-        String(c.ramal)==String(PABX_RAMAL)||
-        (c.numero_destino&&c.numero_destino.includes(destPhone.slice(-8)))
-      );
+      const myCall=arr.find(c=>String(c.ramal_origem)==String(PABX_RAMAL)||String(c.numero_ramal_origem)==String(PABX_RAMAL)||String(c.ramal)==String(PABX_RAMAL)||(c.numero_destino&&c.numero_destino.includes(destPhone.slice(-8))));
       if(myCall){
-        if(!pabxCallFound){
-          pabxCallFound=true;
-          // Detectou chamada ativa — SDR atendeu o MicroSIP
-          setTimeout(()=>confirmAnswered(),500);
-        }
-        const dest=myCall.numero_destino||myCall.destino||destPhone;
-        setSipBarUI('active',`Ramal ${PABX_RAMAL} → ${dest}`);
+        if(!pabxCallFound){pabxCallFound=true;setTimeout(()=>confirmAnswered(),500);}
+        setSipBarUI('active',`Ramal ${PABX_RAMAL} → ${myCall.numero_destino||destPhone}`);
         setSipUI('pcall','Em ligação');
       }else if(pabxCallFound&&(callState==='calling'||callState==='ringing')){
-        // Chamada foi encontrada antes, agora sumiu = caiu
-        // → auto-registra resultado e avança para o próximo SEM mostrar tela de resultado
-        pabxCallFound=false;
-        clearInterval(pabxPollInt);
-        setSipUI('ok','PABX ✓ IntegraVoip');
-        stopTimer();
-
-        // Determina resultado automático com base no tempo de ligação
-        const dur = callStart ? Math.floor((Date.now()-callStart)/1000) : 0;
-        // Se a chamada durou menos de 8s após conectar, provavelmente não atendeu
-        const autoResult = dur < 8 ? 'Não Atendeu' : 'Não Agendou';
-
-        toast(`⚡ Chamada encerrada (${dur}s) → próximo lead...`, 'warn');
-        // Auto-avança sem mostrar tela de resultado — SDR não precisa fazer nada
+        pabxCallFound=false;clearInterval(pabxPollInt);setSipUI('ok','PABX ✓ IntegraVoip');stopTimer();
+        const dur=callStart?Math.floor((Date.now()-callStart)/1000):0;
+        const autoResult=dur<8?'Não Atendeu':'Não Agendou';
+        toast(`⚡ Chamada encerrada (${dur}s) → próximo lead...`,'warn');
         endCallAuto(autoResult);
       }
     }catch(e){console.warn('[poll]',e.message);}
   },3000);
 }
 
-function stopPabxPoll(){
-  clearInterval(pabxPollInt);pabxCallFound=false;
-}
+function stopPabxPoll(){clearInterval(pabxPollInt);pabxCallFound=false;}
 
-function extractArr(d){
-  if(Array.isArray(d))return d;
-  for(const k of['dados','data','chamadas','result','retorno']){if(d&&Array.isArray(d[k]))return d[k];}
-  if(d&&typeof d==='object'){const v=Object.values(d);if(v.length&&Array.isArray(v[0]))return v[0];}
-  return[];
+function confirmAnswered(){
+  callState='calling';
+  const ring=document.getElementById('ringingState');if(ring)ring.style.display='none';
+  clearRingCountdown();
+  // Show Atendeu? panel instead of immediately showing results
+  showAtendeuPanel();
+  setSipBarUI('active','Em ligação — lead atendeu?');
+  setSipUI('pcall','Em ligação');
+  toast('📞 Conectado! Verifique se atendeu.','ok');
 }
 
 function hangupCall(){
-  // SDR desligou manualmente — registra resultado e avança
   stopPabxPoll();
   if(sipSession){try{sipSession.terminate();}catch(e){}}
-  sipSession=null;
-  stopTimer();
-  clearRingCountdown();
-
+  sipSession=null;stopTimer();clearRingCountdown();
   const dur=callStart?Math.floor((Date.now()-callStart)/1000):0;
-  const autoResult = dur < 8 ? 'Não Atendeu' : 'Não Agendou';
+  const autoResult=dur<8?'Não Atendeu':'Não Agendou';
   toast(`📵 Desligado (${dur}s) → próximo lead...`,'warn');
   endCallAuto(autoResult);
 }
 
 function toggleMute(){
-  if(!sipSession)return;
-  isMuted=!isMuted;
+  if(!sipSession)return;isMuted=!isMuted;
   const btn=document.getElementById('muteBtn');
   if(isMuted){sipSession.mute();btn.classList.add('muted');btn.textContent='🔇 Mudo ON';}
   else{sipSession.unmute();btn.classList.remove('muted');btn.textContent='🎤 Mudo';}
@@ -1135,82 +1239,46 @@ function setCallUI(st){
   const rs=document.getElementById('resultSection');
   const ca=document.getElementById('callActions');
   const ring=document.getElementById('ringingState');
-  // hide all first
+  const sp=document.getElementById('scriptPanel');
+  const ap=document.getElementById('atendeuPanel');
+  const qap=document.getElementById('querAgendarPanel');
   idle.classList.add('hidden');rs.classList.add('hidden');
   ca.classList.add('hidden');if(ring)ring.style.display='none';
+  if(sp)sp.classList.add('hidden');
+  if(ap)ap.style.display='none';
+  if(qap)qap.style.display='none';
 
   if(st==='ringing'){
     if(ring)ring.style.display='flex';
     callStart=Date.now();startTimer();
     setSipBarUI('dialing','📱 Atenda o MicroSIP → PABX conecta ao lead');
     startRingCountdown();
-    // Beep urgently
-    try{ const ctx=new AudioContext(); const o=ctx.createOscillator(); const g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=880; g.gain.setValueAtTime(.4,ctx.currentTime); g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3); o.start(); o.stop(ctx.currentTime+.3); }catch(e){}
+    try{const ctx=new AudioContext();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=880;g.gain.setValueAtTime(.4,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);o.start();o.stop(ctx.currentTime+.3);}catch(e){}
   }else if(st==='calling'){
     clearRingCountdown();
-    // Mostra botões de resultado como OVERRIDE MANUAL durante a ligação
-    rs.classList.remove('hidden');ca.classList.remove('hidden');
-    const lbl=document.getElementById('auto-result-lbl');
-    if(lbl)lbl.textContent='📋 REGISTRAR RESULTADO MANUAL';
+    // Show hangup + atendeu panel
+    ca.classList.remove('hidden');
+    if(ap)ap.style.display='block';
     if(!callStart){callStart=Date.now();startTimer();}
-    setSipBarUI('active','Em ligação — resultado automático ao desligar');
-  }else if(st==='result'){
-    clearRingCountdown();
-    // Mantido por compatibilidade — mostra botões de override manual
-    rs.classList.remove('hidden');
-    // SEM timer automático aqui — fluxo auto usa endCallAuto diretamente
+    setSipBarUI('active','Em ligação');
   }else{
-    // idle
     clearRingCountdown();
     idle.classList.remove('hidden');
     stopTimer();document.getElementById('timer-display').textContent='00:00';
     isMuted=false;const btn=document.getElementById('muteBtn');if(btn){btn.classList.remove('muted');btn.textContent='🎤 Mudo';}
-    resetCallBtn();
-    stopPabxPoll();
-    clearAutoResultTimer();
+    resetCallBtn();stopPabxPoll();
   }
 }
 
-function confirmAnswered(){
-  // PABX detectou chamada ativa — SDR atendeu o MicroSIP
-  // Mostra a tela de chamada em andamento (resultado como override manual)
-  callState='calling';
-  const ring=document.getElementById('ringingState');
-  if(ring)ring.style.display='none';
-  clearRingCountdown();
-  document.getElementById('resultSection').classList.remove('hidden');
-  document.getElementById('callActions').classList.remove('hidden');
-  // Label muda para override manual — NÃO inicia timer automático
-  const lbl=document.getElementById('auto-result-lbl');
-  if(lbl)lbl.textContent='📋 REGISTRAR RESULTADO MANUAL';
-  setSipBarUI('active','Em ligação — PABX conectando ao lead');
-  setSipUI('pcall','Em ligação');
-  // Marca step 1 como concluído visualmente
-  const s1=document.getElementById('ringStepNum1');
-  const s2=document.getElementById('ringStepNum2');
-  if(s1)s1.classList.add('done');
-  if(s2)s2.classList.add('done');
-  toast('📞 Conectado!','ok');
-}
-
-function cancelRinging(){
-  stopPabxPoll();
-  setCallUI('idle');
-  setSipUI('ok','PABX ✓ IntegraVoip');
-  toast('Ligação cancelada','warn');
-}
+function cancelRinging(){stopPabxPoll();setCallUI('idle');setSipUI('ok','PABX ✓ IntegraVoip');toast('Ligação cancelada','warn');}
 
 function resetCallBtn(){
-  const btn=document.getElementById('btn-call');
-  btn.disabled=false;
-  const l=leads[curIdx];
-  document.getElementById('btn-call-txt').textContent=l?'Ligar — '+fmtPhone(l.phone):'Ligar';
+  const btn=document.getElementById('btn-call');btn.disabled=false;
+  const l=leads[curIdx];document.getElementById('btn-call-txt').textContent=l?'Ligar — '+fmtPhone(l.phone):'Ligar';
 }
 
-function setSipBarUI(st, info, phone){
-  const bar=document.getElementById('sipBar');
-  const dot=document.getElementById('sb-dot');
-  const si=document.getElementById('sb-info');
+function setSipBarUI(st,info,phone){
+  const bar=document.getElementById('sipBar'),dot=document.getElementById('sb-dot'),si=document.getElementById('sb-info');
   bar.className='sip-bar';
   if(st==='dialing'){bar.classList.add('dialing-bar');dot.className='sb-dot dialing';si.textContent=info||'Discando...';}
   else if(st==='active'){bar.classList.add('active-bar');dot.className='sb-dot active';si.textContent=info||'Em ligação';}
@@ -1219,217 +1287,96 @@ function setSipBarUI(st, info, phone){
   if(phone){const sub=document.getElementById('sb-sub');if(sub)sub.innerHTML=`${fmtPhone(phone)} · PABX IntegraVoip · Ramal ${PABX_RAMAL}`;}
 }
 
-// ════════════════════════════════════════════════
-// RD STATION SYNC
-// ════════════════════════════════════════════════
-async function syncRD(){
-  if(!cfg.rdToken){toast('Configure o Token RD Station','warn');openCfg();return;}
-  toast('🔄 Sincronizando RD Station...','ok');
-  try{
-    const stages=cfg.stages.split(',').map(s=>s.trim()).filter(Boolean);
-    let all=[],page=1,total=0;
-    do{
-      const r=await fetch(`https://crm.rdstation.com/api/v1/deals?token=${cfg.rdToken}&deal_pipeline_id=${cfg.pipeId}&limit=200&page=${page}`);
-      if(!r.ok)throw new Error('HTTP '+r.status);
-      const d=await r.json();
-      total=d.total||0;all=[...all,...(d.deals||[])];page++;
-      if((d.deals||[]).length<200)break;
-    }while(all.length<total&&page<=10);
-
-    leads=all.map(d=>({
-      id:d._id||d.id,
-      name:d.contacts?.[0]?.name||d.name||'Lead',
-      company:d.organization?.name||'',
-      phone:d.contacts?.[0]?.phones?.[0]?.phone||d.contacts?.[0]?.mobile_phone||'',
-      stage:'Sem Contato',
-      rdStage:d.deal_stage?.name||'',
-      cadenceDay:0, attemptsToday:0, lastAttemptDate:null,
-      called:false, dealId:d._id||d.id, waSent:false
-    })).filter(l=>l.phone);
-
-    LS.set('leads',JSON.stringify(leads));
-    updateProgress();renderKanban();
-    toast(`✅ ${leads.length} leads carregados`,'ok');
-    if(leads.length)showDialerActive();
-  }catch(e){toast('❌ RD: '+e.message,'err');console.error(e);}
+// ═══════════════════════════════════════════
+// RINGING COUNTDOWN
+// ═══════════════════════════════════════════
+function startRingCountdown(){
+  clearRingCountdown();let secs=60;
+  const el=document.getElementById('ringCountdown');if(el)el.textContent=secs;
+  ringCountdownInt=setInterval(()=>{
+    secs--;if(el){el.textContent=secs;el.classList.toggle('urgent',secs<=10);}
+    if(secs<=0){clearRingCountdown();toast('⏱ Tempo esgotado — avançando...','warn');endCallAuto('Não Atendeu');}
+  },1000);
 }
+function clearRingCountdown(){clearInterval(ringCountdownInt);ringCountdownInt=null;const el=document.getElementById('ringCountdown');if(el){el.textContent='–';el.classList.remove('urgent');}}
 
-// ════════════════════════════════════════════════
-// QUEUE & CADENCE
-// ════════════════════════════════════════════════
-function showDialerActive(){
-  document.getElementById('dialerEmpty').classList.add('hidden');
-  document.getElementById('dialerActive').classList.remove('hidden');
-  updateProgress();
-}
-
-function updateProgress(){
-  const done=leads.filter(l=>l.called).length,total=leads.length;
-  if(!total)return;
-  document.getElementById('pb-fill').style.width=((done/total)*100)+'%';
-  document.getElementById('pb-done').textContent=done;
-  document.getElementById('pb-total').textContent=total;
-}
-
-function startQueue(){
-  const fi=leads.findIndex(l=>!l.called);
-  if(fi<0){toast('Nenhum lead pendente!','warn');return;}
-  showDialerActive();loadLead(fi);
-}
-
-function loadLead(idx){
-  curIdx=idx;const l=leads[idx];
-  // Update UI
-  document.getElementById('lc-name').textContent=l.name;
-  document.getElementById('lc-phone').textContent=fmtPhone(l.phone);
-  document.getElementById('lc-company').textContent=l.company||'—';
-  document.getElementById('lc-stage').textContent=l.rdStage||l.stage;
-  document.getElementById('lc-att').textContent=ordinal((l.attemptsToday||0)+1)+' tentativa hoje';
-  document.getElementById('btn-call-txt').textContent='Ligar — '+fmtPhone(l.phone);
-  document.getElementById('sb-ramal').textContent=cfg.sipUser||'201';
-  // Cadence
-  const cad=CADENCE[Math.min(l.cadenceDay||0, CADENCE.length-1)];
-  document.getElementById('cad-day').textContent='D+'+(l.cadenceDay||0);
-  document.getElementById('cad-attempts').textContent=(l.attemptsToday||0)+'/'+MAX_ATTEMPTS_DAY+' hoje';
-  document.getElementById('cad-actions').innerHTML=cad.actions.map(a=>`<span class="cad-tag ${a}">${a==='call'?'📞':a==='whatsapp'?'💬':a==='email'?'📧':'🏁'}</span>`).join('');
-  // WA tab
-  updateWAPanel(l);
-  setCallUI('idle');
-  if(autoMode)setTimeout(()=>dial(),400);
-}
-
-function ordinal(n){return n+'ª';}
-
-// ════════════════════════════════════════════════
-// END CALL & RESULTS
-// ════════════════════════════════════════════════
-// endCallAuto — chamado automaticamente quando o PABX detecta queda da chamada
-// NÃO exibe tela de resultado — registra e avança direto
+// ═══════════════════════════════════════════
+// END CALL (auto)
+// ═══════════════════════════════════════════
 function endCallAuto(result){
   if(callState!=='calling'&&callState!=='ringing')return;
-  stopPabxPoll();
-  if(sipSession){try{sipSession.terminate();}catch(e){}}
-  sipSession=null;
-  stopTimer();
-  clearAutoResultTimer();
-  clearRingCountdown();
-
-  const dur=callStart?Math.floor((Date.now()-callStart)/1000):0;
-  durations.push(dur);
-  const l=leads[curIdx];
-  if(!l)return;
-
-  l.attemptsToday=(l.attemptsToday||0)+1;
-  l.lastAttemptDate=TODAY;
-  l.lastResult=result;
-
-  // Stage mapping
+  stopPabxPoll();if(sipSession){try{sipSession.terminate();}catch(e){}}
+  sipSession=null;stopTimer();clearRingCountdown();
+  const dur=callStart?Math.floor((Date.now()-callStart)/1000):0;durations.push(dur);
+  const l=leads[curIdx];if(!l)return;
+  l.attemptsToday=(l.attemptsToday||0)+1;l.lastAttemptDate=TODAY;l.lastResult=result;
   if(result==='Não Atendeu'||result==='Não Agendou'||result==='Caixa Postal'){
     l.stage='Tentativa';
-    if(l.attemptsToday>=MAX_ATTEMPTS_DAY){
-      l.cadenceDay=(l.cadenceDay||0)+1;
-      l.attemptsToday=0;
-      if(l.cadenceDay>7)l.called=true;
-    }
+    if(l.attemptsToday>=MAX_ATTEMPTS_DAY){l.cadenceDay=(l.cadenceDay||0)+1;l.attemptsToday=0;if(l.cadenceDay>7)l.called=true;}
   }else if(result==='Agendou'){l.stage='Agendado';l.called=true;}
   else if(result==='Excluir'){l.stage='Excluído';l.called=true;}
-
   LS.set('leads',JSON.stringify(leads));
-
-  // Stats
-  sessCalls++;
-  if(result==='Não Atendeu'||result==='Caixa Postal'){streak=0;}else{streak++;}
-  dayStats.calls++;dayStats.pts+=2+(streak>0?Math.min(streak,10):0);
-  totStats.calls++;
+  sessCalls++;if(result==='Não Atendeu'||result==='Caixa Postal'){streak=0;}else{streak++;}
+  dayStats.calls++;dayStats.pts+=2+(streak>0?Math.min(streak,10):0);totStats.calls++;
   document.getElementById('ss-calls').textContent=sessCalls;
   document.getElementById('ss-pts').textContent=dayStats.pts;
-  saveStats();
-  checkAchievements();
-  updateProgress();renderKanban();
-
-  // Vai direto para o idle e inicia countdown para próximo lead
+  saveStats();checkAchievements();updateProgress();renderKanban();
   callState='idle';
-  const ring=document.getElementById('ringingState');
-  if(ring)ring.style.display='none';
+  const ring=document.getElementById('ringingState');if(ring)ring.style.display='none';
   document.getElementById('resultSection').classList.add('hidden');
   document.getElementById('callActions').classList.add('hidden');
+  document.getElementById('scriptPanel').classList.add('hidden');
   document.getElementById('idleActions').classList.remove('hidden');
-  setSipBarUI('idle','Aguardando...');
-  isMuted=false;
-  resetCallBtn();
-
-  // Avança automaticamente
-  if(autoMode){startCD(result);}
+  const ap=document.getElementById('atendeuPanel');if(ap)ap.style.display='none';
+  const qap=document.getElementById('querAgendarPanel');if(qap)qap.style.display='none';
+  setSipBarUI('idle','Aguardando...');isMuted=false;resetCallBtn();
+  if(autoMode)startCD(result);
 }
 
-function endCall(result, btn){
+// ═══════════════════════════════════════════
+// END CALL (manual)
+// ═══════════════════════════════════════════
+function endCall(result,btn){
   if(callState!=='calling'&&callState!=='ringing')return;
-  // Hang up immediately on result selection
-  stopPabxPoll();
-  if(sipSession){try{sipSession.terminate();}catch(e){}}
-  sipSession=null;
-  stopTimer();
-  clearAutoResultTimer(); // cancel any pending auto-result timer
-  const dur=callStart?Math.floor((Date.now()-callStart)/1000):0;
-  durations.push(dur);
-  const l=leads[curIdx];
-  l.attemptsToday=(l.attemptsToday||0)+1;
-  l.lastAttemptDate=TODAY;
-  l.lastResult=result;
-
-  // Stage mapping
+  stopPabxPoll();if(sipSession){try{sipSession.terminate();}catch(e){}}
+  sipSession=null;stopTimer();
+  const dur=callStart?Math.floor((Date.now()-callStart)/1000):0;durations.push(dur);
+  const l=leads[curIdx];l.attemptsToday=(l.attemptsToday||0)+1;l.lastAttemptDate=TODAY;l.lastResult=result;
   if(result==='Agendou'){l.stage='Agendado';l.called=true;}
   else if(result==='Excluir'){l.stage='Excluído';l.called=true;}
   else if(result==='Remarcar'){l.stage='Remarcado';}
   else if(result==='Não Agendou'){l.stage='Tentativa';}
   else if(result==='Não Atendeu'||result==='Caixa Postal'){
     l.stage='Tentativa';
-    // Check if exhausted today's attempts
-    if(l.attemptsToday>=MAX_ATTEMPTS_DAY){
-      l.cadenceDay=(l.cadenceDay||0)+1;
-      l.attemptsToday=0;
-      if(l.cadenceDay>7)l.called=true;
-    }
+    if(l.attemptsToday>=MAX_ATTEMPTS_DAY){l.cadenceDay=(l.cadenceDay||0)+1;l.attemptsToday=0;if(l.cadenceDay>7)l.called=true;}
   }
-
   LS.set('leads',JSON.stringify(leads));
-  // Stats
   sessCalls++;streak++;
   if(result==='Agendou'){sessSched++;dayStats.sched++;dayStats.pts+=50;totStats.sched++;}
   if(result==='Não Atendeu'||result==='Caixa Postal'){streak=0;}
-  dayStats.calls++;dayStats.pts+=2+(streak>0?Math.min(streak,10):0);
-  totStats.calls++;
+  dayStats.calls++;dayStats.pts+=2+(streak>0?Math.min(streak,10):0);totStats.calls++;
   document.getElementById('ss-calls').textContent=sessCalls;
   document.getElementById('ss-sched').textContent=sessSched;
   document.getElementById('ss-pts').textContent=dayStats.pts;
-  saveStats();
-  checkAchievements();
-  updateProgress();renderKanban();
+  saveStats();checkAchievements();updateProgress();renderKanban();
   setCallUI('idle');
-
-  // If WA action required this cadence day
-  const cad=CADENCE[Math.min(l.cadenceDay||0,CADENCE.length-1)];
-  if(cad.actions.includes('whatsapp')&&!l.waSent){
-    document.getElementById('waQuickBtn').style.background='rgba(37,211,102,.25)';
-    document.getElementById('waQuickBtn').style.border='1.5px solid rgba(37,211,102,.5)';
-  }
-
-  // Remarcar/Agendou → modal
-  if(result==='Remarcar'||result==='Agendou'){
+  if(result==='Agendou'&&!btn&&agendamentos.length&&agendamentos[agendamentos.length-1].origem==='SDR IA'){
+    // Already booked via inline agenda — just advance
+    advance(result);
+  }else if(result==='Agendou'){
+    // Agendou → abrir booking para escolher consultor
+    pendingRes=result;
+    openAgendaBooking(l);
+  }else if(result==='Remarcar'){
     pendingRes=result;openRemarcar(l);
   }else{
     advance(result);
   }
 }
 
-function advance(result){
-  if(autoMode){startCD(result);}
-  else{/* stay */}
-}
-
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // COUNTDOWN
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 const CD_BADGE={
   'Agendou':'color:var(--green);border-color:var(--green);background:rgba(0,232,122,.1)',
   'Não Agendou':'color:var(--yellow);border-color:var(--yellow);background:rgba(245,158,11,.07)',
@@ -1438,158 +1385,124 @@ const CD_BADGE={
   'Caixa Postal':'color:var(--purple);border-color:var(--purple);background:rgba(139,92,246,.07)',
   'Excluir':'color:var(--red);border-color:var(--red);background:rgba(239,68,68,.07)'
 };
-
 function startCD(result){
-  let c=cfg.delay||3;
-  const ni=nextLeadIdx();
-  const nl=ni>=0?leads[ni]:null;
-  const badge=document.getElementById('cd-res');
-  badge.textContent=result;badge.style.cssText=CD_BADGE[result]||'';
+  let c=cfg.delay||3;const ni=nextLeadIdx();const nl=ni>=0?leads[ni]:null;
+  const badge=document.getElementById('cd-res');badge.textContent=result;badge.style.cssText=CD_BADGE[result]||'';
   document.getElementById('cd-num').textContent=c;
   document.getElementById('cd-next-name').textContent=nl?nl.name:'✅ Fila concluída';
   document.getElementById('cd-next-phone').textContent=nl?fmtPhone(nl.phone||''):'';
   document.getElementById('cdOverlay').style.display='flex';
   cdInt=setInterval(()=>{c--;document.getElementById('cd-num').textContent=c;if(c<=0){clearInterval(cdInt);document.getElementById('cdOverlay').style.display='none';advanceQueue();}},1000);
 }
-
 function cancelCD(){clearInterval(cdInt);document.getElementById('cdOverlay').style.display='none';}
-
-function nextLeadIdx(){
-  for(let i=curIdx+1;i<leads.length;i++){if(!leads[i].called)return i;}
-  return -1;
-}
-
+function nextLeadIdx(){for(let i=curIdx+1;i<leads.length;i++){if(!leads[i].called)return i;}return -1;}
+function advance(result){if(autoMode)startCD(result);}
 function advanceQueue(){
   const ni=nextLeadIdx();
   if(ni>=0){loadLead(ni);}
-  else{
-    document.getElementById('dialerActive').classList.add('hidden');
-    document.getElementById('dialerEmpty').classList.remove('hidden');
-    document.getElementById('empty-sub').textContent='🎉 Fila concluída! '+sessCalls+' ligações · '+sessSched+' agendamentos.';
-    toast('🎉 Fila finalizada!','ok');
-  }
+  else{document.getElementById('dialerActive').classList.add('hidden');document.getElementById('dialerEmpty').classList.remove('hidden');document.getElementById('empty-sub').textContent='🎉 Fila concluída! '+sessCalls+' ligações · '+sessSched+' agendamentos.';toast('🎉 Fila finalizada!','ok');}
 }
+function skipLead(){if(callState==='calling'){toast('Encerre a ligação primeiro','err');return;}if(curIdx<0)return;advanceQueue();toast('Lead pulado','ok');}
+function markNoPhone(){if(curIdx<0)return;leads[curIdx].called=true;leads[curIdx].stage='Excluído';LS.set('leads',JSON.stringify(leads));updateProgress();advanceQueue();toast('Sem telefone — próximo','ok');}
 
-function skipLead(){
-  if(callState==='calling'){toast('Encerre a ligação primeiro','err');return;}
-  if(curIdx<0)return;
-  advanceQueue();toast('Lead pulado','ok');
+// ═══════════════════════════════════════════
+// QUEUE & LEAD LOAD
+// ═══════════════════════════════════════════
+function showDialerActive(){
+  document.getElementById('dialerEmpty').classList.add('hidden');
+  document.getElementById('dialerActive').classList.remove('hidden');
+  updateProgress();
 }
-
-function markNoPhone(){
-  if(curIdx<0)return;
-  leads[curIdx].called=true;leads[curIdx].stage='Excluído';
-  LS.set('leads',JSON.stringify(leads));
-  updateProgress();advanceQueue();toast('Sem telefone — próximo','ok');
+function updateProgress(){
+  const done=leads.filter(l=>l.called).length,total=leads.length;if(!total)return;
+  document.getElementById('pb-fill').style.width=((done/total)*100)+'%';
+  document.getElementById('pb-done').textContent=done;document.getElementById('pb-total').textContent=total;
 }
+function startQueue(){
+  const fi=leads.findIndex(l=>!l.called);if(fi<0){toast('Nenhum lead pendente!','warn');return;}
+  showDialerActive();loadLead(fi);
+}
+function loadLead(idx){
+  curIdx=idx;const l=leads[idx];
+  document.getElementById('lc-name').textContent=l.name;
+  document.getElementById('lc-phone').textContent=fmtPhone(l.phone);
+  document.getElementById('lc-company').textContent=l.company||'—';
+  document.getElementById('lc-stage').textContent=l.rdStage||l.stage;
+  document.getElementById('lc-att').textContent=ordinal((l.attemptsToday||0)+1)+' tentativa hoje';
+  document.getElementById('btn-call-txt').textContent='Ligar — '+fmtPhone(l.phone);
+  document.getElementById('sb-ramal').textContent=cfg.sipUser||'201';
+  // Type badge
+  const tb=document.getElementById('lead-type-badge');
+  const typeMap={frio:'ltype-frio',quente:'ltype-quente',recuperacao:'ltype-recuperacao'};
+  const typeLabels={frio:'❄️ FRIO',quente:'🔥 QUENTE',recuperacao:'♻️ RECUPERAÇÃO'};
+  tb.className='lead-type-badge '+(typeMap[l.leadType||'frio']||'ltype-frio');
+  tb.textContent=typeLabels[l.leadType||'frio']||'FRIO';
+  // Cadence
+  const cad=CADENCE[Math.min(l.cadenceDay||0,CADENCE.length-1)];
+  document.getElementById('cad-day').textContent='D+'+(l.cadenceDay||0);
+  document.getElementById('cad-attempts').textContent=(l.attemptsToday||0)+'/'+MAX_ATTEMPTS_DAY+' hoje';
+  document.getElementById('cad-actions').innerHTML=cad.actions.map(a=>`<span class="cad-tag ${a}">${a==='call'?'📞':a==='whatsapp'?'💬':a==='email'?'📧':'🏁'}</span>`).join('');
+  updateWAPanel(l);
+  setCallUI('idle');
+  if(autoMode)setTimeout(()=>dial(),400);
+}
+function ordinal(n){return n+'ª';}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // PAUSE
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function doPause(type,icon,lbl){
   if(callState==='calling'){toast('Encerre a ligação antes de pausar','err');return;}
   clearInterval(cdInt);document.getElementById('cdOverlay').style.display='none';
   callState='paused';
-  document.getElementById('po-icon').textContent=icon;
-  document.getElementById('po-label').textContent=lbl;
-  document.getElementById('po-timer').textContent='00:00';
-  document.getElementById('pauseOverlay').style.display='flex';
-  const start=Date.now();
-  pauseInt=setInterval(()=>{const s=Math.floor((Date.now()-start)/1000);document.getElementById('po-timer').textContent=fmtTime(s);},1000);
+  document.getElementById('po-icon').textContent=icon;document.getElementById('po-label').textContent=lbl;
+  document.getElementById('po-timer').textContent='00:00';document.getElementById('pauseOverlay').style.display='flex';
+  const start=Date.now();pauseInt=setInterval(()=>{const s=Math.floor((Date.now()-start)/1000);document.getElementById('po-timer').textContent=fmtTime(s);},1000);
   toast('Em pausa: '+lbl,'warn');
 }
+function resumeDialer(){clearInterval(pauseInt);document.getElementById('pauseOverlay').style.display='none';callState='idle';if(curIdx>=0&&autoMode)setTimeout(()=>dial(),500);toast('▶ Discagem retomada','ok');}
 
-function resumeDialer(){
-  clearInterval(pauseInt);
-  document.getElementById('pauseOverlay').style.display='none';
-  callState='idle';
-  if(curIdx>=0&&autoMode)setTimeout(()=>dial(),500);
-  toast('▶ Discagem retomada','ok');
-}
-
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // REMARCAR
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+let remarcarAutoInt=null;
 function openRemarcar(lead){
   document.getElementById('rm-lead-name').textContent=lead.name+' — '+fmtPhone(lead.phone);
-  document.getElementById('rm-type').value=pendingRes==='Agendou'?'meeting':'callback';
-  const d=new Date();d.setDate(d.getDate()+1);
-  if(d.getDay()===0)d.setDate(d.getDate()+1);
-  if(d.getDay()===6)d.setDate(d.getDate()+2);
+  document.getElementById('rm-type')&&(document.getElementById('rm-type').value='callback');
+  const d=new Date();d.setDate(d.getDate()+1);if(d.getDay()===0)d.setDate(d.getDate()+1);if(d.getDay()===6)d.setDate(d.getDate()+2);
   document.getElementById('rm-date').value=d.toISOString().slice(0,10);
-  document.getElementById('rm-time').value='09:00';
-  document.getElementById('rm-note').value='';
+  document.getElementById('rm-time').value='09:00';document.getElementById('rm-note').value='';
   document.getElementById('remarcarModal').classList.add('on');
-  startRemarcarAutoTimer();
+  clearInterval(remarcarAutoInt);let secs=30;
+  const lbl=document.getElementById('rm-auto-lbl');if(lbl)lbl.textContent='Pulando em '+secs+'s...';
+  remarcarAutoInt=setInterval(()=>{secs--;if(lbl)lbl.textContent='Pulando em '+secs+'s...';if(secs<=0)skipRemarcar();},1000);
 }
-
 function saveRemarcar(){
-  clearRemarcarAutoTimer();
-  const date=document.getElementById('rm-date').value;
-  const time=document.getElementById('rm-time').value;
+  clearInterval(remarcarAutoInt);
+  const date=document.getElementById('rm-date').value,time=document.getElementById('rm-time').value;
   if(!date||!time){toast('Selecione data e hora','err');return;}
   const l=leads[curIdx];
-  scheduled.push({id:'s'+Date.now(),leadId:l.id,leadName:l.name,phone:l.phone,at:date+'T'+time,note:document.getElementById('rm-note').value.trim(),type:document.getElementById('rm-type').value});
+  scheduled.push({id:'s'+Date.now(),leadId:l.id,leadName:l.name,phone:l.phone,at:date+'T'+time,note:document.getElementById('rm-note').value.trim(),type:'callback'});
   LS.set('scheduled',JSON.stringify(scheduled));
-  updateAgendaBadge();
   document.getElementById('remarcarModal').classList.remove('on');
   toast('📅 Agendado para '+fmtDate(date+'T'+time),'ok');
   advance(pendingRes||'Remarcar');pendingRes=null;
 }
+function skipRemarcar(){clearInterval(remarcarAutoInt);document.getElementById('remarcarModal').classList.remove('on');advance(pendingRes||'Remarcar');pendingRes=null;}
+function fmtDate(iso){const d=new Date(iso);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
 
-function skipRemarcar(){
-  clearRemarcarAutoTimer();
-  document.getElementById('remarcarModal').classList.remove('on');
-  advance(pendingRes||'Remarcar');pendingRes=null;
-}
-
-function fmtDate(iso){
-  const d=new Date(iso);
-  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
-
-function updateAgendaBadge(){
-  const n=scheduled.filter(s=>!s.alerted&&new Date(s.at)>new Date()).length;
-  const b=document.getElementById('wa-badge');// reuse for now
-  // Actually use agenda badge in the WA tab
-}
-
-// ════════════════════════════════════════════════
-// SCHEDULED ALERT CHECKER
-// ════════════════════════════════════════════════
-function startAlertChecker(){
-  alertInt=setInterval(()=>{
-    const now=new Date();
-    const due=scheduled.find(s=>{const at=new Date(s.at);const diff=at-now;return diff>=-60000&&diff<=0&&!s.alerted;});
-    if(due){due.alerted=true;LS.set('scheduled',JSON.stringify(scheduled));showAlert(due);}
-  },30000);
-}
-
-function showAlert(s){
-  curAlert=s;
-  document.getElementById('ao-name').textContent=s.leadName;
-  document.getElementById('ao-phone').textContent=fmtPhone(s.phone);
-  document.getElementById('ao-note').textContent=s.note||'';
-  document.getElementById('alertOverlay').style.display='flex';
-  if(Notification.permission==='granted')new Notification('⏰ Hora de ligar!',{body:s.leadName+' — '+fmtPhone(s.phone)});
-}
-
-function callFromAlert(){
-  document.getElementById('alertOverlay').style.display='none';
-  if(curAlert){const idx=leads.findIndex(l=>l.id===curAlert.leadId);if(idx>=0){showDialerActive();loadLead(idx);}}
-  curAlert=null;
-}
-
-function snoozeAlert(){
-  if(curAlert){const f=scheduled.find(s=>s.id===curAlert.id);if(f){f.at=new Date(Date.now()+300000).toISOString().slice(0,16);f.alerted=false;LS.set('scheduled',JSON.stringify(scheduled));}}
-  document.getElementById('alertOverlay').style.display='none';curAlert=null;toast('⏰ +5 min','warn');
-}
-
+// ═══════════════════════════════════════════
+// ALERT CHECKER
+// ═══════════════════════════════════════════
+function startAlertChecker(){alertInt=setInterval(()=>{const now=new Date();const due=scheduled.find(s=>{const at=new Date(s.at);const diff=at-now;return diff>=-60000&&diff<=0&&!s.alerted;});if(due){due.alerted=true;LS.set('scheduled',JSON.stringify(scheduled));showAlert(due);}},30000);}
+function showAlert(s){curAlert=s;document.getElementById('ao-name').textContent=s.leadName;document.getElementById('ao-phone').textContent=fmtPhone(s.phone);document.getElementById('ao-note').textContent=s.note||'';document.getElementById('alertOverlay').style.display='flex';}
+function callFromAlert(){document.getElementById('alertOverlay').style.display='none';if(curAlert){const idx=leads.findIndex(l=>l.id===curAlert.leadId);if(idx>=0){showDialerActive();loadLead(idx);}}curAlert=null;}
+function snoozeAlert(){if(curAlert){const f=scheduled.find(s=>s.id===curAlert.id);if(f){f.at=new Date(Date.now()+300000).toISOString().slice(0,16);f.alerted=false;LS.set('scheduled',JSON.stringify(scheduled));}}document.getElementById('alertOverlay').style.display='none';curAlert=null;toast('⏰ +5 min','warn');}
 function dismissAlert(){document.getElementById('alertOverlay').style.display='none';curAlert=null;}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // WHATSAPP
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function updateWAPanel(l){
   document.getElementById('wa-lead-name').textContent=l.name;
   document.getElementById('wa-lead-phone').textContent=fmtPhone(l.phone);
@@ -1598,29 +1511,23 @@ function updateWAPanel(l){
   const tpl=WA_TEMPLATES[l.cadenceDay]||WA_TEMPLATES[0];
   document.getElementById('wa-template').textContent=tpl.replace('{name}',l.name.split(' ')[0]);
 }
-
 function openWA(){
   const l=leads[curIdx];if(!l){toast('Selecione um lead','err');return;}
   const tpl=WA_TEMPLATES[l.cadenceDay||0]||WA_TEMPLATES[0];
   const msg=encodeURIComponent(tpl.replace('{name}',l.name.split(' ')[0]));
   const phone=fmtPABX(l.phone);
   window.open(`https://wa.me/55${phone}?text=${msg}`,'_blank');
-  // Track
   l.waSent=true;
   waHistory.unshift({id:Date.now(),leadName:l.name,phone:l.phone,day:l.cadenceDay||0,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),date:TODAY});
   LS.set('waHist',JSON.stringify(waHistory));
-  dayStats.wa++;dayStats.pts+=10;
-  sessWA++;document.getElementById('ss-pts').textContent=dayStats.pts;
+  dayStats.wa++;dayStats.pts+=10;sessWA++;
+  document.getElementById('ss-pts').textContent=dayStats.pts;
   saveStats();checkAchievements();
-  document.getElementById('waQuickBtn').style.background='';document.getElementById('waQuickBtn').style.border='';
   toast('💬 WhatsApp aberto','ok');renderWAPage();
 }
-
 function sendWA(){openWA();}
-
 function renderWAPage(){
-  const l=leads[curIdx];
-  if(l)updateWAPanel(l);
+  const l=leads[curIdx];if(l)updateWAPanel(l);
   const hist=waHistory.slice(0,20);
   if(!hist.length){document.getElementById('wa-history-list').innerHTML='<div style="font-size:11px;color:var(--txt3);text-align:center;padding:20px">Nenhuma mensagem ainda</div>';return;}
   document.getElementById('wa-history-list').innerHTML=hist.map(h=>`<div class="wa-hist-item">
@@ -1629,15 +1536,14 @@ function renderWAPage(){
   </div>`).join('');
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // KANBAN
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function renderKanban(){
   const board=document.getElementById('kb-board');
   document.getElementById('kb-sync').textContent='Atualizado '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   board.innerHTML=KB_STAGES.map(stage=>{
-    const sl=leads.filter(l=>l.stage===stage);
-    const c=KB_COLORS[stage]||'#7a94b0';
+    const sl=leads.filter(l=>l.stage===stage);const c=KB_COLORS[stage]||'#7a94b0';
     return`<div class="kb-col">
       <div class="kb-col-hdr" style="border-color:${c}22;background:${c}0d">
         <span class="kb-col-title" style="color:${c}">${stage}</span>
@@ -1653,17 +1559,14 @@ function renderKanban(){
     </div>`;
   }).join('');
 }
-
 function jumpToLead(id){
-  const idx=leads.findIndex(l=>l.id===id);
-  if(idx<0){toast('Lead não encontrado','err');return;}
-  setTab('dialer',document.querySelector('.tab'));
-  showDialerActive();loadLead(idx);
+  const idx=leads.findIndex(l=>l.id===id);if(idx<0){toast('Lead não encontrado','err');return;}
+  setTab('dialer',document.querySelector('.tab'));showDialerActive();loadLead(idx);
 }
 
-// ════════════════════════════════════════════════
-// GAMIFICATION & RANKING
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// RANKING
+// ═══════════════════════════════════════════
 function renderRanking(){
   const now=new Date();
   document.getElementById('rank-date-lbl').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
@@ -1671,147 +1574,990 @@ function renderRanking(){
   document.getElementById('rank-calls').textContent=dayStats.calls;
   document.getElementById('rank-sched').textContent=dayStats.sched;
   document.getElementById('rank-wa').textContent=dayStats.wa;
-  document.getElementById('rank-calls').style.color='var(--blue2)';
-
-  // Goal bar
-  const g=cfg.goal||30;
-  const pct=Math.min(100,Math.round((dayStats.calls/g)*100));
+  const g=cfg.goal||30;const pct=Math.min(100,Math.round((dayStats.calls/g)*100));
   document.getElementById('goal-bar-fill').style.width=pct+'%';
   document.getElementById('goal-lbl-done').textContent=dayStats.calls+' ligações';
   document.getElementById('goal-lbl-meta').textContent='Meta: '+g;
   document.getElementById('goal-input').value=g;
-
-  // Streak
   document.getElementById('streak-val').textContent=streak;
   const avg=durations.length?Math.round(durations.reduce((a,b)=>a+b,0)/durations.length):0;
   document.getElementById('tempo-medio-val').textContent=avg?fmtTime(avg):'—';
   const rate=dayStats.calls>0?Math.round((dayStats.sched/dayStats.calls)*100):0;
   document.getElementById('conv-rate-val').textContent=rate+'%';
-
-  // Achievements
-  renderAchievements();
-
-  // Ranking list
-  renderRankList();
+  renderAchievements();renderRankList();
 }
-
 function renderAchievements(){
   const unlocked=dayStats.unlocked||[];
   const stats={todayCalls:dayStats.calls,todaySched:dayStats.sched,todayWA:dayStats.wa,totalCalls:totStats.calls,streak};
   document.getElementById('ach-grid').innerHTML=ACHIEVEMENTS_DEF.map(a=>{
     const isUnlocked=unlocked.includes(a.id)||a.check(stats);
-    return`<div class="ach${isUnlocked?' unlocked':''}">
-      <div class="ach-icon">${a.icon}</div>
-      <div class="ach-name">${a.name}</div>
-      <div class="ach-pts">+${a.pts}pts</div>
-    </div>`;
+    return`<div class="ach${isUnlocked?' unlocked':''}"><div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div><div class="ach-pts">+${a.pts}pts</div></div>`;
   }).join('');
 }
-
 function checkAchievements(){
   const unlocked=dayStats.unlocked||[];
   const stats={todayCalls:dayStats.calls,todaySched:dayStats.sched,todayWA:dayStats.wa,totalCalls:totStats.calls,streak};
-  ACHIEVEMENTS_DEF.forEach(a=>{
-    if(!unlocked.includes(a.id)&&a.check(stats)){
-      unlocked.push(a.id);dayStats.pts+=a.pts;
-      showAchPopup(a);
-      toast('🏆 Conquista: '+a.name+' +'+a.pts+'pts','win');
-    }
-  });
+  ACHIEVEMENTS_DEF.forEach(a=>{if(!unlocked.includes(a.id)&&a.check(stats)){unlocked.push(a.id);dayStats.pts+=a.pts;showAchPopup(a);toast('🏆 Conquista: '+a.name+' +'+a.pts+'pts','win');}});
   dayStats.unlocked=unlocked;saveStats();
 }
-
-function showAchPopup(a){
-  const p=document.getElementById('achPopup');
-  document.getElementById('ach-popup-icon').textContent=a.icon;
-  document.getElementById('ach-popup-name').textContent=a.name;
-  p.classList.add('on');setTimeout(()=>p.classList.remove('on'),4000);
-}
-
+function showAchPopup(a){const p=document.getElementById('achPopup');document.getElementById('ach-popup-icon').textContent=a.icon;document.getElementById('ach-popup-name').textContent=a.name;p.classList.add('on');setTimeout(()=>p.classList.remove('on'),4000);}
 function renderRankList(){
-  // Single-user ranking with local data + placeholder for multi-SDR
   const me={name:cfg.name||'Você',calls:dayStats.calls,sched:dayStats.sched,pts:dayStats.pts};
-  const fakeRanking=[me].sort((a,b)=>b.pts-a.pts);
-  const posEmojis=['🥇','🥈','🥉','4','5'];
-  document.getElementById('rank-list').innerHTML=`
-    ${fakeRanking.map((r,i)=>`<div class="rank-row me">
-      <div class="rank-pos ${i===0?'first':i===1?'second':i===2?'third':''}">${posEmojis[i]||i+1}</div>
-      <div class="rank-av">${(r.name||'?')[0].toUpperCase()}</div>
-      <div>
-        <div class="rank-name">${r.name||'SDR'} ${i===0&&cfg.name?'(você)':''}</div>
-        <div class="rank-stats">${r.calls} lig · ${r.sched} agend</div>
+  document.getElementById('rank-list').innerHTML=`<div class="rank-row me">
+    <div class="rank-pos first">🥇</div>
+    <div class="rank-av">${(me.name||'?')[0].toUpperCase()}</div>
+    <div><div class="rank-name">${me.name||'SDR'} (você)</div><div class="rank-stats">${me.calls} lig · ${me.sched} agend</div></div>
+    <div class="rank-pts">${me.pts}pts</div>
+  </div>
+  <div style="font-size:10px;color:var(--txt3);text-align:center;padding:12px;font-family:var(--mono);border:1px dashed var(--b2);border-radius:8px;margin-top:8px">Para ranking multi-SDR em tempo real, configure o backend.</div>`;
+}
+function updateGoal(val){cfg.goal=parseInt(val)||30;LS.set('goal',cfg.goal);renderRanking();}
+function saveStats(){LS.set('dayStats_'+TODAY,JSON.stringify(dayStats));LS.set('totStats',JSON.stringify(totStats));}
+function updateScoreDisplay(){document.getElementById('ss-sched').textContent=sessSched;document.getElementById('ss-pts').textContent=dayStats.pts;saveStats();checkAchievements();}
+
+// ═══════════════════════════════════════════
+// AGENDA INTERNA
+// ═══════════════════════════════════════════
+// Gera slots padrão para os próximos 5 dias úteis se não existirem
+function ensureDefaultSlots(){
+  const defaultHours=['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
+  CONSULTORES.forEach(c=>{
+    if(!agendaSlots[c.id])agendaSlots[c.id]={};
+    let d=new Date();
+    for(let i=0;i<5;i++){
+      while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);
+      const key=d.toISOString().slice(0,10);
+      if(!agendaSlots[c.id][key]){agendaSlots[c.id][key]=defaultHours.slice();}
+      d.setDate(d.getDate()+1);
+    }
+  });
+  saveAgenda();
+}
+function saveAgenda(){LS.set('agenda_slots',JSON.stringify(agendaSlots));LS.set('agendamentos',JSON.stringify(agendamentos));}
+
+function renderAgenda(){
+  const container=document.getElementById('agendaPageContent');
+  const today=new Date().toISOString().slice(0,10);
+
+  // Build dates list (next 5 business days)
+  const dates=[];let d=new Date();
+  while(dates.length<5){
+    if(d.getDay()!==0&&d.getDay()!==6)dates.push(d.toISOString().slice(0,10));
+    d.setDate(d.getDate()+1);
+  }
+
+  const selDate=bookingState.date||dates[0];
+  const selConsultor=bookingState.consultor;
+
+  container.innerHTML=`
+    <div style="font-size:13px;font-weight:700;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;font-family:var(--mono);margin-bottom:8px">📅 AGENDA INTERNA — CONSULTORES</div>
+
+    <div class="consultores-row">
+      ${CONSULTORES.map(c=>`
+        <div class="consultor-card${selConsultor===c.id?' selected':''}" onclick="selectConsultor('${c.id}')">
+          <div class="consultor-av" style="background:${c.color}">${c.avatar}</div>
+          <div class="consultor-name">${c.name}</div>
+          <div class="consultor-role">${c.role}</div>
+        </div>`).join('')}
+    </div>
+
+    <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:4px">
+      ${dates.map(date=>{
+        const dt=new Date(date+'T12:00:00');
+        const label=dt.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+        return`<button style="padding:7px 12px;border-radius:8px;border:1px solid ${date===selDate?'var(--green)':'var(--b2)'};background:${date===selDate?'rgba(0,232,122,.1)':'var(--s2)'};color:${date===selDate?'var(--green)':'var(--txt2)'};font-family:var(--mono);font-size:11px;cursor:pointer;white-space:nowrap;flex-shrink:0" onclick="selectDate('${date}')">${label}</button>`;
+      }).join('')}
+    </div>
+
+    ${selConsultor?`
+      <div style="font-size:10px;color:var(--txt3);font-family:var(--mono);margin-bottom:6px">
+        HORÁRIOS — ${CONSULTORES.find(c=>c.id===selConsultor)?.name} · ${new Date(selDate+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})}
       </div>
-      <div class="rank-pts">${r.pts}pts</div>
-    </div>`).join('')}
-    <div style="font-size:10px;color:var(--txt3);text-align:center;padding:12px;font-family:var(--mono);border:1px dashed var(--b2);border-radius:8px;margin-top:8px">
-      Para ranking multi-SDR em tempo real, configure o backend.<br>
-      <span style="color:var(--green)">Compartilhe o link com o time →</span> ${window.location.origin}
+      <div class="slots-grid">
+        ${renderSlots(selConsultor,selDate)}
+      </div>
+      ${bookingState.slot?`
+        <div style="background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.25);border-radius:10px;padding:14px 16px;margin-top:4px">
+          <div style="font-size:11px;color:var(--txt3);font-family:var(--mono);margin-bottom:6px">CONFIRMAR AGENDAMENTO</div>
+          <div class="fg fi-row" style="margin:0 0 10px 0">
+            <div><label class="flbl">Nome do Lead</label><input type="text" class="fi" id="book-lead-name" value="${bookingState.leadName}" placeholder="Nome completo" oninput="bookingState.leadName=this.value"></div>
+            <div><label class="flbl">Telefone</label><input type="text" class="fi" id="book-lead-phone" value="${bookingState.leadPhone}" placeholder="(00) 00000-0000" oninput="bookingState.leadPhone=this.value"></div>
+          </div>
+          <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">
+            📅 <b>${new Date(selDate+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})}</b> às <b>${bookingState.slot}</b> · <b>${CONSULTORES.find(c=>c.id===selConsultor)?.name}</b>
+          </div>
+          <button class="confirmar-btn" onclick="confirmarAgendamento()">✅ Confirmar Agendamento</button>
+        </div>`:''}
+    `:'<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Selecione um consultor para ver os horários disponíveis.</div>'}
+
+    <div class="agenda-interna">
+      <div class="ai-header">
+        <span class="ai-title">Agendamentos Confirmados</span>
+        <button onclick="renderAgenda()" style="background:transparent;border:none;color:var(--txt3);font-size:11px;cursor:pointer">↻ Atualizar</button>
+      </div>
+      ${agendamentos.length?agendamentos.slice().reverse().map(ag=>{
+        const cons=CONSULTORES.find(c=>c.id===ag.consultor);
+        return`<div class="ai-item">
+          <div class="ai-time">${ag.slot}</div>
+          <div class="ai-lead">
+            <div class="ai-lead-name">${ag.leadName}</div>
+            <div class="ai-lead-phone">${fmtPhone(ag.leadPhone)} · ${ag.date}</div>
+          </div>
+          <span class="ai-consultor" style="background:${cons?.color||'var(--green)'}22;color:${cons?.color||'var(--green)'};border:1px solid ${cons?.color||'var(--green)'}44">${cons?.name||ag.consultor}</span>
+          <button onclick="cancelarAgendamento('${ag.id}')" style="background:transparent;border:none;color:var(--txt3);font-size:11px;cursor:pointer;padding:4px" title="Cancelar">✕</button>
+        </div>`;
+      }).join(''):'<div style="font-size:11px;color:var(--txt3);text-align:center;padding:20px">Nenhum agendamento confirmado.</div>'}
     </div>`;
 }
 
-function updateGoal(val){
-  cfg.goal=parseInt(val)||30;
-  LS.set('goal',cfg.goal);
-  renderRanking();
+function renderSlots(consultorId,date){
+  const slots=agendaSlots[consultorId]?.[date]||[];
+  const booked=agendamentos.filter(ag=>ag.consultor===consultorId&&ag.date===date).map(ag=>ag.slot);
+  if(!slots.length)return'<div style="grid-column:span 3;font-size:11px;color:var(--txt3);text-align:center;padding:12px;font-family:var(--mono)">Nenhum horário cadastrado para este dia.</div>';
+  return slots.map(s=>{
+    const isBooked=booked.includes(s);
+    const isSel=bookingState.slot===s&&bookingState.date===date&&bookingState.consultor===consultorId;
+    return`<button class="slot-btn${isBooked?' occupied':isSel?' selected':''}"
+      ${isBooked?'disabled':''}
+      onclick="selectSlot('${s}','${consultorId}','${date}')">
+      ${isBooked?`🔴 ${s}`:isSel?`✅ ${s}`:s}
+    </button>`;
+  }).join('');
 }
 
-function saveStats(){
-  LS.set('dayStats_'+TODAY,JSON.stringify(dayStats));
-  LS.set('totStats',JSON.stringify(totStats));
+function selectConsultor(id){bookingState.consultor=id;bookingState.slot=null;renderAgenda();}
+function selectDate(date){bookingState.date=date;bookingState.slot=null;renderAgenda();}
+function selectSlot(slot,consultor,date){bookingState.slot=slot;bookingState.consultor=consultor;bookingState.date=date;renderAgenda();}
+
+function confirmarAgendamento(){
+  const name=document.getElementById('book-lead-name')?.value||bookingState.leadName;
+  const phone=document.getElementById('book-lead-phone')?.value||bookingState.leadPhone;
+  if(!name||!phone){toast('Informe nome e telefone do lead','err');return;}
+  if(!bookingState.consultor||!bookingState.date||!bookingState.slot){toast('Selecione consultor, data e horário','err');return;}
+
+  // Registra agendamento
+  const ag={
+    id:'ag'+Date.now(),leadName:name,leadPhone:phone,
+    consultor:bookingState.consultor,date:bookingState.date,slot:bookingState.slot,
+    createdAt:new Date().toLocaleString('pt-BR')
+  };
+  agendamentos.push(ag);
+
+  // Remove slot da disponibilidade
+  if(agendaSlots[bookingState.consultor]?.[bookingState.date]){
+    agendaSlots[bookingState.consultor][bookingState.date]=agendaSlots[bookingState.consultor][bookingState.date].filter(s=>s!==bookingState.slot);
+  }
+  saveAgenda();
+
+  // Update lead if exists
+  if(curIdx>=0&&leads[curIdx]){
+    leads[curIdx].stage='Agendado';leads[curIdx].called=true;leads[curIdx].lastResult='Agendou';
+    LS.set('leads',JSON.stringify(leads));
+  }
+
+  toast(`✅ Agendado: ${name} · ${bookingState.slot} com ${CONSULTORES.find(c=>c.id===bookingState.consultor)?.name}`,'ok');
+
+  bookingState={consultor:null,date:null,slot:null,leadName:'',leadPhone:'',origin:'manual'};
+  renderAgenda();renderKanban();
+
+  if(pendingRes){advance(pendingRes);pendingRes=null;}
 }
 
-// ════════════════════════════════════════════════
+function cancelarAgendamento(id){
+  const ag=agendamentos.find(a=>a.id===id);if(!ag)return;
+  if(!confirm('Cancelar agendamento de '+ag.leadName+'?'))return;
+  // Devolve slot
+  if(!agendaSlots[ag.consultor])agendaSlots[ag.consultor]={};
+  if(!agendaSlots[ag.consultor][ag.date])agendaSlots[ag.consultor][ag.date]=[];
+  agendaSlots[ag.consultor][ag.date].push(ag.slot);
+  agendaSlots[ag.consultor][ag.date].sort();
+  agendamentos=agendamentos.filter(a=>a.id!==id);
+  saveAgenda();renderAgenda();toast('Agendamento cancelado','warn');
+}
+
+function openAgendaBooking(lead){
+  bookingState.leadName=lead.name;bookingState.leadPhone=lead.phone;bookingState.origin='dialer';
+  // Switch to agenda tab
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-agenda').classList.add('active');
+  document.querySelectorAll('.tab')[4].classList.add('active');
+  renderAgenda();
+  toast('📅 Selecione consultor e horário!','ok');
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — IMPORT
+// ═══════════════════════════════════════════
+function selectLeadType(type){
+  selectedLeadType=type;
+  document.querySelectorAll('.type-card').forEach(c=>c.className='type-card');
+  document.getElementById('tc-'+type).classList.add('type-card','selected-'+type);
+  updateImportBtn();
+}
+
+function handleFileSelect(input){
+  if(!input.files||!input.files[0])return;
+  selectedFile=input.files[0];
+  document.getElementById('upload-zone-text').textContent='📄 '+selectedFile.name;
+  updateImportBtn();
+}
+
+function updateImportBtn(){
+  document.getElementById('import-btn').disabled=!(selectedFile&&selectedLeadType);
+}
+
+async function importLeads(){
+  if(!selectedFile||!selectedLeadType)return;
+  const btn=document.getElementById('import-btn');
+  btn.disabled=true;btn.innerHTML='<span>⏳</span><span>Importando...</span>';
+
+  try{
+    let newLeads=[];
+    const name=selectedFile.name.toLowerCase();
+
+    if(name.endsWith('.csv')){
+      const text=await selectedFile.text();
+      newLeads=parseCSV(text,selectedLeadType);
+    }else if(name.endsWith('.xlsx')||name.endsWith('.xls')){
+      newLeads=await parseXLSX(selectedFile,selectedLeadType);
+    }else{
+      throw new Error('Formato não suportado. Use CSV ou XLSX.');
+    }
+
+    if(!newLeads.length)throw new Error('Nenhum lead encontrado no arquivo. Verifique se possui colunas Nome e Telefone.');
+
+    // Append to existing leads
+    leads=[...leads,...newLeads];
+    LS.set('leads',JSON.stringify(leads));
+
+    // Register import
+    const importRecord={id:'imp'+Date.now(),filename:selectedFile.name,type:selectedLeadType,count:newLeads.length,date:TODAY};
+    importedLists.push(importRecord);
+    LS.set('imported_lists',JSON.stringify(importedLists));
+
+    updateProgress();renderKanban();renderImportedTable();
+
+    toast(`✅ ${newLeads.length} leads importados (${selectedLeadType.toUpperCase()})!`,'ok');
+    if(newLeads.length)showDialerActive();
+
+    // Reset
+    selectedFile=null;
+    document.getElementById('csv-file-input').value='';
+    document.getElementById('upload-zone-text').textContent='Clique para selecionar o arquivo';
+
+  }catch(e){toast('❌ Erro: '+e.message,'err');}
+
+  btn.innerHTML='<span>🚀</span><span>Importar Lista</span>';
+  updateImportBtn();
+}
+
+function parseCSV(text,type){
+  const lines=text.split('\n').filter(l=>l.trim());
+  if(!lines.length)return[];
+  const header=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/['"]/g,''));
+  const nameIdx=findColIdx(header,['nome','name','lead','contato']);
+  const phoneIdx=findColIdx(header,['telefone','phone','tel','fone','celular','whatsapp','número','numero']);
+  const companyIdx=findColIdx(header,['empresa','academia','negocio','negócio','company','gym']);
+
+  const result=[];
+  for(let i=1;i<lines.length;i++){
+    const cols=splitCSVLine(lines[i]);
+    const name=cols[nameIdx]?.replace(/['"]/g,'').trim();
+    const phone=cols[phoneIdx]?.replace(/['"]/g,'').trim();
+    if(!name||!phone)continue;
+    result.push({
+      id:'l'+Date.now()+'_'+i,name,phone:cleanPhone(phone),
+      company:companyIdx>=0?cols[companyIdx]?.replace(/['"]/g,'').trim():'',
+      stage:'Sem Contato',cadenceDay:0,attemptsToday:0,called:false,
+      leadType:type,dealId:null,waSent:false,rdStage:'Sem Contato'
+    });
+  }
+  return result;
+}
+
+async function parseXLSX(file,type){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{
+        const data=new Uint8Array(e.target.result);
+        const wb=XLSX.read(data,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+        if(rows.length<2){resolve([]);return;}
+        const header=rows[0].map(h=>String(h).toLowerCase().trim());
+        const nameIdx=findColIdx(header,['nome','name','lead','contato']);
+        const phoneIdx=findColIdx(header,['telefone','phone','tel','fone','celular','whatsapp','número','numero']);
+        const companyIdx=findColIdx(header,['empresa','academia','negocio','negócio','company','gym']);
+        const result=[];
+        for(let i=1;i<rows.length;i++){
+          const row=rows[i];
+          const name=String(row[nameIdx]||'').trim();
+          const phone=String(row[phoneIdx]||'').trim();
+          if(!name||!phone||name==='undefined')continue;
+          result.push({
+            id:'l'+Date.now()+'_'+i,name,phone:cleanPhone(phone),
+            company:companyIdx>=0?String(row[companyIdx]||'').trim():'',
+            stage:'Sem Contato',cadenceDay:0,attemptsToday:0,called:false,
+            leadType:type,dealId:null,waSent:false,rdStage:'Sem Contato'
+          });
+        }
+        resolve(result);
+      }catch(err){reject(err);}
+    };
+    reader.onerror=()=>reject(new Error('Erro ao ler arquivo'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function findColIdx(header,names){for(const n of names){const i=header.findIndex(h=>h.includes(n));if(i>=0)return i;}return 0;}
+function splitCSVLine(line){
+  const result=[];let cur='',inQ=false;
+  for(const ch of line){if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){result.push(cur);cur='';}else{cur+=ch;}}
+  result.push(cur);return result;
+}
+function cleanPhone(p){let c=String(p).replace(/\D/g,'');if(c.startsWith('55')&&c.length>=12)return c;return c;}
+
+function renderImportedTable(){
+  const tbody=document.getElementById('imported-tbody');
+  if(!importedLists.length){tbody.innerHTML='<tr><td class="ilt-td" colspan="5" style="color:var(--txt3);text-align:center;padding:20px">Nenhuma lista importada ainda.</td></tr>';return;}
+  const typeColors={frio:'color:var(--blue2);background:rgba(59,130,246,.1)',quente:'color:var(--yellow);background:rgba(245,158,11,.1)',recuperacao:'color:var(--purple);background:rgba(139,92,246,.1)'};
+  const typeLabels={frio:'❄️ Frios',quente:'🔥 Quentes',recuperacao:'♻️ Recuperação'};
+  tbody.innerHTML=importedLists.slice().reverse().map(l=>`<tr>
+    <td class="ilt-td" style="font-weight:600;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.filename}</td>
+    <td class="ilt-td"><span style="padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;${typeColors[l.type]||''}">${typeLabels[l.type]||l.type}</span></td>
+    <td class="ilt-td" style="font-family:var(--mono);font-size:11px">${l.count} leads</td>
+    <td class="ilt-td" style="font-family:var(--mono);font-size:11px;color:var(--txt3)">${l.date}</td>
+    <td class="ilt-td"><button onclick="startQueueForList('${l.id}')" style="background:rgba(0,232,122,.1);border:1px solid rgba(0,232,122,.25);color:var(--green);padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:700">▶ Discar</button></td>
+  </tr>`).join('');
+}
+
+function startQueueForList(listId){
+  setTab('dialer',document.querySelector('.tab'));
+  startQueue();
+}
+
+// ═══════════════════════════════════════════
+// SDR IA WIZARD
+// ═══════════════════════════════════════════
+const SDR_STEPS = [
+  {
+    id:'s0',badge:'Identificação',title:'Dados do Lead',dur:'',
+    render:()=>`
+      <div class="sdr-row">
+        <div><label class="sdr-lbl">Nome do Lead *</label><input class="sdr-input" id="si-nome" value="${sdrIaState.fields['nome']||''}" placeholder="Ex: João Silva" oninput="sdrF('nome',this.value)"></div>
+        <div><label class="sdr-lbl">Empresa / Academia *</label><input class="sdr-input" id="si-empresa" value="${sdrIaState.fields['empresa']||''}" placeholder="Ex: Academia FitCenter" oninput="sdrF('empresa',this.value)"></div>
+      </div>
+      <div><label class="sdr-lbl">Como chegou até nós?</label>
+        <select class="sdr-select" onchange="sdrF('origem',this.value)">
+          <option value="">Selecione...</option>
+          <option value="quente" ${sdrIaState.fields['origem']==='quente'?'selected':''}>🔥 Webinário Quente — Preencheu Aplicação</option>
+          <option value="frio_40k" ${sdrIaState.fields['origem']==='frio_40k'?'selected':''}>❄️ Webinário Frio — Até 40K</option>
+          <option value="frio_mais40k" ${sdrIaState.fields['origem']==='frio_mais40k'?'selected':''}>❄️ Webinário Frio — +40K</option>
+        </select>
+      </div>`
+  },
+  {
+    id:'s1',badge:'Passo 1.1',title:'Saudação Inicial',dur:'⏱ 30 segundos',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text"><strong>${sdrIaState.fields['nome']||'[Nome]'}</strong>?<br><br>Aqui é o <strong>[Seu nome]</strong>. Como você está? Tudo bem?<br><br>Vamos começar a nossa entrevista, então. Será uma conversa bem rápida.</div>
+      </div>
+      <div class="sdr-info">💡 Início cordial e objetivo. Tom confiante e animado.</div>`
+  },
+  {
+    id:'s2',badge:'Passo 1.2',title:'Objetivo da Ligação',dur:'⏱ ~1 minuto',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">O objetivo dessa ligação é entender melhor o seu negócio e analisarmos juntos se você tem o perfil de empresa que estou buscando para receber <strong>1 hora de consultoria gratuita</strong>.<br><br>Se eu entender que você tem o perfil, vou passar você para a próxima fase — uma <strong>reunião de 1 hora em vídeo-conferência</strong> com nosso especialista.</div>
+      </div>`
+  },
+  {
+    id:'s3',badge:'Passo 1.3',title:'Gerar Autoridade',dur:'⏱ ~1 minuto',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 PERGUNTA PRIMEIRO</span>
+        <div class="sdr-script-text">Você já conhece o <strong>Eduardo Lustosa, Ultra Academia ou Gestão Fitness Brasil</strong>?</div>
+      </div>
+      <div class="sdr-fg"><div class="sdr-opt-grid">
+        <div class="sdr-opt${sdrIaState.opts['conhece']==='sim'?' sel':''}" onclick="sdrO('conhece','sim')">✅ Sim, conhece</div>
+        <div class="sdr-opt${sdrIaState.opts['conhece']==='nao'?' sel-warn':''}" onclick="sdrO('conhece','nao')">❌ Não conhece</div>
+      </div></div>
+      <div class="sdr-cond${sdrIaState.opts['conhece']==='nao'?' show':''}">
+        <div class="sdr-script"><span class="sdr-script-lbl">🎙 SE NÃO CONHECE</span>
+          <div class="sdr-script-text">Ok. Deixa eu me apresentar brevemente. Sou consultor aqui da <strong>Gestão Fitness Brasil do time do Eduardo Lustosa</strong>. Nós saímos de 300 para <strong>+7.000 alunos</strong>. O Eduardo é <strong>parceiro oficial do Sebrae</strong>, já ajudamos mais de <strong>1.000 empresários</strong> e ele tem relacionamento com <strong>Conrado Adolpho, G4, MLS</strong> com Flávio Augusto e Joel Jota.</div>
+        </div>
+      </div>`
+  },
+  {
+    id:'s4',badge:'Passo 1.4',title:'Negócio do Lead',dur:'⏱ Situação',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">Me fala um pouco do seu negócio.</div>
+      </div>
+      <div class="sdr-info">💡 Deixe o lead falar. Anote os pontos mais importantes.</div>
+      <div class="sdr-fg"><label class="sdr-lbl">✍️ Descrição do negócio</label>
+        <textarea class="sdr-input sdr-textarea" placeholder="Ex: Academia de 5 anos, 400 alunos, foco em musculação..." oninput="sdrF('negocio',this.value)">${sdrIaState.fields['negocio']||''}</textarea>
+      </div>`
+  },
+  {
+    id:'s5',badge:'BANT · Budget',title:'Faturamento Mensal',dur:'⏱ B de BANT',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">Qual o <strong>faturamento médio mensal</strong> da sua empresa?</div>
+      </div>
+      <div class="sdr-fg"><label class="sdr-lbl">✍️ Faturamento Médio Mensal</label>
+        <select class="sdr-select" onchange="sdrF('faturamento',this.value)">
+          <option value="">Selecione...</option>
+          <option value="10000" ${sdrIaState.fields['faturamento']==='10000'?'selected':''}>Até R$ 10.000</option>
+          <option value="20000" ${sdrIaState.fields['faturamento']==='20000'?'selected':''}>R$ 10.001 a R$ 20.000</option>
+          <option value="30000" ${sdrIaState.fields['faturamento']==='30000'?'selected':''}>R$ 20.001 a R$ 30.000</option>
+          <option value="50000" ${sdrIaState.fields['faturamento']==='50000'?'selected':''}>R$ 30.001 a R$ 50.000</option>
+          <option value="80000" ${sdrIaState.fields['faturamento']==='80000'?'selected':''}>R$ 50.001 a R$ 80.000</option>
+          <option value="120000" ${sdrIaState.fields['faturamento']==='120000'?'selected':''}>R$ 80.001 a R$ 120.000</option>
+          <option value="200000" ${sdrIaState.fields['faturamento']==='200000'?'selected':''}>R$ 120.001 a R$ 200.000</option>
+          <option value="300000" ${sdrIaState.fields['faturamento']==='300000'?'selected':''}>Acima de R$ 200.000</option>
+        </select>
+      </div>`
+  },
+  {
+    id:'s6',badge:'BANT · Budget',title:'Margem de Lucro',dur:'⏱ Capacidade de pagamento',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">Qual tem sido sua <strong>margem de lucro</strong>? Quanto sobra de lucro líquido do que você fatura?</div>
+      </div>
+      <div class="sdr-fg"><label class="sdr-lbl">✍️ Margem de Lucro</label>
+        <select class="sdr-select" onchange="sdrF('margem',this.value)">
+          <option value="">Selecione...</option>
+          <option value="5" ${sdrIaState.fields['margem']==='5'?'selected':''}>Abaixo de 10% (muito baixa)</option>
+          <option value="15" ${sdrIaState.fields['margem']==='15'?'selected':''}>10% a 20%</option>
+          <option value="25" ${sdrIaState.fields['margem']==='25'?'selected':''}>20% a 30%</option>
+          <option value="35" ${sdrIaState.fields['margem']==='35'?'selected':''}>30% a 40%</option>
+          <option value="50" ${sdrIaState.fields['margem']==='50'?'selected':''}>Acima de 40% (excelente)</option>
+        </select>
+      </div>`
+  },
+  {
+    id:'s7',badge:'BANT · Budget',title:'Endividamento',dur:'⏱ Ponto crítico',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">Sobra isso mesmo no fim do mês ou tem <strong>endividamento</strong>?</div>
+      </div>
+      <div class="sdr-fg"><div class="sdr-opt-grid">
+        <div class="sdr-opt${sdrIaState.opts['divida']==='nao'?' sel':''}" onclick="sdrO('divida','nao')">✅ Sobra / Sem dívidas</div>
+        <div class="sdr-opt${sdrIaState.opts['divida']==='sim'?' sel-warn':''}" onclick="sdrO('divida','sim')">⚠️ Tem endividamento</div>
+      </div></div>
+      <div class="sdr-cond${sdrIaState.opts['divida']==='sim'?' show':''}">
+        <div class="sdr-script"><span class="sdr-script-lbl">🎙 PRÓXIMA PERGUNTA</span>
+          <div class="sdr-script-text">Mas seu fluxo de caixa está <strong>positivo ou negativo</strong>?</div>
+        </div>
+        <div class="sdr-opt-grid">
+          <div class="sdr-opt${sdrIaState.opts['fluxo']==='pos'?' sel':''}" onclick="sdrO('fluxo','pos')">📈 Positivo (lucro)</div>
+          <div class="sdr-opt${sdrIaState.opts['fluxo']==='neg'?' sel-danger':''}" onclick="sdrO('fluxo','neg')">📉 Negativo (prejuízo)</div>
+        </div>
+        <div class="sdr-cond${sdrIaState.opts['fluxo']==='neg'?' show':''}">
+          <div class="sdr-info danger" style="margin-top:10px">🚨 Fluxo negativo — perguntar sobre fundo de reserva. Se não tiver: ENCERRAR ENTREVISTA.</div>
+          <div class="sdr-opt-grid" style="margin-top:8px">
+            <div class="sdr-opt${sdrIaState.opts['fundo']==='sim'?' sel':''}" onclick="sdrO('fundo','sim')">✅ Tem reserva</div>
+            <div class="sdr-opt${sdrIaState.opts['fundo']==='nao'?' sel-danger':''}" onclick="sdrO('fundo','nao')">🚨 Sem reserva</div>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    id:'s8',badge:'BANT · Need',title:'Maior Desafio',dur:'⏱ Necessidade real',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">Hoje, qual você considera que é o seu <strong>maior desafio</strong> em vendas e crescimento de alunos?</div>
+      </div>
+      <div class="sdr-fg"><label class="sdr-lbl">✍️ Maior desafio relatado</label>
+        <textarea class="sdr-input sdr-textarea" placeholder="Ex: Muita evasão, pouca captação, equipe sem processo de vendas..." oninput="sdrF('desafio',this.value)">${sdrIaState.fields['desafio']||''}</textarea>
+      </div>`
+  },
+  {
+    id:'s9',badge:'Qualificação',title:'Dor Oculta',dur:'⏱ O verdadeiro porquê',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">Me explica porque realmente que você quer sair da sua situação atual e quer <strong>crescer a sua empresa</strong>?</div>
+      </div>
+      <div class="sdr-info">💡 Descubra o motivo pessoal real — família, independência, legado. Use essa âncora nos momentos de objeção.</div>
+      <div class="sdr-fg"><label class="sdr-lbl">✍️ Dor oculta / motivo real</label>
+        <textarea class="sdr-input sdr-textarea" placeholder="Ex: Quer provar para a família, arcar com faculdade da filha..." oninput="sdrF('dor',this.value)">${sdrIaState.fields['dor']||''}</textarea>
+      </div>`
+  },
+  {
+    id:'s10',badge:'BANT · Authority',title:'Identificar Decisores',dur:'⏱ A de BANT',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">Caso no final da <strong>consultoria gratuita</strong> apresentássemos uma solução, você é a pessoa que pode <strong>tomar a decisão</strong> de entrar ou não no programa, ou precisa consultar alguém? Um sócio, esposa, financeiro...</div>
+      </div>
+      <div class="sdr-fg"><div class="sdr-opt-grid">
+        <div class="sdr-opt${sdrIaState.opts['dec']==='unico'?' sel':''}" onclick="sdrO('dec','unico')">✅ É o único decisor</div>
+        <div class="sdr-opt${sdrIaState.opts['dec']==='outro'?' sel-warn':''}" onclick="sdrO('dec','outro')">👥 Precisa consultar alguém</div>
+      </div></div>
+      <div class="sdr-cond${sdrIaState.opts['dec']==='outro'?' show':''}">
+        <div class="sdr-info danger" style="margin-top:8px">🚨 NÃO AGENDAR sem confirmar o segundo decisor na reunião. Reunião sem todos os decisores = reunião perdida.</div>
+      </div>
+      <div class="sdr-cond${sdrIaState.opts['dec']==='unico'?' show':''}">
+        <div class="sdr-script" style="margin-top:8px"><span class="sdr-script-lbl">🎙 PERGUNTAR SOBRE CÔNJUGE</span>
+          <div class="sdr-script-text">Você é casado? Sua esposa poderia participar da reunião? É muito importante que ela esteja presente para tomar uma decisão consciente juntos.</div>
+        </div>
+      </div>`
+  },
+  {
+    id:'s11',badge:'BANT · Timeline',title:'Urgência',dur:'⏱ T de BANT',
+    render:()=>`
+      <div class="sdr-script"><span class="sdr-script-lbl">🎙 FALE ISSO</span>
+        <div class="sdr-script-text">Qual é a sua <strong>urgência em resolver esse desafio</strong>?<br><br>Você quer resolver isso <strong>agora com urgência</strong>, nos próximos <strong>6 meses</strong>, ou é algo para <strong>daqui a 1 ano ou mais</strong>?</div>
+      </div>
+      <div class="sdr-info warn">⚠️ Leads sem urgência têm alta taxa de no-show. Quem responde "1 ano" raramente fecha.</div>
+      <div class="sdr-fg">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div class="sdr-opt${sdrIaState.opts['prior']==='urgente'?' sel':''}" onclick="sdrO('prior','urgente')">🔥 Urgente — agora</div>
+          <div class="sdr-opt${sdrIaState.opts['prior']==='6meses'?' sel-warn':''}" onclick="sdrO('prior','6meses')">📅 Próximos 6 meses</div>
+          <div class="sdr-opt${sdrIaState.opts['prior']==='1ano'?' sel-danger':''}" onclick="sdrO('prior','1ano')">🕐 1 ano ou mais</div>
+        </div>
+      </div>`
+  }
+];
+const SDR_TOTAL=SDR_STEPS.length;
+
+function openSdrIa(){
+  // Pre-fill from current lead
+  const l=leads[curIdx];
+  if(l){sdrIaState.fields['nome']=sdrIaState.fields['nome']||l.name;sdrIaState.fields['empresa']=sdrIaState.fields['empresa']||l.company||'';}
+  sdrCurrentStep=0;
+  document.getElementById('sdrIaOverlay').classList.add('on');
+  renderSdrStep();
+}
+function closeSdrIa(){document.getElementById('sdrIaOverlay').classList.remove('on');}
+
+function renderSdrStep(){
+  const pct=Math.round((sdrCurrentStep/SDR_TOTAL)*100);
+  document.getElementById('sdr-prog-fill').style.width=pct+'%';
+  const step=SDR_STEPS[sdrCurrentStep];
+  document.getElementById('sdr-resultado').style.display='none';
+  document.getElementById('sdr-steps-container').innerHTML=`
+    <div class="sdr-step active">
+      <div class="sdr-step-badge">${step.badge}</div>
+      <div class="sdr-step-title">${step.title}</div>
+      ${step.dur?`<div class="sdr-step-dur">${step.dur}</div>`:''}
+      ${step.render()}
+      <div class="sdr-nav">
+        ${sdrCurrentStep>0?`<button class="sdr-btn-prev" onclick="sdrPrev()">← Voltar</button>`:''}
+        ${sdrCurrentStep<SDR_TOTAL-1
+          ?`<button class="sdr-btn-next" onclick="sdrNext()">Próximo →</button>`
+          :`<button class="sdr-btn-next" onclick="sdrFinalizar()">Ver Diagnóstico →</button>`
+        }
+      </div>
+    </div>`;
+}
+
+function sdrF(key,val){sdrIaState.fields[key]=val;}
+function sdrO(key,val){
+  sdrIaState.opts[key]=val;
+  renderSdrStep();// re-render to show conditionals
+}
+function sdrNext(){
+  if(sdrCurrentStep===0){
+    if(!sdrIaState.fields['nome']||!sdrIaState.fields['empresa']){toast('Preencha nome e empresa','err');return;}
+  }
+  if(sdrCurrentStep===7){
+    if(sdrIaState.opts['divida']==='sim'&&sdrIaState.opts['fluxo']==='neg'&&sdrIaState.opts['fundo']==='nao'){
+      showSdrEncerrar();return;
+    }
+  }
+  if(sdrCurrentStep<SDR_TOTAL-1){sdrCurrentStep++;renderSdrStep();}
+}
+function sdrPrev(){if(sdrCurrentStep>0){sdrCurrentStep--;renderSdrStep();}}
+
+function showSdrEncerrar(){
+  document.getElementById('sdr-steps-container').innerHTML=`
+    <div style="text-align:center;padding:40px 20px">
+      <div style="font-size:60px;margin-bottom:16px">🛑</div>
+      <div style="font-size:22px;font-weight:900;color:var(--red);margin-bottom:10px">ENCERRAR ENTREVISTA</div>
+      <div style="font-size:13px;color:var(--txt3);margin-bottom:20px">Situação financeira crítica — não agendar agora.</div>
+      <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-left:3px solid var(--red);border-radius:8px;padding:16px;margin-bottom:20px;font-style:italic;font-size:13px;color:#fca5a5;text-align:left;line-height:1.8">
+        "Pelo que você me disse, você está em uma situação muito delicada. Na minha opinião, você deveria <strong style="color:#fca5a5;font-style:normal">segurar o caixa</strong> e não gastar mais nada além do estritamente necessário. Vejo que nesse momento não conseguimos te ajudar com a consultoria. Agradeço muito o seu tempo e vou te enviar um <strong style="color:#fca5a5;font-style:normal">PDF de bônus</strong> para te ajudar."
+      </div>
+      <button class="sdr-btn-prev" onclick="sdrCurrentStep=7;renderSdrStep()" style="margin-right:10px">← Voltar</button>
+      <button class="sdr-btn-red" onclick="closeSdrIa();toast('Entrevista encerrada — lead registrado','warn')">💾 Encerrar e Registrar</button>
+    </div>`;
+}
+
+function sdrFinalizar(){
+  const resultado=computeSdrResultado();
+  document.getElementById('sdr-steps-container').innerHTML='';
+  document.getElementById('sdr-resultado').style.display='block';
+  document.getElementById('sdr-resultado').innerHTML=renderSdrResultado(resultado);
+  document.getElementById('sdr-prog-fill').style.width='100%';
+}
+
+function computeSdrResultado(){
+  const fat=parseInt(sdrIaState.fields['faturamento'])||0;
+  const margem=parseInt(sdrIaState.fields['margem'])||0;
+  const origem=sdrIaState.fields['origem']||'';
+  const divida=sdrIaState.opts['divida']||'';
+  const fluxo=sdrIaState.opts['fluxo']||'';
+  const dec=sdrIaState.opts['dec']||'';
+  const prior=sdrIaState.opts['prior']||'';
+  const dor=(sdrIaState.fields['dor']||'').trim();
+  const desafio=(sdrIaState.fields['desafio']||'').trim();
+
+  const origemQuente=origem==='quente';
+  const isPAV=fat>30000&&!origem.includes('40k');
+  const ticketProduto=isPAV?24997:1997;
+  const lucroMensal=fat*(margem/100);
+  const mesesParaPagar=lucroMensal>0?ticketProduto/lucroMensal:99;
+
+  const produto=isPAV?'PAV — R$24.997':'Acelerador de Matrículas — R$1.997';
+
+  // BANT
+  const bantB=mesesParaPagar>6||divida==='sim'&&fluxo==='neg'?'no':mesesParaPagar>3?'warn':'ok';
+  const bantA=dec==='outro'?'warn':dec==='unico'?'ok':'warn';
+  const bantN=desafio.length>15?'ok':desafio.length>0?'warn':'no';
+  const bantT=prior==='urgente'?'ok':prior==='6meses'?'warn':prior==='1ano'?'no':'warn';
+
+  // Score
+  let score=0;
+  if(fat>=80000)score+=20;else if(fat>=50000)score+=15;else if(fat>=30000)score+=10;else if(fat>=15000)score+=5;
+  if(mesesParaPagar<=0.5)score+=25;else if(mesesParaPagar<=1)score+=20;else if(mesesParaPagar<=2)score+=14;else if(mesesParaPagar<=3)score+=8;else if(mesesParaPagar<=6)score+=3;
+  if(!divida||divida==='nao')score+=10;else if(fluxo==='pos')score+=5;
+  if(dor.length>40)score+=20;else if(dor.length>15)score+=10;else if(dor.length>0)score+=5;
+  if(desafio.length>40)score+=10;else if(desafio.length>10)score+=5;
+  if(dec==='unico')score+=10;else if(dec==='outro')score+=4;
+  if(origemQuente)score+=10;else score+=4;
+  if(prior==='urgente')score+=10;else if(prior==='6meses')score+=4;else if(prior==='1ano')score-=20;
+  score=Math.max(0,Math.min(score,95));
+
+  let resultado='agendar',tituloText='✅ Agendar Reunião com o Closer',rbCls='rb-ok';
+  let actions=[];
+  if(score>=60){
+    actions=['Informe ao lead que ele passou para a próxima fase.','Ofereça dois horários (manhã/tarde) para a reunião de 1h.','Confirme presença de TODOS os decisores.','Produto: '+produto,'Envie o script completo para o closer.'];
+  }else if(score>=35&&prior!=='1ano'){
+    resultado='cautela';tituloText='⚠️ Agendar com Cautela';rbCls='rb-warn';
+    actions=['Avise o closer sobre os pontos fracos.','Urgência: '+( prior==='6meses'?'Moderada — confirmar razão concreta':'Não declarada'),dor.length===0?'Dor oculta NÃO mapeada — closer deve aprofundar no início.':'Dor oculta mapeada ✅','Produto: '+produto];
+  }else{
+    resultado='nao_agendar';tituloText=prior==='1ano'?'❌ Não Agendar — Sem Urgência':'❌ Não Agendar';rbCls='rb-no';
+    actions=[prior==='1ano'?'Lead declarou urgência de 1 ano ou mais — não há lógica em agendar.':'Score insuficiente de qualificação.','Encerre a ligação com respeito e profissionalismo.','Cadastrar na base de nurturing para follow-up em 60-90 dias.'];
+  }
+
+  const lucroFmt=lucroMensal>0?'R$'+Math.round(lucroMensal).toLocaleString('pt-BR'):'-';
+  const mesesFmt=mesesParaPagar<99?mesesParaPagar.toFixed(1):'N/A';
+
+  let negociacao='';
+  if(isPAV){
+    if(fat>=80000&&margem>=25&&!divida)negociacao='À vista ou até 6x no cartão — capacidade forte.';
+    else if(fat>=50000)negociacao='Entrada de 30-50% + restante em até 12x — capacidade moderada.';
+    else negociacao='Parcelado em até 12x no cartão (R$2.083/mês) — verificar limite.';
+  }else{
+    if(mesesParaPagar<=0.5)negociacao='À vista (R$1.997) — excelente capacidade.';
+    else if(mesesParaPagar<=1)negociacao='À vista ou até 3x.';
+    else negociacao='Parcelado em até 12x (R$166/mês).';
+  }
+
+  return{score,produto,resultado,tituloText,rbCls,actions,negociacao,lucroFmt,mesesFmt,mesesParaPagar,
+    bant:{B:{status:bantB,desc:bantB==='ok'?'Capacidade adequada':bantB==='warn'?'Capacidade apertada':'Insuficiente'},
+    A:{status:bantA,desc:bantA==='ok'?'Decisor confirmado':bantA==='warn'?'Múltiplos decisores':'Não mapeado'},
+    N:{status:bantN,desc:bantN==='ok'?desafio.substring(0,30)+'...':'Necessidade fraca'},
+    T:{status:bantT,desc:prior==='urgente'?'Alta urgência':prior==='6meses'?'Urgência moderada':prior==='1ano'?'Sem urgência':'Não declarada'}}};
+}
+
+function renderSdrResultado(data){
+  const nome=sdrIaState.fields['nome']||'—';
+  const empresa=sdrIaState.fields['empresa']||'—';
+  const bantKeys=['B','A','N','T'];
+  const bantLabels={B:'💰 Budget',A:'👤 Authority',N:'🎯 Need',T:'⏰ Timeline'};
+  const bantEmoji={B:'💰',A:'👤',N:'🎯',T:'⏰'};
+
+  return`
+    <div style="margin-bottom:16px">
+      <span class="result-badge ${data.rbCls}">${data.resultado==='agendar'?'✅ Agendar':data.resultado==='cautela'?'⚠️ Cautela':'❌ Não Agendar'}</span>
+      <div class="result-title">${data.tituloText}</div>
+    </div>
+
+    <div class="bant-row">
+      ${bantKeys.map(k=>{
+        const item=data.bant[k];
+        const cls='bant-'+item.status;
+        return`<div class="bant-item">
+          <div class="bant-letter" style="color:${item.status==='ok'?'var(--green)':item.status==='warn'?'var(--yellow)':'var(--red)'}">${bantEmoji[k]} ${k}</div>
+          <div class="bant-name">${bantLabels[k].split(' ')[1]}</div>
+          <span class="bant-status ${cls}">${item.status==='ok'?'✅ OK':item.status==='warn'?'⚠️ Atenção':'❌ Crítico'}</span>
+          <div class="bant-desc">${item.desc}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="result-grid">
+      <div class="r-card"><div class="r-card-lbl">Lead</div><div class="r-card-val">${nome}</div></div>
+      <div class="r-card"><div class="r-card-lbl">Empresa</div><div class="r-card-val">${empresa}</div></div>
+      <div class="r-card"><div class="r-card-lbl">Produto Recomendado</div><div class="r-card-val g" style="font-size:12px">${data.produto}</div></div>
+      <div class="r-card"><div class="r-card-lbl">Chance de Compra</div><div class="r-card-val ${data.score>=60?'g':data.score>=35?'a':'r'}">${data.score}%</div></div>
+    </div>
+
+    ${data.negociacao?`<div class="r-card" style="margin-bottom:12px"><div class="r-card-lbl">💳 Negociação Recomendada</div><div class="r-card-val" style="font-size:13px;font-weight:500;color:var(--txt2);margin-top:4px">${data.negociacao}</div></div>`:''}
+
+    <div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;margin-bottom:10px">🎯 O que fazer agora</div>
+      <ul class="action-list-sdr">
+        ${data.actions.map((a,i)=>`<li><div class="action-num">${i+1}</div><div>${a}</div></li>`).join('')}
+      </ul>
+    </div>
+
+    ${data.resultado==='agendar'||data.resultado==='cautela'?`
+      <div style="background:var(--s2);border:1px solid rgba(0,232,122,.3);border-radius:12px;padding:16px;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:800;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">📅</span> Agendar Consultoria — Escolha o Consultor e Horário
+        </div>
+        <div id="sdr-inline-agenda">${renderInlineAgenda()}</div>
+      </div>
+    `:''}
+
+    <button onclick="sdrCurrentStep=0;sdrIaState={opts:{},fields:{}};renderSdrStep()" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--b2);background:transparent;color:var(--txt3);font-family:var(--sans);font-size:12px;cursor:pointer;margin-top:8px">+ Qualificar Novo Lead</button>
+  `;
+}
+
+function abrirBookingFromSdr(){
+  const nome=sdrIaState.fields['nome']||'';
+  const l=leads[curIdx];
+  bookingState.leadName=nome||l?.name||'';
+  bookingState.leadPhone=l?.phone||'';
+  closeSdrIa();
+  openAgendaBooking({name:bookingState.leadName,phone:bookingState.leadPhone});
+}
+
+// ═══════════════════════════════════════════
+// ATENDEU / QUER AGENDAR FLOW
+// ═══════════════════════════════════════════
+function showAtendeuPanel(){
+  document.getElementById('atendeuPanel').style.display='block';
+  document.getElementById('querAgendarPanel').style.display='none';
+}
+
+function leadAtendeu(sim){
+  document.getElementById('atendeuPanel').style.display='none';
+  if(!sim){
+    // Did not answer — register and move on
+    endCall('Não Atendeu',null);
+    return;
+  }
+  // Show script + quer agendar
+  const l=leads[curIdx];
+  const type=l?.leadType||'frio';
+  buildQuerAgendarScript(type);
+  document.getElementById('querAgendarPanel').style.display='block';
+  document.getElementById('scriptPanel').classList.remove('hidden');
+  scriptStep=0;
+  renderScriptPanel();
+}
+
+function buildQuerAgendarScript(type){
+  const colors={frio:'var(--blue2)',quente:'var(--yellow)',recuperacao:'var(--purple)'};
+  const labels={frio:'❄️ SCRIPT FRIO',quente:'🔥 SCRIPT QUENTE',recuperacao:'♻️ SCRIPT RECUPERAÇÃO'};
+  const color=colors[type]||colors.frio;
+  const label=labels[type]||labels.frio;
+
+  const scriptLines={
+    frio:`<div style="border-left:3px solid ${color};padding-left:12px;margin-bottom:12px;font-size:13px;color:var(--txt2);font-style:italic;line-height:1.8">
+      <strong style="color:var(--txt);font-style:normal">SDR:</strong> Oii, vi que você se inscreveu no nosso workshop para donos de academia. Você conseguiu assistir?<br><br>
+      <span style="color:var(--txt3)"><strong style="color:var(--txt);font-style:normal">Lead:</strong> Não... / não tive tempo...</span><br><br>
+      <strong style="color:var(--txt);font-style:normal">SDR:</strong> Entendo, a correria do dia a dia é grande.<br><br>
+      <strong style="color:var(--txt);font-style:normal">SDR:</strong> Inclusive nós liberamos <strong style="color:var(--txt);font-style:normal">1 hora de consultoria 100% gratuita</strong> com nosso especialista para te ajudar a crescer o número de alunos e ter maior previsibilidade. Tenho 3 vagas disponíveis... acredito que possa te ajudar.
+    </div>`,
+    quente:`<div style="border-left:3px solid ${color};padding-left:12px;margin-bottom:12px;font-size:13px;color:var(--txt2);font-style:italic;line-height:1.8">
+      <strong style="color:var(--txt);font-style:normal">SDR:</strong> <strong style="color:var(--txt);font-style:normal">[Nome]</strong>? Aqui é o <strong style="color:var(--txt);font-style:normal">[Seu nome]</strong>. Como você está? Tudo bem?<br><br>
+      <strong style="color:var(--txt);font-style:normal">SDR:</strong> Estou ligando porque você se inscreveu no nosso evento. O objetivo é entender melhor o seu negócio e ver se você tem perfil para receber <strong style="color:var(--txt);font-style:normal">1 hora de consultoria gratuita</strong> com nosso especialista.<br><br>
+      <strong style="color:var(--txt);font-style:normal">SDR:</strong> Tenho algumas vagas disponíveis — acredito que pode te ajudar muito.
+    </div>`,
+    recuperacao:`<div style="border-left:3px solid ${color};padding-left:12px;margin-bottom:12px;font-size:13px;color:var(--txt2);font-style:italic;line-height:1.8">
+      <strong style="color:var(--txt);font-style:normal">SDR:</strong> Oi, aqui é o <strong style="color:var(--txt);font-style:normal">[Nome do consultor]</strong> da Gestão Fitness Brasil. Estou ligando porque você agendou uma reunião conosco e não conseguiu comparecer — queria entender o motivo.<br><br>
+      <span style="color:var(--txt3)"><strong style="color:var(--txt);font-style:normal">Lead:</strong> [Ouvir o motivo]</span><br><br>
+      <strong style="color:var(--txt);font-style:normal">SDR:</strong> Entendo. Vou abrir uma exceção para você — nosso consultor tem vagas disponíveis. Gostaria de reagendar agora?
+    </div>`
+  };
+
+  document.getElementById('qa-script-label').textContent=label;
+  document.getElementById('qa-script-body').innerHTML=scriptLines[type]||scriptLines.frio;
+}
+
+function querAgendar(sim){
+  document.getElementById('querAgendarPanel').style.display='none';
+  if(sim){
+    // Open qualification SDR IA
+    openSdrIa();
+  }else{
+    // Not interested — register and move on
+    endCall('Não Agendou',null);
+    toast('Lead não quis agendar — registrado.','warn');
+  }
+}
+
+// ═══════════════════════════════════════════
+// INLINE AGENDA for SDR resultado
+// ═══════════════════════════════════════════
+function renderInlineAgenda(){
+  const today=new Date();
+  const nome=sdrIaState.fields['nome']||leads[curIdx]?.name||'Lead';
+
+  // Generate next 7 days
+  const days=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(today);d.setDate(today.getDate()+i);
+    const key=d.toISOString().slice(0,10);
+    days.push({date:d,key});
+  }
+
+  const consultores=CONSULTORES;
+  let html=`
+    <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px" id="ia-date-tabs">
+      ${days.map((d,i)=>
+        `<button onclick="selectIaDate('${d.key}')" id="ia-date-${d.key}"
+          style="flex-shrink:0;padding:6px 12px;border-radius:8px;border:1px solid ${i===0?'var(--green)':'var(--b2)'};
+          background:${i===0?'rgba(0,232,122,.1)':'var(--s3)'};color:${i===0?'var(--green)':'var(--txt2)'};
+          font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer;transition:.15s">
+          ${i===0?'Hoje':i===1?'Amanhã':d.date.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'})}
+        </button>`
+      ).join('')}
+    </div>
+    <div id="ia-slots-container">${renderIaSlotsForDate(days[0].key,nome)}</div>
+  `;
+  return html;
+}
+
+let iaSelectedDate=null;
+function selectIaDate(dateKey){
+  iaSelectedDate=dateKey;
+  // Update tab styles
+  document.querySelectorAll('[id^="ia-date-"]').forEach(btn=>{
+    const isActive=btn.id===`ia-date-${dateKey}`;
+    btn.style.border=`1px solid ${isActive?'var(--green)':'var(--b2)'}`;
+    btn.style.background=isActive?'rgba(0,232,122,.1)':'var(--s3)';
+    btn.style.color=isActive?'var(--green)':'var(--txt2)';
+  });
+  const nome=sdrIaState.fields['nome']||leads[curIdx]?.name||'Lead';
+  document.getElementById('ia-slots-container').innerHTML=renderIaSlotsForDate(dateKey,nome);
+}
+
+function renderIaSlotsForDate(dateKey,nomeLead){
+  const slots=['08:00','09:00','10:00','11:00','14:00','15:00','16:00','17:00','18:00','19:00'];
+  const agendados=agendamentos.filter(a=>a.date===dateKey);
+
+  return CONSULTORES.map(c=>{
+    const cSlots=agendaSlots[c.id]||{};
+    const daySlots=cSlots[dateKey]||slots; // default: all available
+    const reserved=agendados.filter(a=>a.consultor===c.id).map(a=>a.slot);
+    const available=daySlots.filter(s=>!reserved.includes(s));
+
+    return`<div style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:28px;height:28px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#000">${c.avatar}</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--txt)">${c.name}</div>
+          <div style="font-size:10px;color:var(--txt3);font-family:var(--mono)">${c.role}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${available.length===0
+          ? `<div style="font-size:11px;color:var(--txt3);font-family:var(--mono);padding:4px 0">Sem horários disponíveis</div>`
+          : available.map(slot=>`
+            <button onclick="confirmarAgendamentoInline('${c.id}','${c.name}','${dateKey}','${slot}','${nomeLead}')"
+              style="padding:6px 12px;border-radius:6px;border:1px solid rgba(${c.id==='marcelo'?'0,232,122':c.id==='eduardo'?'245,158,11':'59,130,246'},.35);
+              background:rgba(${c.id==='marcelo'?'0,232,122':c.id==='eduardo'?'245,158,11':'59,130,246'},.07);
+              color:${c.color};font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:.15s"
+              onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+              ${slot}
+            </button>`).join('')
+        }
+      </div>
+    </div>`;
+  }).join('<div style="height:1px;background:var(--b1);margin:10px 0"></div>');
+}
+
+function confirmarAgendamentoInline(consultorId,consultorName,date,slot,nomeLead){
+  const l=leads[curIdx];
+  const phone=l?.phone||sdrIaState.fields['telefone']||'';
+  const ag={
+    id:'ia_'+Date.now(),
+    consultor:consultorId,
+    consultorName,
+    date,slot,
+    leadName:nomeLead,
+    leadPhone:phone,
+    origem:'SDR IA',
+    produto:computeSdrResultado().produto,
+    createdAt:new Date().toLocaleString('pt-BR')
+  };
+  agendamentos.push(ag);
+  LS.set('agendamentos',JSON.stringify(agendamentos));
+  // Mark slot occupied
+  if(!agendaSlots[consultorId])agendaSlots[consultorId]={};
+  if(!agendaSlots[consultorId][date])agendaSlots[consultorId][date]=[];
+  agendaSlots[consultorId][date]=agendaSlots[consultorId][date].filter(s=>s!==slot);
+  LS.set('agenda_slots',JSON.stringify(agendaSlots));
+
+  // Update UI
+  const d=new Date(date+'T12:00:00');
+  const dateLabel=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  document.getElementById('ia-slots-container').innerHTML=`
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:40px;margin-bottom:12px">🎉</div>
+      <div style="font-size:16px;font-weight:900;color:var(--green);margin-bottom:6px">Agendado com sucesso!</div>
+      <div style="font-size:13px;color:var(--txt2);line-height:1.7">
+        <strong>${nomeLead}</strong> com <strong>${consultorName}</strong><br>
+        📅 ${dateLabel} às <strong>${slot}</strong>
+      </div>
+      <div style="margin-top:14px;padding:10px 14px;background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.2);border-radius:8px;font-family:var(--mono);font-size:10px;color:var(--green)">
+        ✅ Registrado no sistema — avise o ${consultorName}!
+      </div>
+    </div>`;
+
+  // Update call result
+  if(callState==='calling'||callState==='ringing'){
+    sessSched++;dayStats.sched++;totStats.sched++;
+    updateScoreDisplay();
+    LS.set('dayStats_'+TODAY,JSON.stringify(dayStats));
+    LS.set('totStats',JSON.stringify(totStats));
+  }
+  toast(`📅 Agendado: ${nomeLead} com ${consultorName} às ${slot}`,'ok');
+  endCall('Agendou',null);
+}
+
+// ═══════════════════════════════════════════
 // TIMER
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function startTimer(){timerInt=setInterval(()=>{document.getElementById('timer-display').textContent=fmtTime(Math.floor((Date.now()-callStart)/1000));},1000);}
 function stopTimer(){clearInterval(timerInt);}
 function fmtTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 function startSessTimer(){sessInt=setInterval(()=>{document.getElementById('ss-time').textContent=fmtTime(Math.floor((Date.now()-sessStart)/1000));},1000);}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // UTILS
-// ════════════════════════════════════════════════
-function fmtPhone(p){const c=p.replace(/\D/g,'');if(c.length===13)return`+${c.slice(0,2)} (${c.slice(2,4)}) ${c.slice(4,9)}-${c.slice(9)}`;if(c.length===11)return`(${c.slice(0,2)}) ${c.slice(2,7)}-${c.slice(7)}`;if(c.length===10)return`(${c.slice(0,2)}) ${c.slice(2,6)}-${c.slice(6)}`;return p;}
-function fmtPABX(p){
-  let c=p.replace(/\D/g,'');
-  // Remove country code +55
-  if(c.startsWith('55')&&c.length>=12)c=c.slice(2);
-  // IntegraVoip expects leading 0: 01133334444 format
-  if(c.length>=10&&!c.startsWith('0'))c='0'+c;
-  return c;
-}
+// ═══════════════════════════════════════════
+function fmtPhone(p){if(!p)return'—';const c=String(p).replace(/\D/g,'');if(c.length===13)return`+${c.slice(0,2)} (${c.slice(2,4)}) ${c.slice(4,9)}-${c.slice(9)}`;if(c.length===11)return`(${c.slice(0,2)}) ${c.slice(2,7)}-${c.slice(7)}`;if(c.length===10)return`(${c.slice(0,2)}) ${c.slice(2,6)}-${c.slice(6)}`;return p;}
+function fmtPABX(p){let c=String(p).replace(/\D/g,'');if(c.startsWith('55')&&c.length>=12)c=c.slice(2);if(c.length>=10&&!c.startsWith('0'))c='0'+c;return c;}
 function toast(msg,t='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+t+' on';setTimeout(()=>el.classList.remove('on'),4000);}
+function extractArr(d){if(Array.isArray(d))return d;for(const k of['dados','data','chamadas','result','retorno']){if(d&&Array.isArray(d[k]))return d[k];}if(d&&typeof d==='object'){const v=Object.values(d);if(v.length&&Array.isArray(v[0]))return v[0];}return[];}
 
-// ════════════════════════════════════════════════
-// CONFIG
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// CONFIG MODAL
+// ═══════════════════════════════════════════
 function openCfg(){
-  document.getElementById('cfg-name').value=cfg.name;
-  document.getElementById('cfg-goal').value=cfg.goal;
-  document.getElementById('cfg-sip-user').value=cfg.sipUser;
-  document.getElementById('cfg-sip-pass').value=cfg.sipPass;
-  document.getElementById('cfg-sip-ws').value=cfg.sipWs;
-  document.getElementById('cfg-sip-domain').value=cfg.sipDomain;
-  document.getElementById('cfg-delay').value=cfg.delay;
-  document.getElementById('cfg-rd').value=cfg.rdToken;
-  document.getElementById('cfg-pipe').value=cfg.pipeId;
-  document.getElementById('cfg-stages').value=cfg.stages;
+  document.getElementById('cfg-name').value=cfg.name;document.getElementById('cfg-goal').value=cfg.goal;
+  document.getElementById('cfg-sip-user').value=cfg.sipUser;document.getElementById('cfg-sip-pass').value=cfg.sipPass;
+  document.getElementById('cfg-sip-ws').value=cfg.sipWs;document.getElementById('cfg-sip-domain').value=cfg.sipDomain;
+  document.getElementById('cfg-delay').value=cfg.delay;document.getElementById('cfg-rd').value=cfg.rdToken;
+  document.getElementById('cfg-pipe').value=cfg.pipeId;document.getElementById('cfg-stages').value=cfg.stages;
   document.getElementById('cfg-wa-num').value=cfg.waNum;
   document.getElementById('cfgModal').classList.add('on');
 }
 function closeCfg(){document.getElementById('cfgModal').classList.remove('on');}
 function saveCfg(){
-  cfg.name=document.getElementById('cfg-name').value;
-  cfg.goal=parseInt(document.getElementById('cfg-goal').value)||30;
-  cfg.sipUser=document.getElementById('cfg-sip-user').value||SIP_USER_DEF;
-  cfg.sipPass=document.getElementById('cfg-sip-pass').value||SIP_PASS_DEF;
-  cfg.sipWs=document.getElementById('cfg-sip-ws').value||SIP_WS_URL;
-  cfg.sipDomain=document.getElementById('cfg-sip-domain').value||SIP_DOM_DEF;
-  cfg.delay=parseInt(document.getElementById('cfg-delay').value)||3;
-  cfg.rdToken=document.getElementById('cfg-rd').value;
-  cfg.pipeId=document.getElementById('cfg-pipe').value;
-  cfg.stages=document.getElementById('cfg-stages').value;
-  cfg.waNum=document.getElementById('cfg-wa-num').value;
+  cfg.name=document.getElementById('cfg-name').value;cfg.goal=parseInt(document.getElementById('cfg-goal').value)||30;
+  cfg.sipUser=document.getElementById('cfg-sip-user').value||SIP_USER_DEF;cfg.sipPass=document.getElementById('cfg-sip-pass').value||SIP_PASS_DEF;
+  cfg.sipWs=document.getElementById('cfg-sip-ws').value||SIP_WS_URL;cfg.sipDomain=document.getElementById('cfg-sip-domain').value||SIP_DOM_DEF;
+  cfg.delay=parseInt(document.getElementById('cfg-delay').value)||3;cfg.rdToken=document.getElementById('cfg-rd').value;
+  cfg.pipeId=document.getElementById('cfg-pipe').value;cfg.stages=document.getElementById('cfg-stages').value;cfg.waNum=document.getElementById('cfg-wa-num').value;
   Object.entries(cfg).forEach(([k,v])=>LS.set(k,v));
   const n=cfg.name||'SDR';document.getElementById('sdr-nm').textContent=n;document.getElementById('sdr-av').textContent=n[0].toUpperCase();
   closeCfg();toast('✅ Salvo!','ok');
@@ -1821,33 +2567,30 @@ function saveCfg(){
 function openAdd(){document.getElementById('addModal').classList.add('on');}
 function closeAdd(){document.getElementById('addModal').classList.remove('on');}
 function addLead(){
-  const name=document.getElementById('al-name').value.trim();
-  const phone=document.getElementById('al-phone').value.trim();
+  const name=document.getElementById('al-name').value.trim();const phone=document.getElementById('al-phone').value.trim();
   if(!name||!phone){toast('Informe nome e telefone','err');return;}
-  leads.push({id:'m'+Date.now(),name,phone,company:document.getElementById('al-co').value.trim(),stage:'Sem Contato',cadenceDay:0,attemptsToday:0,called:false,dealId:null});
-  LS.set('leads',JSON.stringify(leads));
-  showDialerActive();updateProgress();renderKanban();closeAdd();toast('Lead adicionado!','ok');
+  const type=document.getElementById('al-type').value||'frio';
+  leads.push({id:'m'+Date.now(),name,phone:cleanPhone(phone),company:document.getElementById('al-co').value.trim(),stage:'Sem Contato',cadenceDay:0,attemptsToday:0,called:false,leadType:type,dealId:null,waSent:false,rdStage:'Sem Contato'});
+  LS.set('leads',JSON.stringify(leads));showDialerActive();updateProgress();renderKanban();closeAdd();toast('Lead adicionado!','ok');
   ['al-name','al-phone','al-co'].forEach(i=>document.getElementById(i).value='');
   if(curIdx<0)loadLead(leads.length-1);
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // INIT
-// ════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 window.onload=async()=>{
-  // Update SDR display
   const n=cfg.name||'Configurar';
-  document.getElementById('sdr-nm').textContent=n;
-  document.getElementById('sdr-av').textContent=n[0].toUpperCase();
+  document.getElementById('sdr-nm').textContent=n;document.getElementById('sdr-av').textContent=n[0].toUpperCase();
   document.getElementById('goal-input').value=cfg.goal;
-  // Session timer
-  startSessTimer();
-  // Alerts
-  startAlertChecker();
+  startSessTimer();startAlertChecker();
   if(Notification.permission==='default')Notification.requestPermission();
-  // Verifica PABX API (credenciais hardcoded)
-  setTimeout(checkPabxStatus, 800);
-  // Tenta JsSIP para áudio no browser (opcional)
+  ensureDefaultSlots();
+  selectLeadType('frio');// default
+  renderImportedTable();
+
+  setTimeout(checkPabxStatus,800);
+
   setTimeout(()=>{
     if(typeof JsSIP!=='undefined'){
       try{
@@ -1867,17 +2610,11 @@ window.onload=async()=>{
         ua.start();
       }catch(e){console.warn('[JsSIP]',e.message);}
     }
-  }, 1200);
-  // Load leads from RD or localStorage
-  if(cfg.rdToken&&cfg.pipeId){
-    await syncRD();
-  }else if(leads.length){
-    showDialerActive();
-    if(!cfg.name)setTimeout(openCfg,500);
-  }else{
-    if(!cfg.name)setTimeout(openCfg,500);
-  }
-  // Initial ranking render
+  },1200);
+
+  if(leads.length){showDialerActive();if(!cfg.name)setTimeout(openCfg,500);}
+  else{if(!cfg.name)setTimeout(openCfg,500);}
+
   document.getElementById('rank-date-lbl').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
 };
 </script>
