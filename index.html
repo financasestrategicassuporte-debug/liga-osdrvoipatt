@@ -426,6 +426,22 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .toast.warn{border-color:rgba(245,158,11,.4);color:var(--yellow)}
 .toast.win{border-color:rgba(139,92,246,.4);color:var(--purple)}
 .hidden{display:none!important}
+/* CONFIRM BOOKING MODAL */
+.confirm-modal-bg{display:none;position:fixed;inset:0;z-index:700;background:rgba(6,8,13,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.confirm-modal-bg.on{display:flex}
+.confirm-modal{background:var(--s1);border:1px solid var(--b2);border-radius:18px;padding:28px 24px 22px;width:360px;max-width:92vw;text-align:center}
+.confirm-modal-icon{font-size:48px;margin-bottom:12px}
+.confirm-modal-title{font-size:17px;font-weight:900;margin-bottom:6px}
+.confirm-modal-sub{font-size:12px;color:var(--txt3);margin-bottom:18px;line-height:1.6}
+.confirm-modal-card{background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:14px 16px;margin-bottom:20px;text-align:left}
+.confirm-modal-card .cm-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px;color:var(--txt2)}
+.confirm-modal-card .cm-row:last-child{margin-bottom:0}
+.confirm-modal-card .cm-row b{color:var(--txt)}
+.confirm-modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cm-btn-ok{padding:12px;border-radius:10px;border:none;background:var(--green);color:#000;font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;transition:.15s}
+.cm-btn-ok:hover{background:var(--green-d)}
+.cm-btn-cancel{padding:12px;border-radius:10px;border:1.5px solid var(--b3);background:transparent;color:var(--txt2);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.cm-btn-cancel:hover{border-color:var(--red);color:var(--red)}
 </style>
 </head>
 <body>
@@ -487,6 +503,25 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <button class="mbtn" onclick="saveRemarcar()">✅ Confirmar agendamento</button>
     <button class="mcancel" onclick="skipRemarcar()">Pular (sem agendar)</button>
     <div style="text-align:center;font-family:var(--mono);font-size:10px;color:var(--txt3);margin-top:6px" id="rm-auto-lbl"></div>
+  </div>
+</div>
+
+<!-- CONFIRM BOOKING MODAL -->
+<div class="confirm-modal-bg" id="confirmBookingModal">
+  <div class="confirm-modal">
+    <div class="confirm-modal-icon">📅</div>
+    <div class="confirm-modal-title">Confirmar Agendamento</div>
+    <div class="confirm-modal-sub">Certeza que deseja agendar este horário?</div>
+    <div class="confirm-modal-card">
+      <div class="cm-row">👤 Lead: <b id="cm-lead">—</b></div>
+      <div class="cm-row">🧑‍💼 Consultor: <b id="cm-consultor">—</b></div>
+      <div class="cm-row">📅 Data: <b id="cm-data">—</b></div>
+      <div class="cm-row">⏰ Horário: <b id="cm-hora">—</b></div>
+    </div>
+    <div class="confirm-modal-btns">
+      <button class="cm-btn-cancel" onclick="closeConfirmBooking()">✕ Cancelar</button>
+      <button class="cm-btn-ok" id="cm-btn-confirm" onclick="">✅ Confirmar</button>
+    </div>
   </div>
 </div>
 
@@ -1735,7 +1770,22 @@ function confirmarAgendamento(){
   if(!name||!phone){toast('Informe nome e telefone do lead','err');return;}
   if(!bookingState.consultor||!bookingState.date||!bookingState.slot){toast('Selecione consultor, data e horário','err');return;}
 
-  // Registra agendamento
+  // Show confirmation modal
+  const consultorName=CONSULTORES.find(c=>c.id===bookingState.consultor)?.name||bookingState.consultor;
+  const d=new Date(bookingState.date+'T12:00:00');
+  const dateLabel=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  document.getElementById('cm-lead').textContent=name;
+  document.getElementById('cm-consultor').textContent=consultorName;
+  document.getElementById('cm-data').textContent=dateLabel;
+  document.getElementById('cm-hora').textContent=bookingState.slot;
+  _pendingInline={type:'agenda',name,phone,consultorName};
+  document.getElementById('cm-btn-confirm').onclick=executeConfirmAgenda;
+  document.getElementById('confirmBookingModal').classList.add('on');
+}
+
+function executeConfirmAgenda(){
+  const {name,phone}=_pendingInline;
+  closeConfirmBooking();
   const ag={
     id:'ag'+Date.now(),leadName:name,leadPhone:phone,
     consultor:bookingState.consultor,date:bookingState.date,slot:bookingState.slot,
@@ -1743,25 +1793,23 @@ function confirmarAgendamento(){
   };
   agendamentos.push(ag);
 
-  // Remove slot da disponibilidade
   if(agendaSlots[bookingState.consultor]?.[bookingState.date]){
     agendaSlots[bookingState.consultor][bookingState.date]=agendaSlots[bookingState.consultor][bookingState.date].filter(s=>s!==bookingState.slot);
   }
   saveAgenda();
 
-  // Update lead if exists
   if(curIdx>=0&&leads[curIdx]){
     leads[curIdx].stage='Agendado';leads[curIdx].called=true;leads[curIdx].lastResult='Agendou';
     LS.set('leads',JSON.stringify(leads));
   }
 
   toast(`✅ Agendado: ${name} · ${bookingState.slot} com ${CONSULTORES.find(c=>c.id===bookingState.consultor)?.name}`,'ok');
-
   bookingState={consultor:null,date:null,slot:null,leadName:'',leadPhone:'',origin:'manual'};
   renderAgenda();renderKanban();
-
   if(pendingRes){advance(pendingRes);pendingRes=null;}
 }
+
+function closeConfirmBooking(){document.getElementById('confirmBookingModal').classList.remove('on');}
 
 function cancelarAgendamento(id){
   const ag=agendamentos.find(a=>a.id===id);if(!ag)return;
@@ -2484,7 +2532,25 @@ function renderIaSlotsForDate(dateKey,nomeLead){
   }).join('<div style="height:1px;background:var(--b1);margin:10px 0"></div>');
 }
 
+// Pending inline booking state
+let _pendingInline={};
+
 function confirmarAgendamentoInline(consultorId,consultorName,date,slot,nomeLead){
+  // Show confirmation modal first
+  const d=new Date(date+'T12:00:00');
+  const dateLabel=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  document.getElementById('cm-lead').textContent=nomeLead;
+  document.getElementById('cm-consultor').textContent=consultorName;
+  document.getElementById('cm-data').textContent=dateLabel;
+  document.getElementById('cm-hora').textContent=slot;
+  _pendingInline={consultorId,consultorName,date,slot,nomeLead,dateLabel,type:'inline'};
+  document.getElementById('cm-btn-confirm').onclick=executeConfirmInline;
+  document.getElementById('confirmBookingModal').classList.add('on');
+}
+
+function executeConfirmInline(){
+  const {consultorId,consultorName,date,slot,nomeLead,dateLabel}=_pendingInline;
+  closeConfirmBooking();
   const l=leads[curIdx];
   const phone=l?.phone||sdrIaState.fields['telefone']||'';
   const ag={
@@ -2500,15 +2566,11 @@ function confirmarAgendamentoInline(consultorId,consultorName,date,slot,nomeLead
   };
   agendamentos.push(ag);
   LS.set('agendamentos',JSON.stringify(agendamentos));
-  // Mark slot occupied
   if(!agendaSlots[consultorId])agendaSlots[consultorId]={};
   if(!agendaSlots[consultorId][date])agendaSlots[consultorId][date]=[];
   agendaSlots[consultorId][date]=agendaSlots[consultorId][date].filter(s=>s!==slot);
   LS.set('agenda_slots',JSON.stringify(agendaSlots));
 
-  // Update UI
-  const d=new Date(date+'T12:00:00');
-  const dateLabel=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
   document.getElementById('ia-slots-container').innerHTML=`
     <div style="text-align:center;padding:20px">
       <div style="font-size:40px;margin-bottom:12px">🎉</div>
@@ -2522,7 +2584,6 @@ function confirmarAgendamentoInline(consultorId,consultorName,date,slot,nomeLead
       </div>
     </div>`;
 
-  // Update call result
   if(callState==='calling'||callState==='ringing'){
     sessSched++;dayStats.sched++;totStats.sched++;
     updateScoreDisplay();
