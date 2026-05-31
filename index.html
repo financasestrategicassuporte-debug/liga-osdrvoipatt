@@ -123,10 +123,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .sp-next:hover{background:var(--green-d)}
 .sp-qualify-btn{width:100%;padding:10px;border-radius:8px;border:none;background:var(--yellow);color:#000;font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;margin-top:4px}
 /* RESULT BUTTONS */
-.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.r-btn{padding:16px 10px;border-radius:12px;border:2px solid var(--b2);background:var(--s2);font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;transition:.2s;text-align:center;color:var(--txt2);display:flex;flex-direction:column;align-items:center;gap:4px}
-.r-btn .ri{font-size:22px}
-.r-btn:hover{transform:translateY(-2px)}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%}
+.r-btn{padding:12px 10px;border-radius:11px;border:2px solid var(--b2);background:var(--s2);font-family:var(--sans);font-size:12px;font-weight:800;cursor:pointer;transition:.2s;text-align:center;color:var(--txt2);display:flex;flex-direction:row;align-items:center;gap:8px}
+.r-btn .ri{font-size:20px;flex-shrink:0}
+.r-btn:hover{transform:translateY(-1px);border-color:var(--txt2)!important}
 .r-agendou{border-color:var(--green)!important;background:rgba(0,232,122,.08)!important;color:var(--green)!important}
 .r-nao-agendou{border-color:var(--yellow)!important;background:rgba(245,158,11,.07)!important;color:var(--yellow)!important}
 .r-remarcar{border-color:var(--blue2)!important;background:rgba(96,165,250,.08)!important;color:var(--blue2)!important}
@@ -183,6 +183,45 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .kb-note{font-size:10px;color:var(--txt2);margin-top:5px;padding:3px 6px;background:var(--s3);border-radius:4px;font-style:italic}
 .kb-empty{font-size:10px;color:var(--txt3);text-align:center;padding:16px;font-family:var(--mono)}
 .kb-cards{overflow-y:auto;max-height:calc(100vh - 190px)}
+/* SMART TASK PANEL */
+.task-panel{background:var(--s3);border:1px solid var(--b2);border-radius:12px;overflow:hidden;margin-top:0}
+.task-panel-hdr{padding:10px 14px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between}
+.task-panel-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:var(--mono)}
+.task-btn{width:100%;padding:12px 14px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;transition:.2s;text-align:left;display:flex;align-items:center;gap:10px;color:var(--txt2);margin-bottom:6px}
+.task-btn:hover{border-color:var(--green);background:rgba(0,232,122,.06);color:var(--txt)}
+.task-btn-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.task-form{padding:12px 14px;border-top:1px solid var(--b2);background:rgba(0,0,0,.12)}
+.task-form-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:var(--mono);color:var(--txt3);margin-bottom:10px}
+.task-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.task-fi{width:100%;background:var(--s3);border:1px solid var(--b2);border-radius:7px;padding:8px 10px;color:var(--txt);font-family:var(--mono);font-size:12px;outline:none;transition:.15s}
+.task-fi:focus{border-color:var(--green)}
+.task-save-btn{width:100%;padding:11px;border-radius:9px;border:none;background:var(--green);color:#000;font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;transition:.2s;margin-top:4px}
+.task-save-btn:hover{background:var(--green-d)}
+.task-cancel-btn{width:100%;padding:8px;border-radius:8px;border:1px solid var(--b2);background:transparent;color:var(--txt3);font-family:var(--sans);font-size:12px;cursor:pointer;margin-top:4px}
+/* SCHEDULED TASK LIST */
+.sched-task-item{padding:9px 12px;background:var(--s2);border:1px solid var(--b1);border-radius:8px;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.sched-task-item.urgent{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.05)}
+.sched-task-item.soon{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.04)}
+.sched-task-type{font-size:14px;flex-shrink:0}
+.sched-task-info{flex:1}
+.sched-task-name{font-size:11px;font-weight:700}
+.sched-task-time{font-family:var(--mono);font-size:9px;color:var(--txt3);margin-top:1px}
+/* FULL-SCREEN ALERT OVERLAY (upgrade) */
+.kanban-alert-overlay{position:fixed;inset:0;z-index:9100;background:rgba(6,8,13,.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.kanban-alert-overlay.on{display:flex}
+.ka-pulse{width:80px;height:80px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;animation:ka-pulse 1s infinite}
+@keyframes ka-pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,232,122,.7)}50%{box-shadow:0 0 0 20px rgba(0,232,122,0)}}
+.ka-title{font-size:28px;font-weight:900;text-align:center}
+.ka-sub{font-size:14px;color:var(--txt2);text-align:center;font-family:var(--mono)}
+.ka-lead{font-size:22px;font-weight:800;color:var(--green);text-align:center}
+.ka-phone{font-family:var(--mono);font-size:16px;color:var(--txt2)}
+.ka-note{font-size:12px;color:var(--txt3);background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 16px;max-width:420px;text-align:center;font-family:var(--mono)}
+.ka-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.ka-btn-call{padding:14px 28px;border-radius:12px;border:none;background:var(--green);color:#000;font-family:var(--sans);font-size:16px;font-weight:900;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px}
+.ka-btn-call:hover{background:var(--green-d);transform:scale(1.03)}
+.ka-btn-later{padding:12px 20px;border-radius:10px;border:1px solid var(--b2);background:var(--s2);color:var(--txt2);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer}
+.ka-btn-dismiss{padding:12px 20px;border-radius:10px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:var(--red);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer}
+.ka-type-badge{padding:4px 14px;border-radius:20px;font-family:var(--mono);font-size:11px;font-weight:700}
 /* RANKING */
 .rank-page{flex:1;overflow-y:auto;padding:16px;max-width:680px;margin:0 auto;width:100%}
 .goal-card{background:var(--s2);border:1px solid var(--b2);border-radius:16px;padding:18px 20px;margin-bottom:14px;position:relative;overflow:hidden}
@@ -474,7 +513,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .funnel-tab:not(.active):hover{border-color:var(--txt3);color:var(--txt2)}
 .funnel-priority-alert{width:100%;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:8px 14px;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--yellow);font-family:var(--mono)}
 /* CLOSER */
-.closer-page{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-width:700px;margin:0 auto;width:100%}
+.closer-page{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:800px;margin:0 auto;width:100%}
 .closer-next-card{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(249,115,22,.05));border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:20px}
 .closer-next-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);font-family:var(--mono);margin-bottom:6px}
 .closer-next-time{font-size:32px;font-weight:900;letter-spacing:-1px;line-height:1;margin-bottom:4px}
@@ -525,6 +564,50 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ldp-result-btn:hover{border-color:var(--green);color:var(--green)}.ldp-result-btn.sel{background:rgba(0,232,122,.1);border-color:var(--green);color:var(--green)}
 
 @keyframes waSpin{to{transform:rotate(360deg)}}
+/* PERFORMANCE PAGE */
+.perf-page{flex:1;overflow-y:auto;padding:16px;max-width:720px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:14px}
+.perf-hero{background:linear-gradient(135deg,rgba(0,232,122,.08),rgba(59,130,246,.05));border:1px solid rgba(0,232,122,.2);border-radius:18px;padding:22px 24px;position:relative;overflow:hidden}
+.perf-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(0,232,122,.07),transparent 70%)}
+
+
+
+.perf-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.perf-kpi{background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:12px;text-align:center}
+.perf-kpi-val{font-family:var(--mono);font-size:22px;font-weight:800;line-height:1}
+.perf-kpi-lbl{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.perf-kpi-delta{font-size:9px;margin-top:4px;font-family:var(--mono)}
+.perf-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);font-family:var(--mono);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.perf-section-title::after{content:'';flex:1;height:1px;background:var(--b2)}
+.perf-card{background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:16px 18px}
+.ai-bubble{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.ai-bubble-avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ai-bubble-body{flex:1}
+.ai-bubble-name{font-size:10px;font-weight:700;color:var(--blue2);letter-spacing:.5px;text-transform:uppercase;font-family:var(--mono);margin-bottom:5px}
+.ai-bubble-text{font-size:13px;color:var(--txt2);line-height:1.7}
+.ai-bubble-text strong{color:var(--txt)}
+.ai-bubble.loading .ai-bubble-text{color:var(--txt3);font-style:italic}
+.sparkline-wrap{display:flex;align-items:flex-end;gap:3px;height:40px;margin-top:8px}
+.spark-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;transition:height .5s}
+.grade-badge{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;font-family:var(--mono);font-size:14px;font-weight:900}
+.grade-S{background:rgba(0,232,122,.2);color:var(--green);border:1px solid rgba(0,232,122,.4)}
+.grade-A{background:rgba(59,130,246,.2);color:var(--blue2);border:1px solid rgba(59,130,246,.4)}
+.grade-B{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+.grade-C{background:rgba(249,115,22,.15);color:var(--orange);border:1px solid rgba(249,115,22,.3)}
+.grade-D{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.tip-card{background:var(--s3);border-left:3px solid var(--blue2);border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--txt2);line-height:1.6}
+.tip-card.warn{border-color:var(--yellow)}.tip-card.success{border-color:var(--green)}.tip-card.danger{border-color:var(--red)}
+.dimension-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.dimension-name{font-size:11px;font-weight:600;width:130px;flex-shrink:0;color:var(--txt2)}
+.dimension-track{flex:1;height:8px;background:var(--b1);border-radius:4px;overflow:hidden}
+.dimension-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.dimension-score{font-family:var(--mono);font-size:11px;font-weight:700;min-width:32px;text-align:right}
+.analyze-btn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s}
+.analyze-btn:hover{opacity:.85;transform:translateY(-1px)}
+.analyze-btn:disabled{background:var(--b2);color:var(--txt3);cursor:not-allowed;transform:none}
+.call-score-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.call-score-row:last-child{border-bottom:none}
+.call-score-badge{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:900;flex-shrink:0}
+
 </style>
 
 <audio id="remoteAudio" autoplay></audio>
@@ -630,6 +713,35 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div><div class="ach-popup-title">CONQUISTA!</div><div class="ach-popup-name" id="ach-popup-name">—</div></div>
 </div>
 
+<!-- KANBAN SMART ALERT OVERLAY -->
+<div class="kanban-alert-overlay" id="kanbanAlertOverlay">
+  <div class="ka-type-badge" id="ka-type-badge" style="background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.3);color:var(--green)">⏰ HORA DE LIGAR</div>
+  <div class="ka-pulse" id="ka-alert-icon">📞</div>
+  <div class="ka-title" id="ka-title">Ligação Agendada!</div>
+  <div class="ka-lead" id="ka-lead-name">—</div>
+  <div class="ka-phone" id="ka-lead-phone">—</div>
+  <div class="ka-sub" id="ka-stage-lbl">Qualificações Agendadas</div>
+  <div class="ka-note" id="ka-note" style="display:none">—</div>
+  <div class="ka-btns">
+    <button class="ka-btn-call" onclick="kbAlertCall()">📞 Ligar Agora</button>
+    <button class="ka-btn-later" onclick="kbAlertSnooze(5)">⏰ +5 min</button>
+    <button class="ka-btn-later" onclick="kbAlertSnooze(30)">⏰ +30 min</button>
+    <button class="ka-btn-dismiss" onclick="kbAlertDismiss()">✕ Fechar</button>
+  </div>
+</div>
+
+<!-- KANBAN SMART TASK MODAL -->
+<div class="modal-bg" id="kbTaskModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title" id="kbTaskModalTitle">📋 Nova Tarefa</div>
+    <div class="modal-sub" id="kbTaskModalSub">—</div>
+    <div id="kbTaskForm">
+      <!-- dynamic content -->
+    </div>
+    <button class="mcancel" onclick="closeKbTask()">Cancelar</button>
+  </div>
+</div>
+
 <!-- REMARCAR MODAL -->
 <div class="modal-bg" id="remarcarModal">
   <div class="modal">
@@ -688,17 +800,25 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <div class="modal-bg" id="addModal">
   <div class="modal">
     <div class="modal-title">＋ Adicionar Lead</div>
-    <div class="fg"><label class="flbl">Nome</label><input type="text" class="fi" id="al-name"></div>
-    <div class="fg"><label class="flbl">Telefone</label><input type="text" class="fi" id="al-phone"></div>
-    <div class="fg"><label class="flbl">Empresa</label><input type="text" class="fi" id="al-co"></div>
-    <div class="fg"><label class="flbl">Funil</label>
-      <select class="fi" id="al-type">
-        <option value="quente">🔥 Quente — Compareceu + preencheu aplicação (PRIORIDADE)</option>
-        <option value="frio">❄️ Frio — Inscreveu no workshop, não compareceu</option>
-        <option value="recuperacao">♻️ Recuperação — Perdido Quente em reativação</option>
-      </select>
+    <div class="modal-sub">O sistema detecta automaticamente o funil e etapa do lead</div>
+    <div class="fg fi-row">
+      <div><label class="flbl">Nome</label><input type="text" class="fi" id="al-name" oninput="autoDetectLead()"></div>
+      <div><label class="flbl">Telefone *</label><input type="text" class="fi" id="al-phone" oninput="autoDetectLead()" placeholder="(00) 00000-0000"></div>
     </div>
-    <button class="mbtn" onclick="addLead()">Adicionar</button>
+    <div class="fg"><label class="flbl">Empresa</label><input type="text" class="fi" id="al-co"></div>
+    <!-- Auto-detect result -->
+    <div id="al-detect-box" style="display:none;padding:10px 14px;border-radius:8px;margin-bottom:8px;font-size:12px;border:1px solid"></div>
+    <!-- Manual override (shown only when no match found) -->
+    <div id="al-funil-manual" style="display:none">
+      <div class="fg"><label class="flbl">Funil (não encontrado — selecione manualmente)</label>
+        <select class="fi" id="al-type">
+          <option value="quente">🔥 Quente — Compareceu + preencheu aplicação</option>
+          <option value="frio">❄️ Frio — Inscreveu no workshop, não compareceu</option>
+          <option value="recuperacao">♻️ Recuperação — Perdido Quente em reativação</option>
+        </select>
+      </div>
+    </div>
+    <button class="mbtn" onclick="addLead()">Adicionar / Mover Lead</button>
     <button class="mcancel" onclick="closeAdd()">Cancelar</button>
   </div>
 </div>
@@ -759,9 +879,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="tab active" data-tab="dialer" onclick="setTab('dialer',this)">📞 Discador</div>
     <div class="tab" data-tab="wa" onclick="setTab('wa',this)">💬 WhatsApp</div>
     <div class="tab" data-tab="closer" onclick="setTab('closer',this)">🤝 Reuniões</div>
-    <div class="tab" data-tab="kanban" onclick="setTab('kanban',this)">⊞ Kanban</div>
+    <div class="tab" data-tab="kanban" onclick="setTab('kanban',this)">⊞ CRM Kanban</div>
+    <div class="tab" data-tab="closerperf" onclick="setTab('closerperf',this)">📊 Performance IA</div>
     <div class="tab" data-tab="rank" onclick="setTab('rank',this)">🏆 Ranking</div>
-    <div class="tab" data-tab="agenda" onclick="setTab('agenda',this)">📅 Agenda</div>
+    <div class="tab" data-tab="performance" onclick="setTab('performance',this)">📊 Performance</div>
+    <div class="tab" data-tab="chat" onclick="setTab('chat',this)">💬 Chat <span class="badge" id="chat-badge" style="display:none">0</span></div>
     <div class="tab" data-tab="admin" onclick="setTab('admin',this)">⚙ Admin</div>
   </div>
 
@@ -877,13 +999,45 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       </div>
       <!-- Result buttons -->
       <div class="result-grid hidden" id="resultSection">
-        <div style="grid-column:span 2;text-align:center;font-family:var(--mono);font-size:10px;color:var(--yellow);padding:4px 0">📋 REGISTRAR RESULTADO</div>
-        <button class="r-btn r-agendou" onclick="endCall('Agendou',this)"><span class="ri">📅</span>AGENDOU</button>
-        <button class="r-btn r-nao-agendou" onclick="endCall('Não Agendou',this)"><span class="ri">⚠️</span>NÃO AGENDOU</button>
-        <button class="r-btn r-remarcar" onclick="endCall('Remarcar',this)"><span class="ri">🔄</span>REMARCAR</button>
-        <button class="r-btn r-nao-atendeu" onclick="endCall('Não Atendeu',this)"><span class="ri">📵</span>NÃO ATENDEU</button>
-        <button class="r-btn r-caixa" onclick="endCall('Caixa Postal',this)"><span class="ri">📬</span>CAIXA POSTAL</button>
-        <button class="r-btn r-excluir" onclick="endCall('Excluir',this)"><span class="ri">🚫</span>EXCLUIR</button>
+        <div style="grid-column:span 2;text-align:center;font-family:var(--mono);font-size:10px;color:var(--yellow);padding:6px 0;letter-spacing:1px">📋 REGISTRAR RESULTADO</div>
+
+        <!-- Primary results row -->
+        <button class="r-btn r-agendou" onclick="endCall('Agendou',this)">
+          <span class="ri">📅</span>
+          <div><div>AGENDOU</div><div style="font-size:9px;font-weight:400;margin-top:1px;opacity:.7">→ Qualif. Agendada</div></div>
+        </button>
+        <button class="r-btn r-remarcar" onclick="endCall('Remarcar',this)">
+          <span class="ri">🔄</span>
+          <div><div>REMARCAR</div><div style="font-size:9px;font-weight:400;margin-top:1px;opacity:.7">→ Agendar retorno</div></div>
+        </button>
+
+        <!-- Secondary results -->
+        <button class="r-btn r-nao-atendeu" onclick="endCall('Não Atendeu',this)">
+          <span class="ri">📵</span>
+          <div><div>NÃO ATENDEU</div><div style="font-size:9px;font-weight:400;margin-top:1px;opacity:.7">→ Continua cadência</div></div>
+        </button>
+        <button class="r-btn r-nao-agendou" onclick="endCall('Não Agendou',this)">
+          <span class="ri">⚠️</span>
+          <div><div>NÃO AGENDOU</div><div style="font-size:9px;font-weight:400;margin-top:1px;opacity:.7">→ Segue funil</div></div>
+        </button>
+
+        <!-- Kanban stage moves -->
+        <button class="r-btn" onclick="moveToKanbanStageWithTask('Entrar em Contato Futuramente')" style="border-color:var(--txt3)!important;color:var(--txt3)!important">
+          <span class="ri">📌</span>
+          <div><div>FUTURO</div><div style="font-size:9px;font-weight:400;margin-top:1px;opacity:.7">→ Agendar contato</div></div>
+        </button>
+        <button class="r-btn" onclick="moveToKanbanStageWithTask('Qualificações Agendadas')" style="border-color:#06b6d4!important;background:rgba(6,182,212,.07)!important;color:#06b6d4!important">
+          <span class="ri">📋</span>
+          <div><div>QUALIF.</div><div style="font-size:9px;font-weight:400;margin-top:1px;opacity:.7">→ Agendar ligação</div></div>
+        </button>
+
+        <!-- Tertiary -->
+        <button class="r-btn r-caixa" onclick="endCall('Caixa Postal',this)">
+          <span class="ri">📬</span><div>CAIXA POSTAL</div>
+        </button>
+        <button class="r-btn r-excluir" onclick="endCall('Excluir',this)">
+          <span class="ri">🚫</span><div>EXCLUIR</div>
+        </button>
       </div>
       <!-- Hangup + mute -->
       <div class="action-row hidden" id="callActions">
@@ -1132,6 +1286,27 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
         </div>
       </div>
 
+      <!-- META DE LIGAÇÕES -->
+      <div class="admin-section" style="border-color:rgba(0,232,122,.2)">
+        <div class="admin-section-title">🎯 Meta de Ligações Diárias</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end">
+          <div>
+            <label class="flbl">Meta de ligações por dia (SDR)</label>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+              <input type="number" class="fi" id="admin-goal-input" min="1" max="500" placeholder="50"
+                style="width:90px" oninput="adminSetGoal(this.value)">
+              <span style="font-size:12px;color:var(--txt3)">ligações/dia</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--green)" id="admin-goal-current"></span>
+            </div>
+            <div style="font-size:10px;color:var(--txt3);margin-top:6px;font-family:var(--mono)">Define a meta global para todos os SDRs</div>
+          </div>
+          <div style="background:var(--s3);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-family:var(--mono);font-size:28px;font-weight:900;color:var(--green)" id="admin-goal-display">—</div>
+            <div style="font-size:10px;color:var(--txt3);margin-top:3px">meta atual</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Add Member Modal (inline) -->
       <div id="addMemberPanel" style="display:none" class="admin-section">
         <div class="admin-section-title" id="addMemberTitle">➕ Novo Membro</div>
@@ -1213,9 +1388,72 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     </div>
   </div>
 
+  <div class="page" id="page-performance"><div class="perf-page" id="perfPageContent"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Carregando...</div></div></div></div>
+  <!-- ═══ CHAT INTERNO ═══ -->
+  <div class="page" id="page-chat">
+    <div style="display:flex;height:100%;overflow:hidden">
+      <!-- Sidebar: channels/members -->
+      <div id="chat-sidebar" style="width:220px;flex-shrink:0;border-right:1px solid var(--b2);display:flex;flex-direction:column;background:var(--s1)">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--b2)">
+          <div style="font-size:11px;font-weight:700;color:var(--txt2);font-family:var(--mono);letter-spacing:1px">CHAT INTERNO</div>
+          <div style="font-size:9px;color:var(--txt3);font-family:var(--mono);margin-top:2px">SDR ↔ Closer</div>
+        </div>
+        <!-- Channels -->
+        <div style="padding:8px 10px 4px">
+          <div style="font-size:9px;color:var(--txt3);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">CANAIS</div>
+          <div id="chat-channel-list" style="display:flex;flex-direction:column;gap:2px"></div>
+        </div>
+        <!-- Online members -->
+        <div style="padding:8px 10px 4px;margin-top:8px">
+          <div style="font-size:9px;color:var(--txt3);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">EQUIPE</div>
+          <div id="chat-member-list" style="display:flex;flex-direction:column;gap:4px"></div>
+        </div>
+      </div>
+      <!-- Main chat area -->
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+        <!-- Chat header -->
+        <div id="chat-header" style="padding:12px 16px;border-bottom:1px solid var(--b2);display:flex;align-items:center;gap:10px;background:var(--s1);flex-shrink:0">
+          <div style="font-size:13px;font-weight:700" id="chat-header-name"># geral</div>
+          <div style="font-size:10px;color:var(--txt3)" id="chat-header-desc">Canal geral da equipe</div>
+        </div>
+        <!-- Messages area -->
+        <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:2px">
+          <div id="chat-empty" style="margin:auto;text-align:center;opacity:.4">
+            <div style="font-size:40px;margin-bottom:8px">💬</div>
+            <div style="font-size:13px;color:var(--txt2)">Nenhuma mensagem ainda</div>
+          </div>
+        </div>
+        <!-- Input area -->
+        <div style="padding:12px 16px;border-top:1px solid var(--b2);background:var(--s1);flex-shrink:0">
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <div style="flex:1;background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:10px 14px">
+              <textarea id="chat-input" rows="1" placeholder="Mensagem…"
+                style="background:none;border:none;outline:none;color:var(--txt);font-family:var(--sans);font-size:13px;resize:none;width:100%;line-height:1.5;max-height:120px;overflow-y:auto"
+                oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend();}"></textarea>
+            </div>
+            <button onclick="chatSend()" style="width:40px;height:40px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:.15s" onmouseover="this.style.background='var(--green-d)'" onmouseout="this.style.background='var(--green)'">↑</button>
+          </div>
+          <div style="font-size:10px;color:var(--txt3);font-family:var(--mono);margin-top:4px">Enter para enviar · Shift+Enter para nova linha</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CLOSER PERFORMANCE IA ═══ -->
+  <div class="page" id="page-closerperf">
+    <div class="closer-page" id="closerPerfContent">
+      <div style="text-align:center;padding:40px;color:var(--txt3)">Carregando...</div>
+    </div>
+  </div>
+
 </div><!-- shell -->
 
 <script>
+
+
+
+
 // ══════════════════════════════════════════════════════════════════
 // STORAGE
 // ══════════════════════════════════════════════════════════════════
@@ -1399,9 +1637,9 @@ function saveTeamMembers(){ LS.set('teamMembers', JSON.stringify(teamMembers)); 
 // ══════════════════════════════════════════════════════════════════
 // Per architecture: SDR never sees Kanban Admin, Closer tabs
 const PROFILE_TABS={
-  sdr:    ['dialer','wa','rank','kanban'],
-  closer: ['closer','agenda'],
-  admin:  ['dialer','wa','closer','kanban','rank','agenda','admin']
+  sdr:    ['dialer','rank','performance','kanban','chat'],
+  closer: ['closer','kanban','closerperf','chat'],
+  admin:  ['dialer','wa','closer','kanban','closerperf','rank','performance','chat','admin']
 };
 // SDR sees only these Kanban columns (CRM view)
 const KB_STAGES_SDR=[
@@ -1580,14 +1818,18 @@ function applyProfile(){
 // COMMISSION — R$5 comparecimento / R$10 fechamento
 // ══════════════════════════════════════════════════════════════════
 let commissions=JSON.parse(LS.get('commissions','{"comparecimentos":0,"fechamentos":0,"totalHoje":0}'));
-function creditCommission(type){
-  const amount=type==='comparecimento'?5:10;
+function creditCommission(type,leadId){
+  const amount=type==='comparecimento'?5:type==='fechamento'?10:50;
   commissions.comparecimentos=(commissions.comparecimentos||0)+(type==='comparecimento'?1:0);
   commissions.fechamentos=(commissions.fechamentos||0)+(type==='fechamento'?1:0);
   commissions.totalHoje=(commissions.totalHoje||0)+amount;
+  // Log commission event
+  if(!commissions.history)commissions.history=[];
+  commissions.history.push({type,amount,leadId:leadId||null,date:TODAY,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),sdr:currentProfileName||cfg.name||'—'});
   LS.set('commissions',JSON.stringify(commissions));
   updateCommissionBar();
-  toast('💰 +R$'+amount.toFixed(2)+' — '+type,'ok');
+  const label=type==='venda_ganha'?'Venda Ganha':type==='comparecimento'?'Comparecimento':'Fechamento';
+  toast('💰 +R$'+amount.toFixed(2)+' — '+label,'ok');
 }
 function updateCommissionBar(){
   const total=commissions.totalHoje||0,comp=commissions.comparecimentos||0,fech=commissions.fechamentos||0,meta=100;
@@ -1624,6 +1866,21 @@ let waHistory=JSON.parse(LS.get('waHist','[]'));
 let importedLists=JSON.parse(LS.get('imported_lists','[]'));
 let selectedLeadType='quente'; // default to hot
 let selectedFile=null;
+const CLOSER_STAGES=[
+  'Reunião Agendada','Reunião Confirmada','Em Negociação',
+  'Venda Ganha','Venda Perdida'
+];
+const CLOSER_STAGE_COLORS={
+  'Reunião Agendada':'#f59e0b',
+  'Reunião Confirmada':'#10b981',
+  'Em Negociação':'#ec4899',
+  'Venda Ganha':'#00e87a',
+  'Venda Perdida':'#ef4444'
+};
+let closerKbTab='reunioes'; // reunioes | kanban | performance
+let closerStatusFilter='andamento'; // andamento | ganhos | perdidos
+let closerFunnelFilter='all'; // all | quente | frio
+let closerStageFilter='all'; // all | agendada | confirmada
 let kbFilter='all';
 let sdrKbView='andamento'; // 'andamento' | 'perdidas' | 'vendidas'
 let sdrFunnelFilter='all'; // 'all' | 'quente' | 'frio'
@@ -1654,6 +1911,10 @@ const ACHIEVEMENTS_DEF=[
 ];
 
 
+
+
+// ══════════════════════════════════════════════════════════════════
+// TAB NAVIGATION
 // ══════════════════════════════════════════════════════════════════
 // TAB NAVIGATION
 // ══════════════════════════════════════════════════════════════════
@@ -1665,8 +1926,10 @@ function setTab(name,el){
   if(name==='kanban')renderKanban();
   if(name==='wa')renderWAPage();
   if(name==='rank'){renderRanking();updateCommissionBar();}
-  if(name==='agenda')renderAgenda();
-  if(name==='admin'){renderImportedTable();renderAdminMetrics();}
+  if(name==='performance')renderPerformancePage();
+  if(name==='closerperf')renderCloserPerfPage();
+  if(name==='chat')renderChat();
+  if(name==='admin'){renderImportedTable();renderAdminMetrics();updateAdminGoalDisplay();}
   if(name==='closer')renderCloserPage();
 }
 
@@ -1697,16 +1960,16 @@ function renderKanban(){
   const kbTitle=document.getElementById('kb-title-lbl');
   const kbSub=document.getElementById('kb-subtitle-lbl');
   const sdrViewLabels={andamento:'🔵 Em Andamento — Fila · Contato Futuro · Qualificações · Reuniões',perdidas:'❌ Perdidas — leads que não fecharam',vendidas:'✅ Vendidas — fechamentos confirmados'};
-  if(kbTitle){kbTitle.textContent=currentProfile==='sdr'?'CRM — Meus Leads':'Pipeline GFB';}
-  if(kbSub){kbSub.textContent=currentProfile==='sdr'?(sdrViewLabels[sdrKbView]||''):'Kanban completo · '+KB_STAGES.length+' colunas';}
+  if(kbTitle){kbTitle.textContent=currentProfile==='sdr'?'CRM — Meus Leads':currentProfile==='closer'?'CRM Kanban — Closer':'Pipeline GFB';}
+  if(kbSub){kbSub.textContent=currentProfile==='sdr'?(sdrViewLabels[sdrKbView]||''):currentProfile==='closer'?'Reunião Agendada → Confirmada → Negociação → Resultado':'Kanban completo · '+KB_STAGES.length+' colunas';}
   leads.forEach(normStage);
   // Show/hide filter bars
   const sdrTabs=document.getElementById('sdr-kb-tabs');
   const adminTabs=document.getElementById('admin-kb-tabs');
   if(sdrTabs)sdrTabs.style.display=currentProfile==='sdr'?'inline-flex':'none';
-  if(adminTabs)adminTabs.style.display=currentProfile==='sdr'?'none':'inline-flex';
+  if(adminTabs)adminTabs.style.display=(currentProfile==='admin')?'inline-flex':'none';
 
-  // SDR: 3 views (andamento/perdidas/vendidas); Admin: full pipeline + funnel filter
+  // SDR: 3 views; Closer: closer pipeline only; Admin: full pipeline
   let stagesToShow, filtered;
   if(currentProfile==='sdr'){
     const viewMap={
@@ -1716,6 +1979,9 @@ function renderKanban(){
     };
     stagesToShow=viewMap[sdrKbView]||viewMap.andamento;
     filtered=sdrFunnelFilter==='all'?leads:leads.filter(l=>(l.leadType||'frio')===sdrFunnelFilter);
+  } else if(currentProfile==='closer'){
+    stagesToShow=['Reunião Agendada','Reunião Confirmada','Em Negociação','Vendas Ganhas','Vendas Perdidas'];
+    filtered=leads;
   } else {
     stagesToShow=KB_STAGES;
     filtered=kbFilter==='all'?leads:leads.filter(l=>(l.leadType||'frio')===kbFilter);
@@ -1723,24 +1989,66 @@ function renderKanban(){
   board.innerHTML=stagesToShow.map(stage=>{
     const sl=filtered.filter(l=>l.stage===stage);
     const c=KB_COLORS[stage]||'#7a94b0';
-    return`<div class="kb-col">
+    return`<div class="kb-col" data-stage="${stage}"
+      ondragover="event.preventDefault();this.querySelector('.kb-cards').style.background='${c}18'"
+      ondragleave="this.querySelector('.kb-cards').style.background=''"
+      ondrop="kbDrop(event,'${stage}')">
       <div class="kb-col-hdr" style="border-color:${c}22;background:${c}0d">
         <span class="kb-col-title" style="color:${c}">${stage}</span>
         <span class="kb-count" style="background:${c}22;color:${c}">${sl.length}</span>
       </div>
-      <div class="kb-cards">
+      <div class="kb-cards" style="transition:background .15s">
         ${sl.length?sl.map(l=>{
           const act=leads.indexOf(l)===curIdx;
           const tl=(l.leadType||'frio')==='quente'?'🔥 ':'❄️ ';
-          return`<div class="kb-card${act?' calling':''}" onclick="openLeadDetail('${l.id}')">
-            <div class="kb-cn">${tl}${l.name}</div>
-            <div class="kb-cm">${l.company||'—'} · ${l.attemptsToday||0}x · D+${l.cadenceDay||0}</div>
-            ${l.lastResult?`<div class="kb-note">${l.lastResult}</div>`:''}
+          const cardPhone=(l.phone||'').replace(/\D/g,'');
+          const hasCallTime=l.scheduledCallTime;
+          return`<div class="kb-card${act?' calling':''}"
+            draggable="true"
+            ondragstart="kbDragStart(event,'${l.id}')"
+            ondragend="kbDragEnd(event)"
+            style="position:relative;cursor:grab">
+            <div onclick="openLeadDetail('${l.id}')" style="cursor:pointer">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+                <div class="kb-cn">${tl}${l.name}</div>
+                ${hasCallTime?`<div style="font-family:var(--mono);font-size:9px;padding:1px 5px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:4px;color:var(--yellow)">⏰ ${l.scheduledCallTime}</div>`:''}
+              </div>
+              <div class="kb-cm">${l.company||'—'} · D+${l.cadenceDay||0}</div>
+              ${l.aiScore?`<div style="font-family:var(--mono);font-size:8px;color:${l.aiScore>=60?'var(--green)':l.aiScore>=35?'var(--yellow)':'var(--red)'};margin-top:2px">Score: ${l.aiScore}%</div>`:''}
+              ${l.observations?`<div style="font-size:9px;color:var(--txt3);margin-top:3px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📝 ${l.observations.substring(0,38)}</div>`:''}
+              ${l.lastResult&&l.lastResult!==stage?`<div class="kb-note">${l.lastResult}</div>`:''}
+            </div>
+            <div style="display:flex;gap:4px;margin-top:6px">
+              <button onclick="event.stopPropagation();dialLeadMicroSIP('${cardPhone}')" style="padding:3px 8px;border-radius:5px;background:rgba(0,232,122,.1);border:1px solid rgba(0,232,122,.2);color:var(--green);font-size:10px;cursor:pointer" title="Ligar via MicroSIP">📞</button>
+              <button onclick="event.stopPropagation();openWAFromDetail('${cardPhone}','${(l.name||'').replace(/'/g,"\\'")}','${l.cadenceDay||0}')" style="padding:3px 8px;border-radius:5px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.2);color:#25d366;font-size:10px;cursor:pointer" title="WhatsApp">💬</button>
+              <button onclick="event.stopPropagation();openLeadDetail('${l.id}')" style="flex:1;padding:3px 7px;border-radius:5px;background:var(--s3);border:1px solid var(--b2);color:var(--txt3);font-size:9px;cursor:pointer">↗ Ver</button>
+            </div>
+            ${currentProfile==='closer'?`<div style="display:flex;gap:3px;margin-top:4px">
+              ${l.stage==='Reunião Agendada'?`<button onclick="event.stopPropagation();quickMoveStage('`+l.id+`','Reunião Confirmada');renderKanban();renderCloserPage()" style="flex:1;padding:4px;border-radius:5px;border:none;background:rgba(16,185,129,.2);color:#10b981;font-size:9px;font-weight:700;cursor:pointer">✅ Confirmar</button>`:''}
+              ${(l.stage==='Reunião Confirmada'||l.stage==='Reunião Agendada'||l.stage==='Em Negociação')?`<button onclick="event.stopPropagation();quickMoveStage('`+l.id+`','Vendas Ganhas');renderKanban();renderCloserPage()" style="flex:1;padding:4px;border-radius:5px;border:none;background:rgba(0,232,122,.2);color:var(--green);font-size:9px;font-weight:700;cursor:pointer">🏆</button><button onclick="event.stopPropagation();quickMoveStage('`+l.id+`','Vendas Perdidas');renderKanban();renderCloserPage()" style="flex:1;padding:4px;border-radius:5px;border:none;background:rgba(239,68,68,.2);color:var(--red);font-size:9px;font-weight:700;cursor:pointer">❌</button>`:''}
+            </div>`:''}
           </div>`;
-        }).join('')+'':`<div class="kb-empty">Vazio</div>`}
+        }).join(''):`<div class="kb-empty">Solte aqui</div>`}
       </div>
     </div>`;
   }).join('');
+}
+
+let _kbDragId=null;
+function kbDragStart(e,id){_kbDragId=id;e.target.style.opacity='.4';e.dataTransfer.effectAllowed='move';}
+function kbDragEnd(e){e.target.style.opacity='1';document.querySelectorAll('.kb-cards').forEach(c=>c.style.background='');}
+function kbDrop(e,stage){
+  e.preventDefault();e.currentTarget.querySelector('.kb-cards').style.background='';
+  if(!_kbDragId)return;
+  const l=leads.find(x=>x.id===_kbDragId);
+  if(!l||l.stage===stage)return;
+  l.stage=stage;
+  if(stage==='Compareceu')creditCommission('comparecimento');
+  if(stage==='Vendas Ganhas'){creditCommission('fechamento');l.closerResult='Fechou';l.closerResultDate=TODAY;}
+  LS.set('leads',JSON.stringify(leads));
+  renderKanban();
+  toast('Card movido → '+stage,'ok');
+  _kbDragId=null;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1756,82 +2064,141 @@ function openLeadDetail(id){
 }
 function closeLeadDetail(){document.getElementById('leadDetailOverlay').classList.remove('open');}
 function renderLeadDetailBody(l){
+  normStage(l);
   const isQ=(l.leadType||'frio')==='quente';
   const tc=isQ?'var(--yellow)':'var(--blue2)';
   const tl=isQ?'🔥 QUENTE':'❄️ FRIO';
   const canEdit=currentProfile==='closer'||currentProfile==='admin';
   const leadAg=agendamentos.find(ag=>ag.leadPhone===l.phone||ag.leadName===l.name);
+  const phoneClean=(l.phone||'').replace(/\D/g,'');
   const body=document.getElementById('ldpBody');
   body.innerHTML=`
+    <!-- HEADER ACTIONS: call via MicroSIP + move stage -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="dialLeadMicroSIP('${phoneClean}')" style="flex:1;padding:10px 12px;border-radius:10px;background:rgba(0,232,122,.12);border:1.5px solid rgba(0,232,122,.35);color:var(--green);font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px" title="Ligar via MicroSIP">
+        📞 Ligar — ${fmtPhone(l.phone)}
+      </button>
+      <button onclick="openWAFromDetail('${phoneClean}','${(l.name||'').replace(/'/g,"\\'")}','${l.cadenceDay||0}')" style="padding:10px 14px;border-radius:10px;background:rgba(37,211,102,.10);border:1.5px solid rgba(37,211,102,.3);color:#25d366;font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer" title="WhatsApp">💬</button>
+    </div>
+
+    <!-- DADOS -->
     <div class="ldp-section">
       <div class="ldp-section-title">Dados do Lead</div>
       <div class="ldp-grid2">
         <div class="ldp-field"><div class="ldp-field-lbl">Funil</div><div class="ldp-field-val" style="color:${tc}">${tl}</div></div>
-        <div class="ldp-field"><div class="ldp-field-lbl">Etapa</div><div class="ldp-field-val">${l.stage}</div></div>
+        <div class="ldp-field"><div class="ldp-field-lbl">Etapa atual</div><div class="ldp-field-val">${l.stage}</div></div>
         <div class="ldp-field"><div class="ldp-field-lbl">Telefone</div><div class="ldp-field-val">${fmtPhone(l.phone)}</div></div>
         <div class="ldp-field"><div class="ldp-field-lbl">Empresa</div><div class="ldp-field-val">${l.company||'—'}</div></div>
         <div class="ldp-field"><div class="ldp-field-lbl">Cadência</div><div class="ldp-field-val">D+${l.cadenceDay||0}</div></div>
         <div class="ldp-field"><div class="ldp-field-lbl">Tentativas</div><div class="ldp-field-val">${l.attemptsToday||0}</div></div>
       </div>
     </div>
-    ${leadAg?`<div class="ldp-section">
-      <div class="ldp-section-title">Reunião Agendada</div>
+
+    <!-- MOVER ESTÁGIO — sempre visível -->
+    <div class="ldp-section">
+      <div class="ldp-section-title">↗ Mover no Kanban</div>
+      <select class="ldp-move-select" id="ldpMoveStage">
+        ${KB_STAGES.map(st=>`<option value="${st}"${st===l.stage?' selected':''}>${st}</option>`).join('')}
+      </select>
+      <button class="ldp-move-btn" onclick="moveLeadStage('${l.id}')">↗ Mover Card</button>
+      <!-- Quick stage buttons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+        ${['Entrar em Contato Futuramente','Qualificações Agendadas','Reunião Agendada','Reunião Confirmada','Compareceu','Vendas Ganhas'].map(st=>`<button onclick="quickMoveStage('${l.id}','${st}')" style="padding:7px 8px;border-radius:8px;border:1px solid var(--b2);background:${l.stage===st?'rgba(0,232,122,.12)':'var(--s3)'};color:${l.stage===st?'var(--green)':'var(--txt3)'};font-family:var(--sans);font-size:10px;font-weight:700;cursor:pointer;transition:.15s;text-align:center">${st}</button>`).join('')}
+      </div>
+    </div>
+
+    <!-- SMART TASK PANEL — pre-defined by stage -->
+    <div class="ldp-section">
+      <div class="ldp-section-title">⚡ Ação Rápida — Criar Tarefa</div>
+      ${renderSmartTaskButtons(l)}
+    </div>
+
+    <!-- TAREFAS AGENDADAS -->
+    ${renderLeadScheduledTasks(l)}
+
+    <!-- OBSERVAÇÕES + HISTÓRICO -->
+    <div class="ldp-section">
+      <div class="ldp-section-title">📝 Observações</div>
+      <textarea id="ldpObsText" style="width:100%;min-height:80px;padding:10px 12px;background:var(--s3);border:1px solid var(--b2);border-radius:8px;color:var(--txt);font-family:var(--sans);font-size:12px;resize:vertical;outline:none;line-height:1.6" placeholder="Adicionar observação..."></textarea>
+      <button onclick="saveObservations('${l.id}')" style="width:100%;margin-top:7px;padding:9px;border-radius:8px;border:none;background:var(--green);color:#000;font-family:var(--sans);font-size:12px;font-weight:800;cursor:pointer">💾 Salvar observação</button>
+      ${(l.obsHistory||[]).length>0?`
+      <div style="margin-top:10px">
+        <div style="font-size:9px;color:var(--txt3);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Histórico</div>
+        ${(l.obsHistory||[]).slice().reverse().map(o=>`
+          <div style="padding:7px 10px;background:var(--s3);border-radius:7px;margin-bottom:5px;border-left:2px solid var(--b3)">
+            <div style="font-size:10px;color:var(--txt3);font-family:var(--mono);margin-bottom:3px">${o.date} · ${o.author}</div>
+            <div style="font-size:12px;color:var(--txt2);line-height:1.5">${o.text}</div>
+          </div>`).join('')}
+      </div>`:''}
+    </div>
+
+    <!-- REUNIÃO AGENDADA — só em stages relevantes -->
+    ${leadAg&&['Reunião Agendada','Reunião Confirmada','Compareceu','Não Compareceu','Em Negociação','Vendas Ganhas','Vendas Perdidas'].includes(l.stage)?`<div class="ldp-section">
+      <div class="ldp-section-title">📅 Reunião Agendada</div>
       <div class="ldp-grid2">
         <div class="ldp-field"><div class="ldp-field-lbl">Data</div><div class="ldp-field-val">${leadAg.date}</div></div>
         <div class="ldp-field"><div class="ldp-field-lbl">Horário</div><div class="ldp-field-val">${leadAg.slot}</div></div>
         <div class="ldp-field"><div class="ldp-field-lbl">Closer</div><div class="ldp-field-val">${leadAg.consultorName||leadAg.consultor||'—'}</div></div>
-        <div class="ldp-field"><div class="ldp-field-lbl">Status</div><div class="ldp-field-val" style="color:${l.stage==='Reunião Confirmada'?'var(--green)':'var(--yellow)'}">${l.stage==='Reunião Confirmada'?'✅ Confirmado':'⏳ Aguardando'}</div></div>
+        <div class="ldp-field"><div class="ldp-field-lbl">Produto</div><div class="ldp-field-val" style="color:var(--green);font-size:11px">${leadAg.produto||l.qualification?.produto||'—'}</div></div>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:8px">
+        <button onclick="quickMoveStage('${l.id}','Reunião Confirmada')" style="flex:1;padding:9px;border-radius:8px;border:1.5px solid rgba(0,232,122,.4);background:rgba(0,232,122,.1);color:var(--green);font-family:var(--sans);font-size:12px;font-weight:800;cursor:pointer">✅ Confirmar Reunião</button>
+        <button onclick="quickMoveStage('${l.id}','Compareceu')" style="flex:1;padding:9px;border-radius:8px;border:1.5px solid rgba(59,130,246,.4);background:rgba(59,130,246,.1);color:var(--blue2);font-family:var(--sans);font-size:12px;font-weight:800;cursor:pointer">🤝 Compareceu</button>
       </div>
     </div>`:''}
+    <!-- AGENDAR LIGAÇÃO — em Qualificações Agendadas -->
+    ${l.stage==='Qualificações Agendadas'?`<div class="ldp-section" style="border-color:rgba(6,182,212,.25)">
+      <div class="ldp-section-title" style="color:#06b6d4">⏰ Agendar Horário da Ligação</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input type="time" id="ldpCallTime" value="${l.scheduledCallTime||''}" style="flex:1;background:var(--s3);border:1px solid var(--b2);border-radius:7px;padding:8px 10px;color:var(--txt);font-family:var(--mono);font-size:13px;outline:none">
+        <button onclick="saveCallTime('${l.id}')" style="padding:8px 14px;border-radius:8px;border:none;background:#06b6d4;color:#000;font-family:var(--sans);font-size:12px;font-weight:800;cursor:pointer">💾 Salvar</button>
+      </div>
+      ${l.scheduledCallTime?`<div style="font-size:11px;color:#06b6d4;font-family:var(--mono)">⏰ Horário salvo: ${l.scheduledCallTime}</div>`:''}
+    </div>`:''}
+
+    <!-- QUALIFICAÇÃO BANT (sempre visível se existir) -->
     ${l.qualification?`<div class="ldp-section">
-      <div class="ldp-section-title">Qualificação SDR (BANT)</div>
+      <div class="ldp-section-title">🎯 Qualificação BANT</div>
       <div class="ldp-grid2">
-        ${l.qualification.faturamento?`<div class="ldp-field"><div class="ldp-field-lbl">Faturamento</div><div class="ldp-field-val">R$ ${parseInt(l.qualification.faturamento).toLocaleString('pt-BR')}</div></div>`:''}
-        ${l.aiScore!==undefined?`<div class="ldp-field"><div class="ldp-field-lbl">Score IA</div><div class="ldp-field-val" style="color:var(--green)">${l.aiScore}%</div></div>`:''}
-        ${l.qualification.desafio?`<div class="ldp-field" style="grid-column:span 2"><div class="ldp-field-lbl">Desafio</div><div class="ldp-field-val" style="font-size:12px;font-weight:400">${l.qualification.desafio.substring(0,100)}</div></div>`:''}
-        ${l.qualification.dor?`<div class="ldp-field" style="grid-column:span 2"><div class="ldp-field-lbl">Dor Oculta</div><div class="ldp-field-val" style="font-size:12px;font-weight:400">${l.qualification.dor.substring(0,100)}</div></div>`:''}
+        ${l.qualification.faturamento?`<div class="ldp-field"><div class="ldp-field-lbl">Faturamento</div><div class="ldp-field-val" style="color:var(--green)">R$ ${parseInt(l.qualification.faturamento).toLocaleString('pt-BR')}</div></div>`:''}
+        ${l.aiScore!==undefined?`<div class="ldp-field"><div class="ldp-field-lbl">Score IA</div><div class="ldp-field-val" style="color:${l.aiScore>=60?'var(--green)':l.aiScore>=35?'var(--yellow)':'var(--red)'}">${l.aiScore}%</div></div>`:''}
+        ${l.qualification.desafio?`<div class="ldp-field" style="grid-column:span 2"><div class="ldp-field-lbl">Desafio</div><div class="ldp-field-val" style="font-size:11px;font-weight:400">${l.qualification.desafio.substring(0,120)}</div></div>`:''}
+        ${l.qualification.dor?`<div class="ldp-field" style="grid-column:span 2"><div class="ldp-field-lbl">Dor Oculta</div><div class="ldp-field-val" style="font-size:11px;font-weight:400;color:var(--yellow)">${l.qualification.dor.substring(0,120)}</div></div>`:''}
+        ${l.qualification.negocio?`<div class="ldp-field" style="grid-column:span 2"><div class="ldp-field-lbl">Negócio</div><div class="ldp-field-val" style="font-size:11px;font-weight:400">${l.qualification.negocio.substring(0,120)}</div></div>`:''}
       </div>
-    </div>`:''}
+      <button onclick="viewFullQualification('${l.id}')" style="width:100%;margin-top:8px;padding:9px;border-radius:8px;border:1px solid rgba(139,92,246,.35);background:rgba(139,92,246,.08);color:var(--purple);font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer">📄 Ver qualificação completa</button>
+    </div>`:`<div class="ldp-section" style="border-color:rgba(245,158,11,.2)">
+      <div class="ldp-section-title" style="color:var(--yellow)">⚠️ Sem qualificação</div>
+      <div style="font-size:11px;color:var(--txt3);font-family:var(--mono)">SDR ainda não qualificou este lead via SDR IA.</div>
+    </div>`}
+
+    <!-- HISTÓRICO DE LIGAÇÕES -->
     <div class="ldp-section">
-      <div class="ldp-section-title">Histórico de Ligações</div>
+      <div class="ldp-section-title">📞 Histórico de Ligações</div>
       ${(l.callHistory||[]).length===0?
         '<div style="font-size:11px;color:var(--txt3);text-align:center;padding:8px;font-family:var(--mono)">Nenhuma ligação registrada</div>':
         (l.callHistory||[]).slice(-5).reverse().map(c=>`
         <div class="ldp-call-item">
-          <div style="min-width:36px;height:36px;border-radius:8px;background:rgba(0,232,122,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:800;color:var(--green);flex-shrink:0">${c.score||'—'}</div>
+          <div style="min-width:36px;height:36px;border-radius:8px;background:${c.result==='Agendou'?'rgba(0,232,122,.12)':'rgba(245,158,11,.1)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${c.result==='Agendou'?'📅':c.result==='Não Atendeu'?'📵':'⚠'}</div>
           <div style="flex:1"><div style="font-size:12px;font-weight:600">${c.result||'—'} · ${c.sdr||'—'}</div><div style="font-size:10px;color:var(--txt3);font-family:var(--mono)">${c.date||'—'} · ${c.duration||'—'}</div></div>
+          ${c.score&&c.score!=='—'?`<div style="font-family:var(--mono);font-size:11px;font-weight:700;color:${c.score>=60?'var(--green)':c.score>=35?'var(--yellow)':'var(--red)'}">${c.score}%</div>`:''}
         </div>`).join('')
       }
     </div>
-    <div class="ldp-section">
-      <div class="ldp-section-title">Aquecimento WhatsApp</div>
-      ${[{type:'D-1 às 10h',key:'wa_d1'},{type:'Dia 08h',key:'wa_08h'},{type:'R-4h',key:'wa_r4h'},{type:'R-2h',key:'wa_r2h'}].map(msg=>`
-        <div class="ldp-wa-msg">
-          <span style="font-size:11px;color:var(--txt2)">${msg.type}</span>
-          <span class="ldp-wa-status ${l[msg.key]?'sent':'pending'}">${l[msg.key]?'✓ Enviado':'⏳ Pendente'}</span>
-        </div>`).join('')}
-    </div>
+
+    <!-- CLOSER: resultado -->
     ${canEdit?`
     <div class="ldp-section">
-      <div class="ldp-section-title">Documentação do Closer</div>
-      <textarea class="ldp-closer-notes" id="ldpCloserNotes" placeholder="Objeções, próximos passos, contexto...">${l.closerNotes||''}</textarea>
-      <div style="font-size:10px;color:var(--txt3);font-family:var(--mono);margin:8px 0 6px">Resultado da reunião:</div>
+      <div class="ldp-section-title">🤝 Resultado do Closer</div>
       <div class="ldp-result-btns">
         <div class="ldp-result-btn${l.closerResult==='Fechou'||l.stage==='Vendas Ganhas'?' sel':''}" onclick="setCloserResult('${l.id}','Fechou')">✅ Venda Ganha</div>
         <div class="ldp-result-btn${l.closerResult==='Perdeu'||l.stage==='Vendas Perdidas'?' sel':''}" onclick="setCloserResult('${l.id}','Perdeu')">❌ Venda Perdida</div>
         <div class="ldp-result-btn${l.closerResult==='Follow'?' sel':''}" onclick="setCloserResult('${l.id}','Follow')">📅 Follow-up</div>
       </div>
-      <button class="ldp-move-btn" onclick="saveLeadDetail('${l.id}')" style="margin-top:10px">💾 Salvar notas</button>
-    </div>
-    <div class="ldp-section">
-      <div class="ldp-section-title">Mover Card</div>
-      <select class="ldp-move-select" id="ldpMoveStage">
-        ${KB_STAGES.map(st=>`<option value="${st}"${st===l.stage?' selected':''}>  ${st}</option>`).join('')}
-      </select>
-      <button class="ldp-move-btn" onclick="moveLeadStage('${l.id}')">↗ Mover</button>
     </div>`:''}
   `;
 }
+
 function setCloserResult(id,result){
   const l=leads.find(x=>x.id===id);if(!l)return;
   l.closerResult=result;l.closerResultDate=TODAY;
@@ -1859,49 +2226,246 @@ function moveLeadStage(id){
 // CLOSER PAGE
 // ══════════════════════════════════════════════════════════════════
 function renderCloserPage(){
-  const container=document.getElementById('closerPageContent');if(!container)return;
-  const now=new Date();
-  const todayAgs=agendamentos.filter(ag=>ag.date===TODAY);
-  const upcoming=todayAgs.map(ag=>({...ag,dt:new Date(ag.date+'T'+ag.slot+':00')})).filter(ag=>ag.dt>=now).sort((a,b)=>a.dt-b.dt);
-  const next=upcoming[0]||null;
-  const closedToday=leads.filter(l=>(l.closerResult==='Fechou'||l.stage==='Vendas Ganhas')&&l.closerResultDate===TODAY).length;
-  const rateToday=todayAgs.length>0?Math.round((closedToday/todayAgs.length)*100):0;
-  container.innerHTML=`
-    <div class="closer-metrics-row">
-      <div class="closer-metric-card"><div class="cmc-val" style="color:var(--blue2)">${todayAgs.length}</div><div class="cmc-lbl">Reuniões hoje</div></div>
-      <div class="closer-metric-card"><div class="cmc-val" style="color:var(--green)">${closedToday}</div><div class="cmc-lbl">Fechamentos</div></div>
-      <div class="closer-metric-card"><div class="cmc-val" style="color:${rateToday>=40?'var(--green)':rateToday>=25?'var(--yellow)':'var(--red)'}">${rateToday}%</div><div class="cmc-lbl">Taxa conv.</div></div>
-    </div>
-    ${next?`<div class="closer-next-card">
-      <div class="closer-next-label">⚡ PRÓXIMA REUNIÃO</div>
-      <div class="closer-next-time">${next.slot}</div>
-      <div style="font-size:14px;font-weight:800;margin-bottom:4px">${next.leadName}</div>
-      <div style="font-size:11px;color:var(--txt3);margin-bottom:12px">em ${Math.max(0,Math.round((next.dt-now)/60000))} minutos</div>
-      <button onclick="openLeadDetail(leads.find(l=>l.phone===next.leadPhone||l.name===next.leadName)?.id||'')" style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:var(--yellow);padding:10px 16px;border-radius:10px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer">📋 Ver Histórico Completo do Lead</button>
-    </div>`
-    :'<div style="background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:20px;text-align:center;color:var(--txt3)">✅ Nenhuma reunião pendente hoje</div>'}
-    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);font-family:var(--mono);margin-bottom:8px">📅 AGENDA DE HOJE</div>
-    ${todayAgs.length===0?'<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Nenhum agendamento para hoje.</div>'
-    :todayAgs.map(ag=>{
-      const lo=leads.find(l=>l.phone===ag.leadPhone||l.name===ag.leadName);
-      const isNext=next&&ag.id===next.id;
-      const isConf=lo?.stage==='Reunião Confirmada';
-      return`<div class="closer-agenda-item${isNext?' next-meeting':''}" onclick="lo&&openLeadDetail('${lo?.id||''}')">
-        <div class="cai-time">${ag.slot}</div>
-        <div style="flex:1">
-          <div class="cai-name">${ag.leadName}</div>
-          <div class="cai-meta">${lo?.company||'—'} · ${(lo?.leadType||'frio')==='quente'?'🔥 QUENTE':'❄️ FRIO'}${lo?.aiScore?' · Score: '+lo.aiScore+'%':''}</div>
-        </div>
-        <span class="cai-status ${isConf?'confirmed':'pending'}">${isConf?'✅':'⏳'}</span>
-      </div>`;
-    }).join('')}
-    <div style="background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:16px">
-      <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);font-family:var(--mono);margin-bottom:10px">💰 COMISSÃO ESTIMADA</div>
-      <div style="font-family:var(--mono);font-size:26px;font-weight:800;color:var(--green)">R$ ${(closedToday*50).toFixed(2).replace('.',',')}</div>
-      <div style="font-size:11px;color:var(--txt3);margin-top:4px">${closedToday} fechamento(s) × R$50</div>
-    </div>
-  `;
+  var container=document.getElementById('closerPageContent');
+  if(!container)return;
+  var todayStr=TODAY;
+  var closedToday=leads.filter(function(l){return (l.closerResult==='Fechou'||l.stage==='Vendas Ganhas')&&l.closerResultDate===todayStr;}).length;
+  var cmTotal=closedToday*50;
+
+  // Base pools by status filter
+  var pool;
+  if(closerStatusFilter==='ganhos'){
+    pool=leads.filter(function(l){return l.stage==='Vendas Ganhas'||l.closerResult==='Fechou';});
+  } else if(closerStatusFilter==='perdidos'){
+    pool=leads.filter(function(l){return l.stage==='Vendas Perdidas'||l.closerResult==='Perdeu';});
+  } else {
+    // andamento
+    pool=leads.filter(function(l){return l.stage==='Reunião Agendada'||l.stage==='Reunião Confirmada'||l.stage==='Em Negociação';});
+  }
+
+  // Funnel filter
+  if(closerFunnelFilter!=='all'){
+    pool=pool.filter(function(l){return (l.leadType||'frio')===closerFunnelFilter;});
+  }
+
+  // Stage filter (only applies in andamento)
+  var agendados, confirmados, negociacao, ganhos, perdidos;
+  if(closerStatusFilter==='andamento'){
+    if(closerStageFilter==='agendada'){
+      agendados=pool.filter(function(l){return l.stage==='Reunião Agendada';});
+      confirmados=[]; negociacao=[];
+    } else if(closerStageFilter==='confirmada'){
+      agendados=[];
+      confirmados=pool.filter(function(l){return l.stage==='Reunião Confirmada';});
+      negociacao=[];
+    } else {
+      agendados=pool.filter(function(l){return l.stage==='Reunião Agendada';});
+      confirmados=pool.filter(function(l){return l.stage==='Reunião Confirmada';});
+      negociacao=pool.filter(function(l){return l.stage==='Em Negociação';});
+    }
+    ganhos=[]; perdidos=[];
+  } else if(closerStatusFilter==='ganhos'){
+    agendados=[]; confirmados=[]; negociacao=[];
+    ganhos=pool; perdidos=[];
+  } else {
+    agendados=[]; confirmados=[]; negociacao=[];
+    ganhos=[]; perdidos=pool;
+  }
+
+  var totalAgendadas=leads.filter(function(l){return l.stage==='Reunião Agendada';}).length;
+  var totalConfirmadas=leads.filter(function(l){return l.stage==='Reunião Confirmada';}).length;
+
+  // ── Filter tab helper ────────────────────────────────────────
+  var ftab=function(label, key, currentVal, setter){
+    var active=currentVal===key;
+    return '<button onclick="'+setter+'=\''+key+'\';renderCloserPage()" style="padding:6px 14px;border-radius:20px;border:1px solid '
+      +(active?'rgba(0,232,122,.5)':'var(--b2)')
+      +';background:'+(active?'rgba(0,232,122,.12)':'transparent')
+      +';color:'+(active?'var(--green)':'var(--txt3)')
+      +';font-family:var(--sans);font-size:11px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap">'+label+'</button>';
+  };
+
+  // ── Card renderer ────────────────────────────────────────────
+  var renderCard=function(l,stageColor,stageLabel,actions){
+    var ag=agendamentos.find(function(a){return a.leadPhone===l.phone||a.leadName===l.name;});
+    var agSlot=ag?ag.slot:'—';
+    var agDate=ag?ag.date.slice(5).replace('-','/'):'';
+    var agProduto=(ag&&ag.produto)?ag.produto:((l.qualification&&l.qualification.produto)?l.qualification.produto:'');
+    var typeTag=(l.leadType||'frio')==='quente'?'🔥 Quente':'❄️ Frio';
+    var typeColor=(l.leadType||'frio')==='quente'?'var(--yellow)':'var(--blue2)';
+    var oc="openLeadDetail('"+l.id+"')";
+    var html='<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--s2);border:1px solid '
+      +stageColor+'33;border-radius:12px;margin-bottom:8px;cursor:pointer" onclick="'+oc+'">';
+    html+='<div style="min-width:56px;text-align:center;flex-shrink:0">';
+    html+='<div style="font-family:var(--mono);font-size:16px;font-weight:900;color:'+stageColor+'">'+agSlot+'</div>';
+    html+='<div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">'+agDate+'</div>';
+    html+='</div>';
+    html+='<div style="flex:1;min-width:0">';
+    html+='<div style="font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+l.name+'</div>';
+    html+='<div style="display:flex;align-items:center;gap:6px;margin-top:3px">';
+    html+='<span style="font-size:9px;padding:1px 7px;border-radius:10px;background:'+typeColor+'18;color:'+typeColor+';font-weight:700">'+typeTag+'</span>';
+    if(l.company) html+='<span style="font-size:10px;color:var(--txt3)">'+l.company+'</span>';
+    html+='</div>';
+    if(agProduto) html+='<div style="font-size:10px;color:var(--green);font-family:var(--mono);margin-top:3px">'+agProduto+'</div>';
+    html+='</div>';
+    html+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">';
+    html+='<span style="font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;background:'+stageColor+'18;color:'+stageColor+'">'+stageLabel+'</span>';
+    if(actions) html+=actions;
+    html+='</div></div>';
+    return html;
+  };
+
+  var makeOc=function(id,stage,extra){
+    return "event.stopPropagation();quickMoveStage('"+id+"','"+stage+"')"+(extra?';'+extra:'');
+  };
+
+  var html='';
+
+  // ── Metrics ──────────────────────────────────────────────────
+  html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">';
+  html+='<div class="closer-metric-card"><div class="cmc-val" style="color:var(--yellow)">'+totalAgendadas+'</div><div class="cmc-lbl">Agendadas</div></div>';
+  html+='<div class="closer-metric-card"><div class="cmc-val" style="color:#10b981">'+totalConfirmadas+'</div><div class="cmc-lbl">Confirmadas</div></div>';
+  html+='<div class="closer-metric-card"><div class="cmc-val" style="color:var(--green)">'+closedToday+'</div><div class="cmc-lbl">Fechamentos</div></div>';
+  html+='<div class="closer-metric-card"><div class="cmc-val" style="color:var(--green)">R$'+cmTotal.toFixed(0)+'</div><div class="cmc-lbl">Comissão hoje</div></div>';
+  html+='</div>';
+
+  // ── Filter row 1: Status ──────────────────────────────────────
+  html+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">';
+  html+=ftab('🔵 Em Andamento','andamento',closerStatusFilter,'closerStatusFilter');
+  html+=ftab('🏆 Ganhos','ganhos',closerStatusFilter,'closerStatusFilter');
+  html+=ftab('❌ Perdidos','perdidos',closerStatusFilter,'closerStatusFilter');
+  html+='</div>';
+
+  // ── Filter row 2: Funnel ──────────────────────────────────────
+  html+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">';
+  html+=ftab('Todos','all',closerFunnelFilter,'closerFunnelFilter');
+  html+=ftab('🔥 Quente','quente',closerFunnelFilter,'closerFunnelFilter');
+  html+=ftab('❄️ Frio','frio',closerFunnelFilter,'closerFunnelFilter');
+  html+='</div>';
+
+  // ── Filter row 3: Stage (only in andamento) ───────────────────
+  if(closerStatusFilter==='andamento'){
+    html+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">';
+    html+=ftab('Todas','all',closerStageFilter,'closerStageFilter');
+    html+=ftab('⏳ Agendadas','agendada',closerStageFilter,'closerStageFilter');
+    html+=ftab('✅ Confirmadas','confirmada',closerStageFilter,'closerStageFilter');
+    html+='</div>';
+  } else {
+    html+='<div style="margin-bottom:14px"></div>';
+  }
+
+  // ── Content by status ─────────────────────────────────────────
+  if(closerStatusFilter==='andamento'){
+
+    // REUNIÃO AGENDADA
+    if(closerStageFilter==='all'||closerStageFilter==='agendada'){
+      html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+      html+='<div style="width:10px;height:10px;border-radius:50%;background:var(--yellow)"></div>';
+      html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);font-family:var(--mono);font-weight:700">REUNIÃO AGENDADA</div>';
+      html+='<span style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:1px 8px;font-size:10px;color:var(--yellow)">'+agendados.length+'</span>';
+      html+='<div style="flex:1;height:1px;background:rgba(245,158,11,.2)"></div></div>';
+      if(agendados.length===0){
+        html+='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:14px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;margin-bottom:14px">Nenhuma reunião agendada</div>';
+      } else {
+        agendados.forEach(function(l){
+          var oc1=makeOc(l.id,'Reunião Confirmada','renderCloserPage()');
+          var actions='<button onclick="event.stopPropagation();'+oc1+'" style="font-size:10px;padding:5px 12px;border-radius:7px;border:none;background:rgba(16,185,129,.2);color:#10b981;cursor:pointer;font-weight:700">✅ Confirmar</button>';
+          html+=renderCard(l,'var(--yellow)','⏳ Agendada',actions);
+        });
+      }
+    }
+
+    // REUNIÃO CONFIRMADA
+    if(closerStageFilter==='all'||closerStageFilter==='confirmada'){
+      html+='<div style="display:flex;align-items:center;gap:8px;margin:'+(closerStageFilter==='all'?'16px':'0')+' 0 10px">';
+      html+='<div style="width:10px;height:10px;border-radius:50%;background:#10b981"></div>';
+      html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#10b981;font-family:var(--mono);font-weight:700">REUNIÃO CONFIRMADA</div>';
+      html+='<span style="background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:1px 8px;font-size:10px;color:#10b981">'+confirmados.length+'</span>';
+      html+='<div style="flex:1;height:1px;background:rgba(16,185,129,.2)"></div></div>';
+      if(confirmados.length===0){
+        html+='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:14px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;margin-bottom:14px">Nenhuma reunião confirmada</div>';
+      } else {
+        confirmados.forEach(function(l){
+          var oc2=makeOc(l.id,'Vendas Ganhas','renderCloserPage()');
+          var oc3=makeOc(l.id,'Vendas Perdidas','renderCloserPage()');
+          var actions='<div style="display:flex;gap:5px">'
+            +'<button onclick="event.stopPropagation();'+oc2+'" style="font-size:10px;padding:5px 10px;border-radius:7px;border:none;background:rgba(0,232,122,.2);color:var(--green);cursor:pointer;font-weight:700">🏆 Ganho</button>'
+            +'<button onclick="event.stopPropagation();'+oc3+'" style="font-size:10px;padding:5px 10px;border-radius:7px;border:none;background:rgba(239,68,68,.2);color:var(--red);cursor:pointer;font-weight:700">❌ Perdeu</button>'
+            +'</div>';
+          html+=renderCard(l,'#10b981','✅ Confirmada',actions);
+        });
+      }
+    }
+
+    // EM NEGOCIAÇÃO (shown only in 'all' filter)
+    if(closerStageFilter==='all'&&negociacao.length>0){
+      html+='<div style="display:flex;align-items:center;gap:8px;margin:16px 0 10px">';
+      html+='<div style="width:10px;height:10px;border-radius:50%;background:#ec4899"></div>';
+      html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#ec4899;font-family:var(--mono);font-weight:700">EM NEGOCIAÇÃO</div>';
+      html+='<span style="background:rgba(236,72,153,.15);border:1px solid rgba(236,72,153,.3);border-radius:10px;padding:1px 8px;font-size:10px;color:#ec4899">'+negociacao.length+'</span>';
+      html+='<div style="flex:1;height:1px;background:rgba(236,72,153,.2)"></div></div>';
+      negociacao.forEach(function(l){
+        var oc2=makeOc(l.id,'Vendas Ganhas','renderCloserPage()');
+        var oc3=makeOc(l.id,'Vendas Perdidas','renderCloserPage()');
+        var actions='<div style="display:flex;gap:5px">'
+          +'<button onclick="event.stopPropagation();'+oc2+'" style="font-size:10px;padding:5px 10px;border-radius:7px;border:none;background:rgba(0,232,122,.2);color:var(--green);cursor:pointer;font-weight:700">🏆 Ganho</button>'
+          +'<button onclick="event.stopPropagation();'+oc3+'" style="font-size:10px;padding:5px 10px;border-radius:7px;border:none;background:rgba(239,68,68,.2);color:var(--red);cursor:pointer;font-weight:700">❌ Perdeu</button>'
+          +'</div>';
+        html+=renderCard(l,'#ec4899','💼 Negociação',actions);
+      });
+    }
+
+  } else if(closerStatusFilter==='ganhos'){
+    html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+    html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-family:var(--mono);font-weight:700">🏆 VENDAS GANHAS</div>';
+    html+='<span style="background:rgba(0,232,122,.15);border:1px solid rgba(0,232,122,.3);border-radius:10px;padding:1px 8px;font-size:10px;color:var(--green)">'+ganhos.length+'</span>';
+    html+='<div style="flex:1;height:1px;background:rgba(0,232,122,.2)"></div></div>';
+    if(ganhos.length===0){
+      html+='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:14px;background:var(--s2);border:1px solid var(--b1);border-radius:10px">Nenhuma venda ganha ainda</div>';
+    } else {
+      ganhos.forEach(function(l){
+        html+=renderCard(l,'var(--green)','🏆 Ganho',null);
+      });
+    }
+  } else {
+    html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+    html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-family:var(--mono);font-weight:700">❌ VENDAS PERDIDAS</div>';
+    html+='<span style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:1px 8px;font-size:10px;color:var(--red)">'+perdidos.length+'</span>';
+    html+='<div style="flex:1;height:1px;background:rgba(239,68,68,.2)"></div></div>';
+    if(perdidos.length===0){
+      html+='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:14px;background:var(--s2);border:1px solid var(--b1);border-radius:10px">Nenhuma venda perdida</div>';
+    } else {
+      perdidos.forEach(function(l){
+        var oc1=makeOc(l.id,'Reunião Agendada','renderCloserPage()');
+        var actions='<button onclick="event.stopPropagation();'+oc1+'" style="font-size:10px;padding:5px 10px;border-radius:7px;border:none;background:rgba(245,158,11,.2);color:var(--yellow);cursor:pointer;font-weight:700">↩ Reativar</button>';
+        html+=renderCard(l,'var(--red)','❌ Perdida',actions);
+      });
+    }
+  }
+
+  container.innerHTML=html;
 }
+function closerKbDrop(e,stage){
+  e.preventDefault();e.currentTarget.style.background='';
+  if(!_kbDragId)return;
+  const l=leads.find(x=>x.id===_kbDragId);if(!l)return;
+  // Map closer stage to system stage
+  const stageMap={'Venda Ganha':'Vendas Ganhas','Venda Perdida':'Vendas Perdidas','Em Negociação':'Em Negociação','Reunião Confirmada':'Reunião Confirmada','Reunião Agendada':'Reunião Agendada'};
+  const sysStage=stageMap[stage]||stage;
+  l.stage=sysStage;
+  if(stage==='Venda Ganha'){
+    l.closerResult='Fechou';l.closerResultDate=TODAY;
+    creditCommission('fechamento');
+    // Also credit to SDR who scheduled
+    toast('🎉 Venda Ganha! Comissão creditada','ok');
+  } else if(stage==='Venda Perdida'){
+    l.closerResult='Perdeu';l.closerResultDate=TODAY;
+  }
+  LS.set('leads',JSON.stringify(leads));
+  renderCloserPage();
+  _kbDragId=null;
+}
+
 
 // ══════════════════════════════════════════════════════════════════
 // ADMIN METRICS (per architecture: separate funnels, real numbers)
@@ -2154,7 +2718,7 @@ function updateCommissionPrevista(){
   if(el('rankCm-prev-note'))el('rankCm-prev-note').textContent=`${pendingMeetings} reunião(ões) agendada(s) × ${attRate}% compare. × ${closeRate}% fecha. estimado`;
 }
 
-function renderAdminMetrics(){renderTeamManagement();renderAdminAlerts();renderAdminOverview();renderAdminFunnelTables();renderAdminCloserTable();renderAdminSdrTable();}
+function renderAdminMetrics(){updateAdminGoalDisplay();renderTeamManagement();renderAdminAlerts();renderAdminOverview();renderAdminFunnelTables();renderAdminCloserTable();renderAdminSdrTable();}
 function renderAdminAlerts(){
   const list=document.getElementById('adminAlertsList');if(!list)return;
   const alerts=[];
@@ -2270,26 +2834,20 @@ function renderScriptPanel(){
   const typeLabels={frio:'❄️ SCRIPT FRIO',quente:'🔥 SCRIPT QUENTE',recuperacao:'♻️ SCRIPT RECUPERAÇÃO'};
   spTitle.textContent=typeLabels[type]||'SCRIPT';
 
-  spDots.innerHTML=steps.map((_,i)=>`<div class="sp-dot${i<scriptStep?'done':i===scriptStep?'active':''}"></div>`).join('');
-
+  spDots.innerHTML=steps.map(function(_,i){return '<div class="sp-dot'+(i<scriptStep?' done':i===scriptStep?' active':'')+'">'+'</div>';}).join('');
   const step=steps[scriptStep];
   const cls=type;
   const leadFirstName=(l.name||'').split(' ')[0];
   const scriptText=(step.text||'').replace(/\{name\}/g,leadFirstName);
-
-  spBody.innerHTML=`
-    <div class="sp-step active">
-      <div class="sp-step-label ${cls}">${step.label}</div>
-      <div class="sp-text ${cls}">${scriptText}</div>
-      ${step.note?`<div class="sp-note">💡 ${step.note}</div>`:''}
-      <div class="sp-nav">
-        ${scriptStep>0?`<button class="sp-prev" onclick="prevScriptStep()">← Voltar</button>`:''}
-        ${step.isQualify
-          ?`<button class="sp-qualify-btn" onclick="openSdrIa()">🎯 Iniciar Qualificação SDR IA →</button>`
-          :`<button class="sp-next" onclick="nextScriptStep()">${scriptStep<steps.length-1?'Próximo passo →':'✅ Concluído'}</button>`
-        }
-      </div>
-    </div>`;
+  spBody.innerHTML='<div class="sp-step active">'
+    +'<div class="sp-step-label '+cls+'">'+step.label+'</div>'
+    +'<div class="sp-text '+cls+'">'+scriptText+'</div>'
+    +(step.note?'<div class="sp-note">💡 '+step.note+'</div>':'')+'<div class="sp-nav">'
+    +(scriptStep>0?'<button class="sp-prev" onclick="prevScriptStep()">← Voltar</button>':'')
+    +(step.isQualify
+      ?'<button class="sp-qualify-btn" onclick="openSdrIa()">🎯 Iniciar Qualificação SDR IA →</button>'
+      :'<button class="sp-next" onclick="nextScriptStep()">'+(scriptStep<steps.length-1?'Próximo passo →':'✅ Concluído')+'</button>'
+    )+'</div></div>';
 }
 
 function nextScriptStep(){
@@ -2743,8 +3301,37 @@ function _iaNext(){_iaCM++;if(_iaCM>11){_iaCM=0;_iaCY++;}_iaRefresh();}
 
 function renderInlineAgenda(){
   const nome=sdrIaState.fields['nome']||(curIdx>=0&&leads[curIdx]?leads[curIdx].name:'')||'Lead';
-  return _buildCal(_iaCY,_iaCM,iaSelectedDate,'selectIaDate','_iaPrev','_iaNext')
-    +`<div id="ia-slots-container" style="margin-top:10px">${renderIaSlotsForDate(iaSelectedDate,nome)}</div>`;
+  const today=new Date().toISOString().slice(0,10);
+  const months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const d=new Date(_iaCY,_iaCM,1);
+  const last=new Date(_iaCY,_iaCM+1,0).getDate();
+  const firstDow=d.getDay();
+  let days='';
+  for(let i=0;i<firstDow;i++)days+=`<div></div>`;
+  for(let n=1;n<=last;n++){
+    const k=`${_iaCY}-${String(_iaCM+1).padStart(2,'0')}-${String(n).padStart(2,'0')}`;
+    const dow=new Date(k+'T12:00:00').getDay();
+    const isPast=k<today,isWe=dow===0||dow===6,isSel=k===iaSelectedDate,isT=k===today;
+    const hasSlots=CONSULTORES.some(c=>(agendaSlots[c.id]?.[k]||[]).length>0);
+    if(isPast||isWe){days+=`<div style="padding:7px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--b3)">${n}</div>`;continue;}
+    days+=`<button onclick="selectIaDate('${k}')" style="padding:7px;border-radius:8px;border:${isSel?'2px solid var(--green)':isT?'1px solid rgba(59,130,246,.4)':'1px solid transparent'};background:${isSel?'rgba(0,232,122,.15)':isT?'rgba(59,130,246,.08)':hasSlots?'var(--s3)':'transparent'};color:${isSel?'var(--green)':isT?'var(--blue2)':'var(--txt2)'};font-family:var(--mono);font-size:12px;font-weight:${isSel?'800':'500'};cursor:pointer;position:relative">
+      ${n}${hasSlots?'<div style="position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:'+(isSel?'#000':'var(--green)')+'"></div>':''}
+    </button>`;
+  }
+  const nowY=new Date().getFullYear(),nowM=new Date().getMonth();
+  const noPrev=(_iaCY<nowY)||(_iaCY===nowY&&_iaCM<=nowM);
+  return`<div style="background:var(--s2);border:1px solid var(--b2);border-radius:12px;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--b2)">
+      <button onclick="_iaPrev()" ${noPrev?'disabled':''} style="background:transparent;border:1px solid var(--b2);border-radius:6px;color:var(--txt2);padding:4px 10px;cursor:pointer;${noPrev?'opacity:.3':''}">‹</button>
+      <span style="font-size:13px;font-weight:700">${months[_iaCM]} ${_iaCY}</span>
+      <button onclick="_iaNext()" style="background:transparent;border:1px solid var(--b2);border-radius:6px;color:var(--txt2);padding:4px 10px;cursor:pointer">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:8px 10px">
+      ${'Dom Seg Ter Qua Qui Sex Sáb'.split(' ').map(d=>`<div style="text-align:center;font-family:var(--mono);font-size:9px;color:var(--txt3);padding:3px 0;letter-spacing:.5px">${d}</div>`).join('')}
+      ${days}
+    </div>
+  </div>
+  <div id="ia-slots-container" style="margin-top:10px">${renderIaSlotsForDate(iaSelectedDate,nome)}</div>`;
 }
 
 function selectIaDate(dateKey){
@@ -2756,31 +3343,26 @@ function selectIaDate(dateKey){
 function renderIaSlotsForDate(dateKey,nomeLead){
   const defaultSlots=['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
   const agendadosNoDia=agendamentos.filter(a=>a.date===dateKey);
+  const dateLabel=new Date(dateKey+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
 
-  // Show only AVAILABLE slots per closer — occupied slots are hidden
   const sections=CONSULTORES.map(c=>{
     const cSlots=agendaSlots[c.id]||{};
-    // Use configured slots for this day, or default
     const daySlots=(cSlots[dateKey]&&cSlots[dateKey].length>0)?cSlots[dateKey]:defaultSlots;
     const reserved=agendadosNoDia.filter(a=>a.consultor===c.id).map(a=>a.slot);
     const available=daySlots.filter(s=>!reserved.includes(s));
 
-    const colorRgb=c.id==='marcelo'?'0,232,122':c.id==='eduardo'?'245,158,11':'59,130,246';
-
-    return`<div style="background:var(--s3);border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="width:32px;height:32px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#000;flex-shrink:0">${c.avatar}</div>
-        <div>
-          <div style="font-size:13px;font-weight:800;color:var(--txt)">${c.name}</div>
-          <div style="font-size:10px;color:var(--txt3);font-family:var(--mono)">${c.role} · ${available.length} horário(s) disponível(is)</div>
-        </div>
+    return`<div style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:26px;height:26px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#000;flex-shrink:0">${c.avatar}</div>
+        <span style="font-size:12px;font-weight:700">${c.name}</span>
+        <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">${available.length} disponíveis</span>
       </div>
       ${available.length===0
-        ?`<div style="font-size:11px;color:var(--txt3);font-family:var(--mono);padding:4px 0;font-style:italic">Agenda cheia neste dia</div>`
-        :`<div style="display:flex;flex-wrap:wrap;gap:6px">
+        ?`<div style="font-size:10px;color:var(--txt3);font-family:var(--mono);font-style:italic;padding:4px 0">Agenda cheia</div>`
+        :`<div style="display:flex;flex-wrap:wrap;gap:5px">
           ${available.map(slot=>`<button onclick="confirmarAgendamentoInline('${c.id}','${c.name}','${dateKey}','${slot}','${nomeLead}')"
-            style="padding:7px 14px;border-radius:8px;border:1px solid rgba(${colorRgb},.4);background:rgba(${colorRgb},.08);color:${c.color};font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;transition:.15s"
-            onmouseover="this.style.background='rgba(${colorRgb},.18)'" onmouseout="this.style.background='rgba(${colorRgb},.08)'">
+            style="padding:6px 12px;border-radius:7px;border:1px solid ${c.color}44;background:${c.color}12;color:${c.color};font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:.15s"
+            onmouseover="this.style.background='${c.color}28'" onmouseout="this.style.background='${c.color}12'">
             ${slot}
           </button>`).join('')}
         </div>`
@@ -2788,15 +3370,17 @@ function renderIaSlotsForDate(dateKey,nomeLead){
     </div>`;
   }).join('');
 
-  return`<div style="font-size:10px;color:var(--txt3);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">
-    📅 ${new Date(dateKey+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})} — Selecione o closer e horário
-  </div>${sections}`;
+  return`<div style="padding:10px 14px;background:var(--s2);border:1px solid var(--b2);border-radius:10px">
+    <div style="font-size:10px;color:var(--txt3);font-family:var(--mono);letter-spacing:1px;margin-bottom:12px;text-transform:uppercase">📅 ${dateLabel} — Escolha o closer e horário</div>
+    ${sections}
+  </div>`;
 }
 
 
 function confirmarAgendamentoInline(consultorId,consultorName,date,slot,nomeLead){
   const l=leads[curIdx];
   const phone=l?.phone||sdrIaState.fields['telefone']||'';
+  const sdrRes=computeSdrResultado();
   const ag={
     id:'ia_'+Date.now(),
     consultor:consultorId,
@@ -2805,11 +3389,13 @@ function confirmarAgendamentoInline(consultorId,consultorName,date,slot,nomeLead
     leadName:nomeLead,
     leadPhone:phone,
     origem:'SDR IA',
-    produto:computeSdrResultado().produto,
+    produto:sdrRes.produto,
     createdAt:new Date().toLocaleString('pt-BR')
   };
   agendamentos.push(ag);
   LS.set('agendamentos',JSON.stringify(agendamentos));
+  // Set lead stage to Reunião Agendada
+  if(leads[curIdx]){leads[curIdx].stage='Reunião Agendada';leads[curIdx].called=true;LS.set('leads',JSON.stringify(leads));}
   // Mark slot occupied
   if(!agendaSlots[consultorId])agendaSlots[consultorId]={};
   if(!agendaSlots[consultorId][date])agendaSlots[consultorId][date]=[];
@@ -2820,16 +3406,11 @@ function confirmarAgendamentoInline(consultorId,consultorName,date,slot,nomeLead
   const d=new Date(date+'T12:00:00');
   const dateLabel=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
   document.getElementById('ia-slots-container').innerHTML=`
-    <div style="text-align:center;padding:20px">
-      <div style="font-size:40px;margin-bottom:12px">🎉</div>
-      <div style="font-size:16px;font-weight:900;color:var(--green);margin-bottom:6px">Agendado com sucesso!</div>
-      <div style="font-size:13px;color:var(--txt2);line-height:1.7">
-        <strong>${nomeLead}</strong> com <strong>${consultorName}</strong><br>
-        📅 ${dateLabel} às <strong>${slot}</strong>
-      </div>
-      <div style="margin-top:14px;padding:10px 14px;background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.2);border-radius:8px;font-family:var(--mono);font-size:10px;color:var(--green)">
-        ✅ Registrado no sistema — avise o ${consultorName}!
-      </div>
+    <div style="padding:16px;background:rgba(0,232,122,.06);border:1px solid rgba(0,232,122,.25);border-radius:10px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">✅</div>
+      <div style="font-size:15px;font-weight:900;color:var(--green);margin-bottom:6px">Reunião agendada!</div>
+      <div style="font-size:12px;color:var(--txt2);line-height:1.7"><strong>${nomeLead}</strong><br>📅 ${dateLabel} às <strong>${slot}</strong><br>Closer: <strong>${consultorName}</strong></div>
+      <div style="margin-top:10px;font-size:10px;color:var(--green);font-family:var(--mono)">Aparece na agenda do closer agora</div>
     </div>`;
 
   // Update call result
@@ -2904,7 +3485,24 @@ function renderRankList(){
   </div>
   <div style="font-size:10px;color:var(--txt3);text-align:center;padding:12px;font-family:var(--mono);border:1px dashed var(--b2);border-radius:8px;margin-top:8px">Para ranking multi-SDR em tempo real, configure o backend.</div>`;
 }
-function updateGoal(val){cfg.goal=parseInt(val)||30;LS.set('goal',cfg.goal);renderRanking();}
+function updateGoal(val){cfg.goal=parseInt(val)||30;LS.set('goal',cfg.goal);renderRanking();updateAdminGoalDisplay();}
+function adminSetGoal(val){
+  var g=parseInt(val)||50;
+  cfg.goal=g;LS.set('goal',g);
+  var gi=document.getElementById('goal-input');if(gi)gi.value=g;
+  updateAdminGoalDisplay();
+  renderRanking();
+  toast('🎯 Meta definida: '+g+' ligações/dia','ok');
+}
+function updateAdminGoalDisplay(){
+  var g=cfg.goal||50;
+  var disp=document.getElementById('admin-goal-display');
+  var curr=document.getElementById('admin-goal-current');
+  var inp=document.getElementById('admin-goal-input');
+  if(disp)disp.textContent=g+' lig/dia';
+  if(curr)curr.textContent='atual: '+g;
+  if(inp&&inp.value==='')inp.value=g;
+}
 function saveStats(){LS.set('dayStats_'+TODAY,JSON.stringify(dayStats));LS.set('totStats',JSON.stringify(totStats));}
 function updateScoreDisplay(){document.getElementById('ss-sched').textContent=sessSched;document.getElementById('ss-pts').textContent=dayStats.pts;saveStats();checkAchievements();}
 
@@ -3652,18 +4250,119 @@ function saveCfg(){
 // ADD LEAD (v2 — default to quente)
 // ══════════════════════════════════════════════════════════════════
 function openAdd(){document.getElementById('addModal').classList.add('on');}
+
+function autoDetectLead(){
+  const name=(document.getElementById('al-name')||{}).value||'';
+  const phone=(document.getElementById('al-phone')||{}).value||'';
+  const cleanedPhone=cleanPhone(phone);
+  const box=document.getElementById('al-detect-box');
+  const fm=document.getElementById('al-funil-manual');
+  if(!box)return;
+
+  if(!name&&!cleanedPhone){box.style.display='none';if(fm)fm.style.display='none';return;}
+
+  const existing=leads.find(function(l){
+    const lp=cleanPhone(l.phone||'');
+    const matchPhone=cleanedPhone&&lp&&(lp===cleanedPhone||lp.endsWith(cleanedPhone.slice(-8))||cleanedPhone.endsWith(lp.slice(-8)));
+    const matchName=name&&l.name&&l.name.toLowerCase().trim()===name.toLowerCase().trim();
+    return matchPhone||matchName;
+  });
+
+  if(existing){
+    const typeLabel=(existing.leadType||'frio')==='quente'?'🔥 Quente':'❄️ Frio';
+    box.style.cssText='display:block;padding:10px 14px;border-radius:8px;margin-bottom:8px;font-size:12px;border:1px solid rgba(0,232,122,.4);background:rgba(0,232,122,.06);color:var(--txt2)';
+    box.innerHTML='<div style="display:flex;align-items:center;gap:8px">'
+      +'<span style="font-size:16px">✅</span>'
+      +'<div><div style="font-weight:700;color:var(--green)">Lead encontrado no sistema!</div>'
+      +'<div style="margin-top:2px">'+existing.name+' · '+typeLabel+' · Etapa: <b style="color:var(--txt)">'+existing.stage+'</b></div>'
+      +'<div style="font-size:10px;color:var(--txt3);font-family:var(--mono);margin-top:2px">Ao confirmar, o card será aberto e você pode movê-lo</div>'
+      +'</div></div>';
+    if(fm)fm.style.display='none';
+  } else if(cleanedPhone.length>=8||name.length>=3){
+    // Check agendamentos
+    const inAgenda=agendamentos.find(function(ag){
+      return cleanedPhone&&cleanPhone(ag.leadPhone||'').endsWith(cleanedPhone.slice(-8));
+    });
+    if(inAgenda){
+      box.style.cssText='display:block;padding:10px 14px;border-radius:8px;margin-bottom:8px;font-size:12px;border:1px solid rgba(245,158,11,.4);background:rgba(245,158,11,.06);color:var(--txt2)';
+      box.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span>📅</span><div>'
+        +'<div style="font-weight:700;color:var(--yellow)">Encontrado em agendamentos!</div>'
+        +'<div>Reunião com '+inAgenda.leadName+' em '+inAgenda.date+' às '+inAgenda.slot+'</div>'
+        +'<div style="font-size:10px;color:var(--txt3);margin-top:2px">Será adicionado como 🔥 Quente automaticamente</div>'
+        +'</div></div>';
+      if(fm)fm.style.display='none';
+    } else {
+      box.style.cssText='display:block;padding:10px 14px;border-radius:8px;margin-bottom:8px;font-size:12px;border:1px solid var(--b2);background:var(--s3);color:var(--txt3)';
+      box.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span>🔍</span><div>Lead não encontrado no banco — selecione o funil manualmente abaixo</div></div>';
+      if(fm)fm.style.display='block';
+    }
+  } else {
+    box.style.display='none';
+    if(fm)fm.style.display='none';
+  }
+}
+
+function openAdd(){
+  document.getElementById('addModal').classList.add('on');
+  var db=document.getElementById('al-detect-box');if(db)db.style.display='none';
+  var fm=document.getElementById('al-funil-manual');if(fm)fm.style.display='none';
+  ['al-name','al-phone','al-co'].forEach(function(i){var el=document.getElementById(i);if(el)el.value='';});
+  setTimeout(function(){var el=document.getElementById('al-phone');if(el)el.focus();},100);
+}
+
 function closeAdd(){document.getElementById('addModal').classList.remove('on');}
 function addLead(){
   const name=document.getElementById('al-name').value.trim();
   const phone=document.getElementById('al-phone').value.trim();
-  if(!name||!phone){toast('Informe nome e telefone','err');return;}
-  const type=document.getElementById('al-type').value||'quente';
-  // New stage based on funnel type
+  if(!name&&!phone){toast('Informe pelo menos nome ou telefone','err');return;}
+  const company=document.getElementById('al-co')?document.getElementById('al-co').value.trim():'';
+  const cleanedPhone=cleanPhone(phone||'');
+
+  // Auto-detect: cross-check against existing leads by phone or name
+  const existing=leads.find(function(l){
+    const lp=cleanPhone(l.phone||'');
+    const matchPhone=cleanedPhone&&lp&&(lp===cleanedPhone||lp.endsWith(cleanedPhone.slice(-8))||cleanedPhone.endsWith(lp.slice(-8)));
+    const matchName=name&&l.name&&l.name.toLowerCase().trim()===name.toLowerCase().trim();
+    return matchPhone||matchName;
+  });
+
+  if(existing){
+    // Lead found — update info and move to correct stage
+    if(name&&!existing.name)existing.name=name;
+    if(company&&!existing.company)existing.company=company;
+    if(cleanedPhone&&!existing.phone)existing.phone=cleanedPhone;
+    normStage(existing);
+    LS.set('leads',JSON.stringify(leads));
+    closeAdd();
+    renderKanban();
+    updateProgress();
+    toast('✅ Lead já existente — movido para: '+existing.stage,'ok');
+    openLeadDetail(existing.id);
+    return;
+  }
+
+  // New lead — auto-determine funnel from context if possible
+  // If phone matches agendamentos → quente
+  const inAgenda=agendamentos.find(function(ag){
+    return cleanedPhone&&cleanPhone(ag.leadPhone||'').endsWith(cleanedPhone.slice(-8));
+  });
+  let type;
+  if(inAgenda){
+    type='quente';
+  } else {
+    // Use manual select if visible, else default to frio
+    const sel=document.getElementById('al-type');
+    type=(sel&&sel.closest('#al-funil-manual')&&sel.closest('#al-funil-manual').style.display!=='none')?sel.value:'frio';
+  }
+
   const stage=type==='quente'?'Fila Quente':type==='recuperacao'?'Reativação':'Fila Frio';
-  leads.push({id:'m'+Date.now(),name,phone:cleanPhone(phone),company:document.getElementById('al-co').value.trim(),stage,cadenceDay:0,attemptsToday:0,called:false,leadType:type,dealId:null,waSent:false,rdStage:stage});
-  LS.set('leads',JSON.stringify(leads));showDialerActive();updateProgress();renderKanban();closeAdd();
-  toast('Lead adicionado — '+stage,'ok');
-  ['al-name','al-phone','al-co'].forEach(i=>document.getElementById(i).value='');
+  leads.push({id:'m'+Date.now(),name:name||company||phone,phone:cleanedPhone,company,stage,cadenceDay:0,attemptsToday:0,called:false,leadType:type,dealId:null,waSent:false,rdStage:stage});
+  LS.set('leads',JSON.stringify(leads));
+  showDialerActive();updateProgress();renderKanban();closeAdd();
+  toast('Lead adicionado — '+stage+' ('+type+')','ok');
+  ['al-name','al-phone','al-co'].forEach(function(i){var el=document.getElementById(i);if(el)el.value='';});
+  var db=document.getElementById('al-detect-box');if(db)db.style.display='none';
+  var fm=document.getElementById('al-funil-manual');if(fm)fm.style.display='none';
   if(curIdx<0)loadLead(nextLeadIdx());
   checkFunnelPriority();
 }
@@ -3708,7 +4407,7 @@ function endCall(result,btn){
   const l=leads[curIdx];if(!l)return;
   l.attemptsToday=(l.attemptsToday||0)+1;l.lastAttemptDate=TODAY;l.lastResult=result;
   const isQ=(l.leadType||'frio')==='quente';
-  if(result==='Agendou'){l.stage='Qualificações Agendadas';l.called=true;}
+  if(result==='Agendou'){l.stage='Reunião Agendada';l.called=true;}
   else if(result==='Excluir'){l.stage='Excluído';l.called=true;}
   else if(result==='Remarcar'){l.stage='Remarcado';}
   else if(result==='Não Agendou'){l.stage=isQ?'Fila Quente':'Em Cadência';}
@@ -3798,10 +4497,289 @@ function loadLead(idx){
 // ══════════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════════
+// ═══ PERFORMANCE PAGE FUNCTIONS ═══
+let perfAiLoading=false,perfAiCache=null;
+function renderPerformancePage(){
+  const container=document.getElementById('perfPageContent');if(!container)return;
+  const calls=dayStats.calls||0,sched=dayStats.sched||0,wa=dayStats.wa||0,goal=cfg.goal||50;
+  const convRate=calls>0?Math.round((sched/calls)*100):0;
+  const avgDur=durations.length?Math.round(durations.reduce((a,b)=>a+b,0)/durations.length):0;
+  const qualCount=leads.filter(l=>l.qualification).length;
+  const aiScoreLeads=leads.filter(l=>l.aiScore);
+  const aiScoreAvg=aiScoreLeads.length>0?Math.round(aiScoreLeads.reduce((a,l)=>a+(l.aiScore||0),0)/aiScoreLeads.length):0;
+  const perfScore=computePerfScore(calls,sched,convRate,avgDur,qualCount,goal);
+  const grade=scoreToGrade(perfScore);
+  const gradeColor=gradeToColor(grade);
+  const trend7=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k='dayStats_'+d.toISOString().slice(0,10);const ds=JSON.parse(localStorage.getItem('gfb_'+k)||'{"calls":0,"sched":0}');trend7.push({calls:ds.calls||0,label:d.toLocaleDateString('pt-BR',{weekday:'short'})});}
+  const maxCalls=Math.max(...trend7.map(d=>d.calls),1);
+  const dims=[
+    {name:'Volume de Ligações',score:Math.min(100,Math.round((calls/goal)*100)),color:'var(--blue2)'},
+    {name:'Taxa de Conversão',score:Math.min(100,convRate*3),color:'var(--green)'},
+    {name:'Qualificação BANT',score:Math.min(100,qualCount>0?Math.min(100,qualCount*20):0),color:'var(--purple)'},
+    {name:'Score Médio IA',score:aiScoreAvg,color:'var(--yellow)'},
+    {name:'WhatsApp Enviados',score:Math.min(100,wa*10),color:'#25d366'},
+    {name:'Streak Atual',score:Math.min(100,streak*10),color:'var(--orange)'},
+  ];
+  const recentCalls=leads.filter(l=>l.callHistory&&l.callHistory.length>0)
+    .flatMap(l=>l.callHistory.map(c=>({...c,leadName:l.name,leadId:l.id,aiScore:l.aiScore})))
+    .sort((a,b)=>new Date(b.date+'T00:00:00')-new Date(a.date+'T00:00:00')).slice(0,8);
+
+  container.innerHTML=`
+    <!-- SCORE STRIP — clean, no circle balloon -->
+    <div style="background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:70px;height:70px;border-radius:12px;border:2px solid ${gradeColor};background:${gradeColor}14;flex-shrink:0">
+        <div style="font-family:var(--mono);font-size:22px;font-weight:900;color:${gradeColor};line-height:1">${perfScore.toFixed(1)}</div>
+        <div style="font-size:9px;color:${gradeColor};font-family:var(--mono);letter-spacing:.5px">/ 10</div>
+      </div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+          <span style="font-size:16px;font-weight:900">${currentProfileName||'SDR'}</span>
+          <span style="background:${gradeColor}22;border:1px solid ${gradeColor}55;color:${gradeColor};padding:2px 9px;border-radius:6px;font-family:var(--mono);font-size:12px;font-weight:900">${grade}</span>
+          ${perfScore>=8?'<span style="background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.3);color:var(--green);padding:1px 7px;border-radius:20px;font-size:9px;font-weight:700">🚀 TOP</span>':''}
+          ${convRate>=15?'<span style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue2);padding:1px 7px;border-radius:20px;font-size:9px;font-weight:700">📅 CONV. ALTA</span>':''}
+        </div>
+        <div style="font-size:11px;color:var(--txt3)">${gradeLabel(grade)}</div>
+        <!-- Sparkline -->
+        <div style="display:flex;align-items:flex-end;gap:2px;height:24px;margin-top:8px">
+          ${trend7.map((d,i)=>{const h=Math.max(3,Math.round((d.calls/maxCalls)*22));return'<div title="'+d.label+': '+d.calls+'" style="flex:1;height:'+h+'px;border-radius:2px 2px 0 0;background:'+(i===6?'var(--green)':d.calls>0?'rgba(0,232,122,.28)':'var(--b1)')+'"></div>';}).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--txt3);font-family:var(--mono);margin-top:2px"><span>${trend7[0].label}</span><span>Hoje</span></div>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="perf-kpi-grid">
+      <div class="perf-kpi"><div class="perf-kpi-val" style="color:var(--blue2)">${calls}</div><div class="perf-kpi-lbl">Ligações</div><div class="perf-kpi-delta" style="color:${calls>=goal?'var(--green)':'var(--yellow)'}">${Math.round((calls/goal)*100)}% meta</div></div>
+      <div class="perf-kpi"><div class="perf-kpi-val" style="color:var(--green)">${sched}</div><div class="perf-kpi-lbl">Agendamentos</div><div class="perf-kpi-delta" style="color:${convRate>=15?'var(--green)':convRate>=8?'var(--yellow)':'var(--red)'}">${convRate}% conv.</div></div>
+      <div class="perf-kpi"><div class="perf-kpi-val" style="color:var(--purple)">${qualCount}</div><div class="perf-kpi-lbl">Qualificações</div><div class="perf-kpi-delta" style="color:var(--txt3)">${aiScoreAvg>0?aiScoreAvg+'% IA':'—'}</div></div>
+      <div class="perf-kpi"><div class="perf-kpi-val" style="color:var(--orange)">${avgDur?fmtTime(avgDur):'—'}</div><div class="perf-kpi-lbl">Tempo Médio</div><div class="perf-kpi-delta" style="color:${avgDur>90&&avgDur<300?'var(--green)':avgDur>0?'var(--yellow)':'var(--txt3)'}">${avgDur>300?'Longo':avgDur>90?'Ótimo':avgDur>0?'Curto':'—'}</div></div>
+    </div>
+
+    <!-- COACH IA -->
+    <div class="perf-card">
+      <div class="perf-section-title">🤖 Coach IA — Análise da Performance</div>
+      <div id="aiFeedbackArea">
+        ${perfAiCache?renderAiFeedback(perfAiCache):`<div class="ai-bubble">
+          <div class="ai-bubble-avatar">🤖</div>
+          <div class="ai-bubble-body">
+            <div class="ai-bubble-name">Coach GFB IA</div>
+            <div class="ai-bubble-text">Clique em <strong>Analisar</strong> para receber um feedback personalizado sobre suas ligações, script, agendamentos e qualificações.</div>
+          </div>
+        </div>`}
+      </div>
+      <button class="analyze-btn" id="analyzeBtn" onclick="triggerAiAnalysis()" style="margin-top:12px">🤖 Analisar minha performance</button>
+    </div>
+
+    <!-- DIMENSÕES -->
+    <div class="perf-card">
+      <div class="perf-section-title">📐 Dimensões de Performance</div>
+      ${dims.map(d=>`<div class="dimension-row">
+        <div class="dimension-name">${d.name}</div>
+        <div class="dimension-track"><div class="dimension-fill" style="width:${d.score}%;background:${d.color}"></div></div>
+        <div class="dimension-score" style="color:${d.color}">${d.score}%</div>
+      </div>`).join('')}
+    </div>
+
+    <!-- ÚLTIMAS LIGAÇÕES com análise -->
+    <div class="perf-card">
+      <div class="perf-section-title">📞 Últimas Ligações — Análise por Call</div>
+      ${recentCalls.length===0?
+        '<div style="text-align:center;padding:20px;color:var(--txt3);font-size:12px;font-family:var(--mono)">Nenhuma ligação registrada ainda.</div>'
+        :recentCalls.map(c=>{
+          const res=c.result||'—';
+          const bg=res==='Agendou'?'rgba(0,232,122,.15)':res==='Não Atendeu'?'rgba(59,130,246,.1)':'rgba(245,158,11,.1)';
+          const col=res==='Agendou'?'var(--green)':res==='Não Atendeu'?'var(--blue2)':'var(--yellow)';
+          const ico=res==='Agendou'?'📅':res==='Não Atendeu'?'📵':'⚠';
+          const callAnalysis=getCallAnalysis(c);
+          return `<div class="call-score-row" style="flex-direction:column;align-items:flex-start;gap:6px">
+            <div style="display:flex;align-items:center;gap:10px;width:100%">
+              <div class="call-score-badge" style="background:${bg};color:${col}">${ico}</div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;cursor:pointer" onclick="if('${c.leadId}')openLeadDetail('${c.leadId}')">${c.leadName||'—'} ↗</div>
+                <div style="font-size:10px;color:var(--txt3);font-family:var(--mono)">${c.date||'—'} · ${c.duration||'—'}</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:11px;font-weight:700;color:${col};font-family:var(--mono)">${res}</div>
+                ${c.aiScore?`<div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">Score: ${c.aiScore}%</div>`:''}
+              </div>
+            </div>
+            ${callAnalysis?`<div style="width:100%;padding:6px 10px;background:var(--s3);border-radius:6px;font-size:10px;color:var(--txt3);line-height:1.5;border-left:2px solid ${col}">${callAnalysis}</div>`:''}
+          </div>`;
+        }).join('')
+      }
+    </div>
+  `;
+}
+
+function getCallAnalysis(c){
+  const res=c.result||'';
+  const dur=c.duration||'';
+  const parts=[];
+  // Analyze based on result + duration
+  if(res==='Agendou') parts.push('✅ Seguiu o script e converteu. Excelente execução.');
+  else if(res==='Não Atendeu'){
+    parts.push('📵 Não atendeu — cadência seguida corretamente.');
+  } else if(res==='Caixa Postal') parts.push('📬 Caixa postal — enviar WhatsApp de follow-up.');
+  else if(res==='Não Agendou'){
+    // Parse duration to seconds
+    const dparts=(dur||'00:00').split(':');
+    const secs=(parseInt(dparts[0])||0)*60+(parseInt(dparts[1])||0);
+    if(secs<60) parts.push('⚡ Ligação muito curta ('+dur+'). Lead pode ter desligado cedo — revisar abertura.');
+    else if(secs>300) parts.push('💬 Conversa longa ('+dur+') sem agendamento — verificar qualificação e fechamento do agendamento.');
+    else parts.push('ℹ️ Não agendou — verificar se utilizou o script de gancho de valor.');
+  } else if(res==='Remarcar') parts.push('📅 Remarcou — confirmação agendada no sistema.');
+  return parts.join(' ');
+}
+
+function computePerfScore(calls,sched,convRate,avgDur,qualCount,goal){let s=0;s+=Math.min(3,(calls/goal)*3);s+=Math.min(3,(convRate/15)*3);if(avgDur>90&&avgDur<=300)s+=2;else if(avgDur>60&&avgDur<=90)s+=1.2;else if(avgDur>300)s+=1;else if(avgDur>0)s+=0.5;s+=Math.min(2,(qualCount/3)*2);return Math.max(0,Math.min(10,parseFloat(s.toFixed(1))));}
+function scoreToGrade(s){if(s>=9)return'S';if(s>=7.5)return'A';if(s>=6)return'B';if(s>=4)return'C';return'D';}
+function gradeToColor(g){return{S:'var(--green)',A:'var(--blue2)',B:'var(--yellow)',C:'var(--orange)',D:'var(--red)'}[g]||'var(--txt3)';}
+function gradeLabel(g){return{S:'Desempenho excepcional — você está no topo! 🚀',A:'Ótimo desempenho — continue assim 💪',B:'Bom desempenho — há espaço para crescer',C:'Desempenho regular — foco nos pontos fracos',D:'Precisa de atenção — converse com o gestor'}[g]||'';}
+function renderAiFeedback(text){const formatted=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');return'<div class="ai-bubble"><div class="ai-bubble-avatar">🤖</div><div class="ai-bubble-body"><div class="ai-bubble-name">Coach GFB IA · '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</div><div class="ai-bubble-text">'+formatted+'</div></div></div>';}
+async function triggerAiAnalysis(){if(perfAiLoading)return;perfAiLoading=true;const btn=document.getElementById('analyzeBtn');if(btn){btn.disabled=true;btn.innerHTML='⏳ Analisando...';}const feedArea=document.getElementById('aiFeedbackArea');if(feedArea)feedArea.innerHTML='<div class="ai-bubble loading"><div class="ai-bubble-avatar">🤖</div><div class="ai-bubble-body"><div class="ai-bubble-name">Coach GFB IA</div><div class="ai-bubble-text">Analisando suas métricas...</div></div></div>';try{const calls=dayStats.calls||0,sched=dayStats.sched||0,wa=dayStats.wa||0,goal=cfg.goal||50,convRate=calls>0?Math.round((sched/calls)*100):0,avgDur=durations.length?Math.round(durations.reduce((a,b)=>a+b,0)/durations.length):0,qualCount=leads.filter(l=>l.qualification).length,aiScoreAvg=leads.filter(l=>l.aiScore).length>0?Math.round(leads.filter(l=>l.aiScore).reduce((a,l)=>a+(l.aiScore||0),0)/leads.filter(l=>l.aiScore).length):0,recentResults=leads.filter(l=>l.callHistory&&l.callHistory.length>0).flatMap(l=>l.callHistory).slice(-10).map(c=>c.result).join(', ')||'sem dados',perfScore=computePerfScore(calls,sched,convRate,avgDur,qualCount,goal),grade=scoreToGrade(perfScore),prompt='Você é o Coach IA da Gestão Fitness Brasil. Analise a performance do SDR '+(currentProfileName||'SDR')+' e dê um feedback honesto e motivador em português brasileiro.\n\nDADOS DE HOJE:\n- Ligações: '+calls+' / Meta: '+goal+' ('+Math.round((calls/goal)*100)+'%)\n- Agendamentos: '+sched+'\n- Taxa de conversão: '+convRate+'%\n- WhatsApp enviados: '+wa+'\n- Tempo médio de ligação: '+(avgDur>0?fmtTime(avgDur):'sem dados')+'\n- Qualificações BANT: '+qualCount+'\n- Score médio IA: '+(aiScoreAvg>0?aiScoreAvg+'%':'sem dados')+'\n- Últimos resultados: '+recentResults+'\n- Score: '+perfScore+'/10 (Grau '+grade+')\n- Streak: '+streak+'\n\nANÁLISE DE CALLS:\n- Taxa de não-atendimento: '+(calls>0?Math.round(((leads.filter(l=>l.callHistory&&l.callHistory.some(c=>c.result==='Não Atendeu')).length)/Math.max(calls,1))*100):0)+'%\n- Agendamentos obtidos: '+sched+' de '+calls+' ligações\n\nResponda em 3 blocos curtos com **negrito**:\n1. **Execução do Script** — avalie se a taxa de conversão indica seguimento do script (referência GFB: 15%+ = bom)\n2. **Ponto crítico** — o que mais está impactando negativamente\n3. **Ação imediata** — uma dica prática e específica para a próxima ligação\n\nUse os dados reais, seja direto, máximo 160 palavras.';const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})});const data=await response.json();const text=data.content?.[0]?.text||'Erro ao obter análise.';perfAiCache=text;if(feedArea)feedArea.innerHTML=renderAiFeedback(text);}catch(e){const msg=e.message&&e.message.includes('Failed to fetch')?'Sem conexão. Tente novamente.':'Erro temporário.';if(feedArea)feedArea.innerHTML='<div class="ai-bubble" style="border-color:rgba(239,68,68,.2)"><div class="ai-bubble-avatar">⚠️</div><div class="ai-bubble-body"><div class="ai-bubble-name" style="color:var(--red)">Erro</div><div class="ai-bubble-text">'+msg+'</div></div></div>';}perfAiLoading=false;if(btn){btn.disabled=false;btn.innerHTML='🔄 Atualizar análise';}}
+
+
+
+// ═══════════════════════════════════════════
+// KANBAN INTERACTIVITY — new helpers
+// ═══════════════════════════════════════════
+
+function dialLeadMicroSIP(phone){
+  if(!phone){toast('Sem telefone','err');return;}
+  let p=String(phone).replace(/\D/g,'');
+  // Remove Brazil country code if present, add 0 for PABX
+  if(p.startsWith('55')&&p.length>=12)p=p.slice(2);
+  if(!p.startsWith('0'))p='0'+p;
+  // Open microsip: URI protocol
+  const uri='microsip:'+p;
+  window.open(uri,'_self');
+  toast('📞 Abrindo MicroSIP → '+p,'ok');
+  // Also trigger PABX dial via API as fallback
+  pabxAPI('/discar_numero','POST',{dados:{numero_ramal_origem:PABX_RAMAL,numero_destino:p}})
+    .then(()=>setSipUI('conn','Discando via PABX...'))
+    .catch(()=>{});
+}
+
+function openWAFromDetail(phone,name,day){
+  const tpl=(WA_TEMPLATES[parseInt(day)]||WA_TEMPLATES[0]).replace('{name}',(name||'').split(' ')[0]);
+  window.open('https://wa.me/55'+phone+'?text='+encodeURIComponent(tpl),'_blank');
+}
+
+function quickMoveStage(id,stage){
+  const l=leads.find(x=>x.id===id);if(!l)return;
+  l.stage=stage;
+  if(stage==='Compareceu')creditCommission('comparecimento');
+  if(stage==='Vendas Ganhas')creditCommission('fechamento');
+  if(stage==='Reunião Confirmada'){
+    // Mark agenda as confirmed
+    const ag=agendamentos.find(a=>a.leadPhone===l.phone||a.leadName===l.name);
+    if(ag)ag.confirmed=true;
+    LS.set('agendamentos',JSON.stringify(agendamentos));
+  }
+  LS.set('leads',JSON.stringify(leads));
+  renderLeadDetailBody(l);
+  renderKanban();
+  toast('Card → '+stage,'ok');
+}
+
+function saveObservations(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;
+  const txt=(document.getElementById('ldpObsText')?.value||'').trim();
+  if(!txt){toast('Digite uma observação','warn');return;}
+  if(!l.obsHistory)l.obsHistory=[];
+  l.obsHistory.push({
+    text:txt,
+    date:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'})+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    author:currentProfileName||cfg.name||'—'
+  });
+  l.observations=txt;l.closerNotes=txt;
+  LS.set('leads',JSON.stringify(leads));
+  if(document.getElementById('ldpObsText'))document.getElementById('ldpObsText').value='';
+  renderLeadDetailBody(l);
+  renderKanban();
+  toast('💾 Observação salva no histórico','ok');
+}
+
+function viewFullQualification(id){
+  const l=leads.find(x=>x.id===id);if(!l||!l.qualification)return;
+  const q=l.qualification;
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(6,8,13,.95);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px';
+  const box=document.createElement('div');
+  box.style.cssText='background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:24px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto';
+  const score=l.aiScore||0;
+  const scoreColor=score>=60?'var(--green)':score>=35?'var(--yellow)':'var(--red)';
+  box.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-size:16px;font-weight:900">${l.name}</div>
+        <div style="font-size:11px;color:var(--txt3);font-family:var(--mono)">${l.company||'—'}</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:var(--mono);font-size:28px;font-weight:900;color:${scoreColor}">${score}%</div>
+        <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">SCORE IA</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      ${q.faturamento?`<div style="background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px"><div style="font-size:9px;color:var(--txt3);font-family:var(--mono);margin-bottom:3px">FATURAMENTO</div><div style="font-size:14px;font-weight:700;color:var(--green)">R$ ${parseInt(q.faturamento).toLocaleString('pt-BR')}</div></div>`:''}
+      ${q.margem?`<div style="background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px"><div style="font-size:9px;color:var(--txt3);font-family:var(--mono);margin-bottom:3px">MARGEM</div><div style="font-size:14px;font-weight:700">${q.margem}%</div></div>`:''}
+      ${q.produto?`<div style="background:var(--s2);border:1px solid rgba(0,232,122,.3);border-radius:8px;padding:10px;grid-column:span 2"><div style="font-size:9px;color:var(--green);font-family:var(--mono);margin-bottom:3px">PRODUTO RECOMENDADO</div><div style="font-size:13px;font-weight:700;color:var(--green)">${q.produto}</div></div>`:''}
+    </div>
+    ${q.negocio?`<div style="background:var(--s3);border-radius:8px;padding:10px 12px;margin-bottom:8px"><div style="font-size:9px;color:var(--txt3);font-family:var(--mono);margin-bottom:4px">NEGÓCIO</div><div style="font-size:12px;color:var(--txt2);line-height:1.6">${q.negocio}</div></div>`:''}
+    ${q.desafio?`<div style="background:var(--s3);border-radius:8px;padding:10px 12px;margin-bottom:8px"><div style="font-size:9px;color:var(--txt3);font-family:var(--mono);margin-bottom:4px">DESAFIO</div><div style="font-size:12px;color:var(--txt2);line-height:1.6">${q.desafio}</div></div>`:''}
+    ${q.dor?`<div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:10px 12px;margin-bottom:8px"><div style="font-size:9px;color:var(--yellow);font-family:var(--mono);margin-bottom:4px">DOR OCULTA</div><div style="font-size:12px;color:#fcd34d;line-height:1.6">${q.dor}</div></div>`:''}
+    <button onclick="this.closest('div[style*=fixed]').remove()" style="width:100%;margin-top:8px;padding:11px;border-radius:9px;border:1px solid var(--b2);background:transparent;color:var(--txt2);font-family:var(--sans);font-size:13px;cursor:pointer">Fechar</button>
+  `;
+  overlay.appendChild(box);
+  overlay.onclick=(e)=>{if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+}
+
+function saveCallTime(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;
+  const t=document.getElementById('ldpCallTime')?.value||'';
+  l.scheduledCallTime=t;
+  LS.set('leads',JSON.stringify(leads));
+  renderLeadDetailBody(l);renderKanban();
+  toast('⏰ Horário salvo: '+t,'ok');
+}
+
+function moveToKanbanStage(stage){
+  // Called from dialer result buttons
+  const l=leads[curIdx];if(!l)return;
+  l.stage=stage;l.lastResult=stage;
+  LS.set('leads',JSON.stringify(leads));
+  // Navigate to kanban
+  const tab=document.querySelector('.tab[data-tab="kanban"]');
+  setTab('kanban',tab);
+  toast('↗ Card movido → '+stage,'ok');
+}
+
+function moveToKanbanStageWithTask(stage){
+  // Move stage + open smart task form for key stages
+  const l=leads[curIdx];if(!l)return;
+  l.stage=stage;l.lastResult=stage;
+  LS.set('leads',JSON.stringify(leads));
+  renderKanban();
+  toast('↗ Card movido → '+stage,'ok');
+  // Auto-open task form for actionable stages
+  const taskTypeMap={
+    'Entrar em Contato Futuramente':'future_contact',
+    'Qualificações Agendadas':'qualif_call',
+  };
+  const taskType=taskTypeMap[stage];
+  if(taskType){
+    // Small delay so kanban re-renders first
+    setTimeout(()=>{ openKbTaskForm(l.id, taskType); }, 200);
+  }
+}
+
 window.onload=async()=>{
   waLoadHistory();
+  loadKbTasks();
   document.getElementById('goal-input').value=cfg.goal;
-  startSessTimer();startAlertChecker();
+  startSessTimer();startAlertChecker();startKbAlertChecker();
   if(Notification.permission==='default')Notification.requestPermission();
   ensureDefaultSlots();
   selectLeadType('quente');
@@ -3941,6 +4919,327 @@ function waRenderMessages(phone){
   area.scrollTop=area.scrollHeight;
 }
 
+
+// ══════════════════════════════════════════════════════════════════
+// SMART KANBAN TASK SYSTEM
+// ══════════════════════════════════════════════════════════════════
+
+// Storage key for kanban tasks
+const KB_TASKS_KEY = 'gfb_kb_tasks';
+let kbTasks = [];
+let kbAlertCurrentTask = null;
+let kbAlertInt = null;
+
+function loadKbTasks(){
+  try{ const r=localStorage.getItem('gfb_'+KB_TASKS_KEY); if(r) kbTasks=JSON.parse(r); }catch(e){}
+}
+function saveKbTasks(){ try{ localStorage.setItem('gfb_'+KB_TASKS_KEY, JSON.stringify(kbTasks)); }catch(e){} }
+
+// Returns smart task buttons based on the lead's Kanban stage
+function renderSmartTaskButtons(l){
+  const stage = l.stage || '';
+  let buttons = [];
+
+  if(stage === 'Qualificações Agendadas'){
+    buttons = [
+      {icon:'⏰', label:'Agendar Horário de Ligação', color:'#06b6d4', type:'qualif_call', desc:'Agendar horário exato para ligar ao lead qualificado'},
+      {icon:'📅', label:'Marcar Reunião Agendada', color:'var(--green)', type:'meeting', desc:'Confirmar e agendar a reunião'},
+      {icon:'🔄', label:'Remarcar / Tentar depois', color:'var(--blue2)', type:'reschedule', desc:'Agendar nova tentativa de contato'},
+    ];
+  } else if(stage === 'Reunião Agendada' || stage === 'Reunião Confirmada'){
+    buttons = [
+      {icon:'🔔', label:'Sequência de Confirmação Auto', color:'var(--green)', type:'meeting_sequence', desc:'Ligação D-1 manhã, D-1 tarde e no dia'},
+      {icon:'📞', label:'Ligar 1 dia antes (manhã)', color:'var(--yellow)', type:'meeting_d1_am', desc:'Confirmar presença na reunião'},
+      {icon:'📞', label:'Ligar 1 dia antes (tarde)', color:'var(--yellow)', type:'meeting_d1_pm', desc:'Segunda confirmação antes da reunião'},
+      {icon:'📅', label:'Lembrete no dia da reunião', color:'var(--orange)', type:'meeting_day', desc:'Alerta no horário da reunião'},
+    ];
+  } else if(stage === 'Entrar em Contato Futuramente'){
+    buttons = [
+      {icon:'📅', label:'Agendar contato futuro', color:'var(--txt2)', type:'future_contact', desc:'Definir data e hora para entrar em contato'},
+      {icon:'💬', label:'Lembrete de WhatsApp', color:'#25d366', type:'future_wa', desc:'Agendar envio de mensagem futura'},
+    ];
+  } else if(stage === 'Remarcar Reunião'){
+    buttons = [
+      {icon:'🔄', label:'Nova data de reunião', color:'var(--blue2)', type:'meeting', desc:'Reagendar a reunião com nova data'},
+      {icon:'📞', label:'Ligar para confirmar', color:'var(--green)', type:'qualif_call', desc:'Ligar para combinar nova data'},
+    ];
+  } else if(stage === 'Compareceu'){
+    buttons = [
+      {icon:'🤝', label:'Follow-up pós-reunião', color:'var(--purple)', type:'followup', desc:'Agendar follow-up ou ligação de fechamento'},
+    ];
+  } else {
+    // Generic
+    buttons = [
+      {icon:'📞', label:'Agendar Ligação', color:'var(--green)', type:'qualif_call', desc:'Marcar horário para ligar'},
+      {icon:'📅', label:'Agendar Contato Futuro', color:'var(--txt2)', type:'future_contact', desc:'Definir data/hora de contato'},
+    ];
+  }
+
+  return `<div style="display:flex;flex-direction:column;gap:6px">
+    ${buttons.map(b=>`
+      <button class="task-btn" onclick="openKbTaskForm('${l.id}','${b.type}')">
+        <div class="task-btn-icon" style="background:${b.color}18;border:1px solid ${b.color}44;color:${b.color}">${b.icon}</div>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:700;color:var(--txt)">${b.label}</div>
+          <div style="font-size:10px;color:var(--txt3);margin-top:1px">${b.desc}</div>
+        </div>
+        <span style="font-size:11px;color:var(--txt3)">›</span>
+      </button>`).join('')}
+  </div>`;
+}
+
+function renderLeadScheduledTasks(l){
+  const tasks = kbTasks.filter(t => t.leadId === l.id && !t.done);
+  if(!tasks.length) return '';
+  const now = Date.now();
+  return `<div class="ldp-section">
+    <div class="ldp-section-title">📋 Tarefas Agendadas (${tasks.length})</div>
+    <div>${tasks.map(t=>{
+      const at = t.at ? new Date(t.at).getTime() : 0;
+      const diff = at - now;
+      const isUrgent = diff < 3600000 && diff > -60000;
+      const isPast = diff < -60000;
+      const timeStr = t.at ? new Date(t.at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+      return`<div class="sched-task-item${isUrgent?' urgent':isPast?' soon':''}">
+        <div class="sched-task-type">${t.icon||'📋'}</div>
+        <div class="sched-task-info">
+          <div class="sched-task-name">${t.label||'Tarefa'}</div>
+          <div class="sched-task-time">⏰ ${timeStr}${t.note?` · ${t.note}`:''}</div>
+        </div>
+        <button onclick="doneKbTask('${t.id}')" style="background:transparent;border:none;color:var(--txt3);cursor:pointer;font-size:11px;padding:4px" title="Marcar como feita">✓</button>
+        <button onclick="deleteKbTask('${t.id}')" style="background:transparent;border:none;color:var(--red);cursor:pointer;font-size:11px;padding:4px" title="Excluir">✕</button>
+      </div>`;
+    }).join('')}</div>
+  </div>`;
+}
+
+function openKbTaskForm(leadId, type){
+  const l = leads.find(x=>x.id===leadId);
+  if(!l) return;
+  const modal = document.getElementById('kbTaskModal');
+  const form = document.getElementById('kbTaskForm');
+  const title = document.getElementById('kbTaskModalTitle');
+  const sub = document.getElementById('kbTaskModalSub');
+
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0,10);
+  const timeStr = now.toTimeString().slice(0,5);
+
+  // Compute tomorrow
+  const tom = new Date(); tom.setDate(tom.getDate()+1);
+  const tomStr = tom.toISOString().slice(0,10);
+
+  sub.textContent = l.name + ' · ' + (l.stage||'');
+
+  const typeConfig = {
+    qualif_call:  {icon:'⏰', label:'Ligar — Qualificação Agendada',  color:'#06b6d4'},
+    meeting:      {icon:'📅', label:'Reunião Agendada',               color:'var(--green)'},
+    reschedule:   {icon:'🔄', label:'Remarcar Contato',               color:'var(--blue2)'},
+    future_contact:{icon:'📅',label:'Contato Futuro',                 color:'var(--txt2)'},
+    future_wa:    {icon:'💬', label:'WhatsApp Futuro',                 color:'#25d366'},
+    followup:     {icon:'🤝', label:'Follow-up',                      color:'var(--purple)'},
+    meeting_d1_am:{icon:'📞', label:'Ligar — D-1 Manhã',              color:'var(--yellow)'},
+    meeting_d1_pm:{icon:'📞', label:'Ligar — D-1 Tarde',              color:'var(--yellow)'},
+    meeting_day:  {icon:'🔔', label:'Lembrete — Dia da Reunião',      color:'var(--orange)'},
+    meeting_sequence:{icon:'🔔', label:'Sequência de Confirmação',    color:'var(--green)'},
+  };
+  const tc = typeConfig[type] || {icon:'📋', label:'Tarefa', color:'var(--green)'};
+  title.innerHTML = `${tc.icon} ${tc.label}`;
+
+  // Default date/time smart-filling
+  let defDate = todayStr, defTime = '09:00', defNote = '';
+  if(type==='meeting_d1_am'){ defDate=tomStr; defTime='09:00'; defNote='Confirmar presença na reunião'; }
+  if(type==='meeting_d1_pm'){ defDate=tomStr; defTime='15:00'; defNote='Segunda confirmação antes da reunião'; }
+  if(type==='meeting_day'){   defDate=todayStr; defTime='08:00'; defNote='Lembrete dia da reunião'; }
+  if(type==='future_contact' || type==='reschedule'){ defDate=tomStr; defTime='09:00'; }
+  if(type==='qualif_call'){ defDate=todayStr; defTime=timeStr; }
+
+  // If meeting sequence — create 3 tasks at once
+  if(type==='meeting_sequence'){
+    form.innerHTML=`
+      <div style="background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.2);border-radius:8px;padding:12px;font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.8">
+        Isso vai criar <strong style="color:var(--green)">3 tarefas automáticas</strong>:<br>
+        📞 D-1 Manhã (09:00) — Ligar para confirmar presença<br>
+        📞 D-1 Tarde (15:00) — Segunda confirmação<br>
+        🔔 Dia da reunião (08:00) — Alerta de reunião
+      </div>
+      <div class="task-form-title">Data da reunião (D)</div>
+      <input type="date" id="kbSeqDate" class="task-fi" value="${tomStr}" style="width:100%;margin-bottom:12px">
+      <button class="task-save-btn" onclick="saveKbMeetingSequence('${leadId}')">✅ Criar Sequência</button>`;
+    modal.classList.add('on');
+    return;
+  }
+
+  form.innerHTML=`
+    <div class="task-row">
+      <div><label style="font-size:10px;color:var(--txt3);font-family:var(--mono);display:block;margin-bottom:4px">DATA</label>
+        <input type="date" id="kbTaskDate" class="task-fi" value="${defDate}"></div>
+      <div><label style="font-size:10px;color:var(--txt3);font-family:var(--mono);display:block;margin-bottom:4px">HORA</label>
+        <input type="time" id="kbTaskTime" class="task-fi" value="${defTime}"></div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:10px;color:var(--txt3);font-family:var(--mono);display:block;margin-bottom:4px">OBSERVAÇÃO (opcional)</label>
+      <input type="text" id="kbTaskNote" class="task-fi" placeholder="Ex: Lead confirmou disponibilidade..." value="${defNote}" style="width:100%">
+    </div>
+    <button class="task-save-btn" onclick="saveKbTask('${leadId}','${type}','${tc.icon}','${tc.label.replace(/'/g,"\\'")}')">💾 Criar Tarefa</button>`;
+
+  modal.classList.add('on');
+}
+
+function saveKbTask(leadId, type, icon, label){
+  const date = document.getElementById('kbTaskDate')?.value;
+  const time = document.getElementById('kbTaskTime')?.value;
+  const note = document.getElementById('kbTaskNote')?.value||'';
+  if(!date||!time){ toast('Selecione data e hora','err'); return; }
+  const at = date+'T'+time;
+  kbTasks.push({
+    id:'kbt'+Date.now(), leadId, type, icon, label,
+    at, note, done:false, alerted:false,
+    createdAt: new Date().toISOString()
+  });
+  saveKbTasks();
+  closeKbTask();
+  toast('✅ Tarefa criada: '+label+' às '+time,'ok');
+  // Re-render lead detail
+  const l = leads.find(x=>x.id===leadId);
+  if(l) renderLeadDetailBody(l);
+}
+
+function saveKbMeetingSequence(leadId){
+  const seqDate = document.getElementById('kbSeqDate')?.value;
+  if(!seqDate){ toast('Selecione a data da reunião','err'); return; }
+  const d = new Date(seqDate+'T12:00:00');
+  const d1 = new Date(d); d1.setDate(d1.getDate()-1);
+  const d1Str = d1.toISOString().slice(0,10);
+  const tasks=[
+    {type:'meeting_d1_am',icon:'📞',label:'Ligar — D-1 Manhã',at:d1Str+'T09:00',note:'Confirmar presença na reunião'},
+    {type:'meeting_d1_pm',icon:'📞',label:'Ligar — D-1 Tarde',at:d1Str+'T15:00',note:'Segunda confirmação'},
+    {type:'meeting_day',  icon:'🔔',label:'Reunião — Lembrete Dia',at:seqDate+'T08:00',note:'Reunião hoje!'},
+  ];
+  tasks.forEach(t=>{
+    kbTasks.push({id:'kbt'+Date.now()+Math.random().toString(36).slice(2),leadId,done:false,alerted:false,createdAt:new Date().toISOString(),...t});
+  });
+  saveKbTasks();
+  closeKbTask();
+  toast('✅ Sequência criada: 3 lembretes agendados!','ok');
+  const l = leads.find(x=>x.id===leadId);
+  if(l) renderLeadDetailBody(l);
+}
+
+function closeKbTask(){
+  document.getElementById('kbTaskModal').classList.remove('on');
+}
+
+function doneKbTask(id){
+  const t = kbTasks.find(x=>x.id===id);
+  if(t){ t.done=true; saveKbTasks(); }
+  // Re-render
+  const l = leads.find(x=>x.id===t?.leadId);
+  if(l) renderLeadDetailBody(l);
+  toast('✓ Tarefa concluída','ok');
+}
+
+function deleteKbTask(id){
+  kbTasks = kbTasks.filter(x=>x.id!==id);
+  saveKbTasks();
+  // Find lead from task
+  const body = document.getElementById('ldpBody');
+  if(body) {
+    const ldpName = document.getElementById('ldpLeadName')?.textContent;
+    const l = leads.find(x=>x.name===ldpName);
+    if(l) renderLeadDetailBody(l);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// KANBAN SMART ALERT CHECKER
+// ══════════════════════════════════════════════════════════════════
+function startKbAlertChecker(){
+  if(kbAlertInt) clearInterval(kbAlertInt);
+  kbAlertInt = setInterval(()=>{
+    const now = new Date();
+    const due = kbTasks.find(t=>{
+      if(t.done||t.alerted||!t.at) return false;
+      const at = new Date(t.at);
+      const diff = at - now;
+      return diff >= -120000 && diff <= 0;
+    });
+    if(due){
+      due.alerted=true;
+      saveKbTasks();
+      showKbAlert(due);
+    }
+  }, 15000);
+}
+
+function showKbAlert(task){
+  const l = leads.find(x=>x.id===task.leadId);
+  kbAlertCurrentTask = task;
+  document.getElementById('ka-lead-name').textContent = l ? l.name : '—';
+  document.getElementById('ka-lead-phone').textContent = l ? fmtPhone(l.phone) : '—';
+  document.getElementById('ka-stage-lbl').textContent = l ? (l.stage||'—') : '—';
+  document.getElementById('ka-title').textContent = task.label || 'Hora de Ligar!';
+  document.getElementById('ka-alert-icon').textContent =
+    task.type==='meeting_day' || task.type==='meeting_sequence' ? '📅' :
+    task.type==='future_wa' ? '💬' : '📞';
+
+  const typeBadge = document.getElementById('ka-type-badge');
+  if(task.type==='meeting_day'){
+    typeBadge.textContent='📅 REUNIÃO HOJE';
+    typeBadge.style.cssText='background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.3);color:var(--green)';
+  } else if(task.type==='future_contact' || task.type==='future_wa'){
+    typeBadge.textContent='📌 CONTATO FUTURO';
+    typeBadge.style.cssText='background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:var(--blue2)';
+  } else {
+    typeBadge.textContent='⏰ HORA DE LIGAR';
+    typeBadge.style.cssText='background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.3);color:var(--green)';
+  }
+
+  const noteEl = document.getElementById('ka-note');
+  if(task.note){ noteEl.textContent=task.note; noteEl.style.display='block'; }
+  else noteEl.style.display='none';
+
+  document.getElementById('kanbanAlertOverlay').classList.add('on');
+  // Play audio beep
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();osc.connect(ctx.destination);osc.frequency.setValueAtTime(880,ctx.currentTime);osc.start();osc.stop(ctx.currentTime+0.3);
+    setTimeout(()=>{const o=ctx.createOscillator();o.connect(ctx.destination);o.frequency.setValueAtTime(1100,ctx.currentTime);o.start();o.stop(ctx.currentTime+0.3);},350);
+  }catch(e){}
+}
+
+function kbAlertCall(){
+  document.getElementById('kanbanAlertOverlay').classList.remove('on');
+  if(!kbAlertCurrentTask) return;
+  const l = leads.find(x=>x.id===kbAlertCurrentTask.leadId);
+  if(l){
+    const phone=(l.phone||'').replace(/\D/g,'');
+    dialLeadMicroSIP(phone);
+  }
+  kbAlertCurrentTask=null;
+}
+
+function kbAlertSnooze(mins){
+  if(kbAlertCurrentTask){
+    const t = kbTasks.find(x=>x.id===kbAlertCurrentTask.id);
+    if(t){ t.at=new Date(Date.now()+mins*60000).toISOString().slice(0,16); t.alerted=false; saveKbTasks(); }
+  }
+  document.getElementById('kanbanAlertOverlay').classList.remove('on');
+  toast('⏰ Lembrete em +'+mins+' min','warn');
+  kbAlertCurrentTask=null;
+}
+
+function kbAlertDismiss(){
+  document.getElementById('kanbanAlertOverlay').classList.remove('on');
+  if(kbAlertCurrentTask){
+    const t = kbTasks.find(x=>x.id===kbAlertCurrentTask.id);
+    if(t) t.done=true;
+    saveKbTasks();
+  }
+  kbAlertCurrentTask=null;
+}
+
+
 function waAddMsg(phone,dir,text){
   if(!phone||!text.trim())return;
   if(!waInboxHistory[phone])waInboxHistory[phone]=[];
@@ -4039,6 +5338,315 @@ function waFrLoaded(){}
 function waFrBlock(){}
 function waFrRefresh(){waOpenDirect();}
 function waFrOpen(){waOpenDirect();}
+
+function renderCloserPerfPage(){
+  const container=document.getElementById('closerPerfContent');
+  if(!container)return;
+  container.innerHTML='<div style="text-align:center;padding:30px"><div style="font-size:30px;margin-bottom:10px">🤖</div><div style="color:var(--txt2);font-size:14px;font-weight:700;margin-bottom:6px">Analisando performance...</div><div style="color:var(--txt3);font-size:12px">Aguarde</div></div>';
+  // Build stats
+  const todayStr=TODAY;
+  const allAgs=agendamentos.length;
+  const todayAgs=agendamentos.filter(function(ag){return ag.date===todayStr;}).length;
+  const closedTotal=leads.filter(function(l){return l.closerResult==='Fechou'||l.stage==='Vendas Ganhas';}).length;
+  const closedToday=leads.filter(function(l){return (l.closerResult==='Fechou'||l.stage==='Vendas Ganhas')&&l.closerResultDate===todayStr;}).length;
+  const lostTotal=leads.filter(function(l){return l.closerResult==='Perdeu'||l.stage==='Vendas Perdidas';}).length;
+  const followUps=leads.filter(function(l){return l.stage==='Follow-up';}).length;
+  const negociacao=leads.filter(function(l){return l.stage==='Em Negociação';}).length;
+  const convRate=allAgs>0?Math.round((closedTotal/allAgs)*100):0;
+  const cmTotal=closedTotal*50;
+  const cmToday=closedToday*50;
+  const recentMeetings=agendamentos.slice().sort(function(a,b){
+    return new Date(b.date+'T'+(b.slot||'00:00'))-new Date(a.date+'T'+(a.slot||'00:00'));
+  }).slice(0,10);
+
+  // Build KPI strip
+  let html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">';
+  var kpis=[
+    {v:allAgs,l:'Total Reuniões',c:'var(--blue2)'},
+    {v:closedTotal,l:'Fechamentos',c:'var(--green)'},
+    {v:convRate+'%',l:'Conversão',c:convRate>=40?'var(--green)':convRate>=25?'var(--yellow)':'var(--red)'},
+    {v:'R$'+cmTotal,l:'Comissão Total',c:'var(--green)'},
+    {v:negociacao,l:'Em Negociação',c:'var(--pink)'},
+    {v:followUps,l:'Follow-ups',c:'var(--yellow)'},
+    {v:lostTotal,l:'Perdidos',c:'var(--red)'},
+    {v:closedToday,l:'Fechados Hoje',c:closedToday>0?'var(--green)':'var(--txt2)'},
+  ];
+  kpis.forEach(function(k){
+    html+='<div class="closer-metric-card"><div class="cmc-val" style="color:'+k.c+'">'+k.v+'</div><div class="cmc-lbl">'+k.l+'</div></div>';
+  });
+  html+='</div>';
+
+  // Conversion bar
+  html+='<div style="background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:14px 16px;margin-bottom:12px">';
+  html+='<div style="font-size:10px;color:var(--txt3);font-family:var(--mono);letter-spacing:1px;margin-bottom:10px">TAXA DE CONVERSÃO GERAL</div>';
+  html+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">';
+  html+='<div style="font-family:var(--mono);font-size:28px;font-weight:900;color:'+(convRate>=40?'var(--green)':convRate>=25?'var(--yellow)':'var(--red)')+'">'+convRate+'%</div>';
+  html+='<div style="flex:1"><div style="height:10px;background:var(--b1);border-radius:5px;overflow:hidden"><div style="height:100%;width:'+Math.min(convRate,100)+'%;background:linear-gradient(90deg,var(--green),var(--blue2));border-radius:5px;transition:width .6s"></div></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);font-family:var(--mono);margin-top:3px"><span>0%</span><span>Meta: 40%</span><span>100%</span></div>'
+    +'</div></div>';
+  html+='<div style="display:flex;gap:16px">';
+  html+='<div style="font-size:11px;color:var(--txt2)"><span style="color:var(--green);font-weight:700">'+closedTotal+'</span> fechados de <span style="font-weight:700">'+allAgs+'</span> reuniões</div>';
+  html+='<div style="font-size:11px;color:var(--red)"><span style="font-weight:700">'+lostTotal+'</span> perdidos</div>';
+  html+='</div></div>';
+
+  // AI Analysis box (calls Anthropic API)
+  html+='<div style="background:var(--s2);border:1px solid rgba(139,92,246,.35);border-radius:12px;padding:14px 16px;margin-bottom:12px" id="closerAiBox">';
+  html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
+  html+='<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🤖</div>';
+  html+='<div><div style="font-size:13px;font-weight:800;color:var(--txt)">Análise IA — Coach de Vendas</div><div style="font-size:10px;color:var(--txt3)">Diagnóstico personalizado da sua performance</div></div>';
+  html+='</div>';
+  html+='<div id="closerAiResult" style="font-size:12px;color:var(--txt2);line-height:1.8;font-family:var(--mono)">Clique em analisar para receber seu diagnóstico.</div>';
+  html+='<button onclick="runCloserAiAnalysis()" style="width:100%;margin-top:10px;padding:11px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--purple),var(--blue2));color:#fff;font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" id="closerAiBtn">🤖 Analisar com IA</button>';
+  html+='</div>';
+
+  // Recent meetings table
+  html+='<div style="background:var(--s2);border:1px solid var(--b2);border-radius:12px;overflow:hidden;margin-bottom:12px">';
+  html+='<div style="padding:10px 14px;background:var(--s3);border-bottom:1px solid var(--b2);font-size:10px;color:var(--txt3);font-family:var(--mono);letter-spacing:1px">📋 ÚLTIMAS REUNIÕES</div>';
+  if(recentMeetings.length===0){
+    html+='<div style="padding:20px;text-align:center;color:var(--txt3);font-size:12px">Nenhuma reunião registrada</div>';
+  } else {
+    recentMeetings.forEach(function(ag){
+      const lo=leads.find(function(l){return l.phone===ag.leadPhone||l.name===ag.leadName;});
+      const res=lo?(lo.closerResult||lo.stage||'—'):'—';
+      const resColor=res==='Fechou'||res==='Vendas Ganhas'?'var(--green)':res==='Perdeu'||res==='Vendas Perdidas'?'var(--red)':'var(--yellow)';
+      const loId=lo?lo.id:'';
+      var ocStr=loId?("openLeadDetail('" + loId + "')"):""; html+='<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--b1);cursor:pointer" onclick="'+ocStr+'">';
+      html+='<div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--green);min-width:44px">'+ag.slot+'</div>';
+      html+='<div style="flex:1"><div style="font-size:12px;font-weight:700">'+ag.leadName+'</div>'
+        +'<div style="font-size:10px;color:var(--txt3);font-family:var(--mono)">'+ag.date.slice(5).replace('-','/')+(ag.produto?' · '+ag.produto:'')+'</div></div>';
+      html+='<span style="font-size:10px;padding:2px 8px;border-radius:10px;font-family:var(--mono);font-weight:700;background:'+resColor+'18;color:'+resColor+'">'+res+'</span>';
+      html+='</div>';
+    });
+  }
+  html+='</div>';
+
+  container.innerHTML=html;
+}
+
+async function runCloserAiAnalysis(){
+  const btn=document.getElementById('closerAiBtn');
+  const result=document.getElementById('closerAiResult');
+  if(!btn||!result)return;
+  btn.disabled=true;
+  btn.innerHTML='⏳ Analisando...';
+  result.innerHTML='<span style="color:var(--txt3)">Analisando seus dados de performance...</span>';
+
+  const allAgs=agendamentos.length;
+  const closedTotal=leads.filter(function(l){return l.closerResult==='Fechou'||l.stage==='Vendas Ganhas';}).length;
+  const lostTotal=leads.filter(function(l){return l.closerResult==='Perdeu'||l.stage==='Vendas Perdidas';}).length;
+  const convRate=allAgs>0?Math.round((closedTotal/allAgs)*100):0;
+  const negociacao=leads.filter(function(l){return l.stage==='Em Negociação';}).length;
+  const followUps=leads.filter(function(l){return l.stage==='Follow-up';}).length;
+  const cmTotal=closedTotal*50;
+  const name=currentProfileName||cfg.name||'Closer';
+
+  const prompt='Voce e um coach especialista em vendas de alto ticket B2C para academias. Analise a performance do closer '+name+' com estes dados: Reunioes: '+allAgs+', Fechamentos: '+closedTotal+', Perdidos: '+lostTotal+', Conversao: '+convRate+'%, Em negociacao: '+negociacao+', Follow-ups: '+followUps+', Comissao total: R$'+cmTotal+'. Forneca: 1) Diagnostico honesto (2-3 linhas) 2) Principal ponto de atencao 3) Acao prioritaria para esta semana 4) Meta recomendada de conversao. Seja direto, use os dados, maximo 150 palavras. Responda em portugues brasileiro.';
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const text=(data.content&&data.content[0]&&data.content[0].text)||'Não foi possível obter análise.';
+    result.innerHTML='<div style="white-space:pre-wrap;line-height:1.8;color:var(--txt)">'+text.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div>';
+
+
+    btn.innerHTML='🔄 Nova Análise';
+  } catch(e){
+    result.innerHTML='<span style="color:var(--red)">Erro ao conectar com IA. Verifique a conexão.</span>';
+    btn.innerHTML='🤖 Tentar novamente';
+  }
+  btn.disabled=false;
+}
+
+
+
+// ══════════════════════════════════════════════════════════════════
+// INTERNAL CHAT ENGINE
+// ══════════════════════════════════════════════════════════════════
+const CHAT_KEY = 'gfb_chat_msgs';
+const CHAT_POLL_MS = 1500;
+let chatCurrentChannel = 'geral';
+let chatPollInt = null;
+let chatLastCount = 0;
+
+const CHAT_CHANNELS = [
+  {id:'geral',   label:'# geral',       desc:'Canal geral da equipe', icon:'💬'},
+  {id:'sdrs',    label:'# sdrs',        desc:'Canal exclusivo SDRs',  icon:'📞'},
+  {id:'closers', label:'# closers',     desc:'Canal Closers',         icon:'🤝'},
+  {id:'urgente', label:'🚨 urgente',    desc:'Avisos importantes',    icon:'🚨'},
+];
+
+function chatLoad(){
+  try{return JSON.parse(localStorage.getItem('gfb_'+CHAT_KEY)||'[]');}catch(e){return[];}
+}
+function chatSave(msgs){
+  try{localStorage.setItem('gfb_'+CHAT_KEY, JSON.stringify(msgs));}catch(e){}
+}
+
+function chatSend(){
+  var inp=document.getElementById('chat-input');
+  if(!inp)return;
+  var text=inp.value.trim();
+  if(!text)return;
+  var msgs=chatLoad();
+  msgs.push({
+    id:'cm'+Date.now(),
+    channel:chatCurrentChannel,
+    author:currentProfileName||cfg.name||'Anônimo',
+    role:currentProfile||'sdr',
+    text:text,
+    ts:Date.now()
+  });
+  chatSave(msgs);
+  inp.value='';
+  inp.style.height='auto';
+  renderChatMessages();
+  chatScrollBottom();
+}
+
+function renderChat(){
+  renderChatSidebar();
+  renderChatMessages();
+  renderChatMemberList();
+  // Start polling
+  if(chatPollInt)clearInterval(chatPollInt);
+  chatPollInt=setInterval(function(){
+    renderChatMessages(true);
+  }, CHAT_POLL_MS);
+}
+
+function renderChatSidebar(){
+  var list=document.getElementById('chat-channel-list');
+  if(!list)return;
+  var msgs=chatLoad();
+  list.innerHTML=CHAT_CHANNELS.map(function(ch){
+    var active=chatCurrentChannel===ch.id;
+    var unread=msgs.filter(function(m){return m.channel===ch.id;}).length;
+    var chId=ch.id; var chOc='chatSetChannel(\''+chId+'\')';    var bg=active?'rgba(0,232,122,.12)':'transparent';
+    var col=active?'var(--green)':'var(--txt3)';
+    var fw=active?'700':'400';
+    var btn='<button onclick="'+chOc+'" style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:none;background:'+bg+';color:'+col+';cursor:pointer;width:100%;text-align:left;font-family:var(--sans);font-size:12px;font-weight:'+fw+';transition:.15s">';
+    btn+='<span>'+ch.icon+'</span><span style="flex:1">'+ch.label+'</span>';
+    if(unread>0) btn+='<span style="background:rgba(0,232,122,.2);color:var(--green);font-size:9px;padding:1px 5px;border-radius:8px">'+unread+'</span>';
+    btn+='</button>';
+    return btn;
+  }).join('');
+}
+
+function renderChatMemberList(){
+  var list=document.getElementById('chat-member-list');
+  if(!list)return;
+  var members=teamMembers||[];
+  if(!members.length){
+    list.innerHTML='<div style="font-size:10px;color:var(--txt3);padding:4px 10px">Nenhum membro</div>';
+    return;
+  }
+  list.innerHTML=members.map(function(m){
+    var roleColor=m.role==='closer'?'var(--yellow)':'var(--blue2)';
+    return '<div style="display:flex;align-items:center;gap:7px;padding:5px 10px;border-radius:6px">'
+      +'<div style="width:26px;height:26px;border-radius:50%;background:'+m.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#000;flex-shrink:0">'+m.avatar+'</div>'
+      +'<div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--txt2)">'+m.name+'</div>'
+        +'<div style="font-size:9px;color:'+roleColor+';font-family:var(--mono)">'+m.role.toUpperCase()+'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderChatMessages(silent){
+  var area=document.getElementById('chat-messages');
+  var empty=document.getElementById('chat-empty');
+  if(!area)return;
+  var msgs=chatLoad().filter(function(m){return m.channel===chatCurrentChannel;});
+  // Update badge
+  var allUnread=chatLoad().length;
+  var badge=document.getElementById('chat-badge');
+  if(badge){
+    badge.style.display=allUnread>0?'':'none';
+    badge.textContent=allUnread;
+  }
+  // If silent poll and count unchanged, skip
+  if(silent&&msgs.length===chatLastCount)return;
+  chatLastCount=msgs.length;
+  var wasBottom=area.scrollHeight-area.scrollTop-area.clientHeight<50;
+  if(msgs.length===0){
+    if(empty)empty.style.display='block';
+    // remove old messages
+    Array.from(area.children).forEach(function(c){if(c.id!=='chat-empty')c.remove();});
+    return;
+  }
+  if(empty)empty.style.display='none';
+  // Rebuild messages
+  Array.from(area.children).forEach(function(c){if(c.id!=='chat-empty')c.remove();});
+  var prevAuthor='', prevDate='';
+  msgs.forEach(function(m){
+    var isMe=(m.author===(currentProfileName||cfg.name));
+    var d=new Date(m.ts);
+    var dateStr=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    var timeStr=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    // Date separator
+    if(dateStr!==prevDate){
+      var sep=document.createElement('div');
+      sep.style.cssText='text-align:center;font-size:10px;color:var(--txt3);font-family:var(--mono);margin:10px 0 6px';
+      sep.textContent='— '+dateStr+' —';
+      area.appendChild(sep);
+      prevDate=dateStr;
+      prevAuthor='';
+    }
+    var showAuthor=m.author!==prevAuthor;
+    prevAuthor=m.author;
+    var roleColor=m.role==='closer'?'var(--yellow)':'var(--blue2)';
+    var el=document.createElement('div');
+    el.style.cssText='display:flex;flex-direction:column;align-items:'+(isMe?'flex-end':'flex-start')+';margin-bottom:2px';
+    var inner='';
+    if(showAuthor&&!isMe){
+      inner+='<div style="font-size:10px;font-weight:700;color:'+roleColor+';margin-bottom:3px;padding-left:4px">'+m.author+'</div>';
+    }
+    inner+='<div style="max-width:72%;background:'+(isMe?'rgba(0,232,122,.12)':'var(--s2)')+';border:1px solid '+(isMe?'rgba(0,232,122,.25)':'var(--b2)')+';border-radius:'+(isMe?'14px 14px 4px 14px':'14px 14px 14px 4px')+';padding:8px 12px 6px;position:relative">';
+    inner+='<div style="font-size:13px;color:var(--txt);line-height:1.6;white-space:pre-wrap;word-break:break-word">'+m.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div>';
+    // (merged above)
+    inner+='<div style="font-size:9px;color:var(--txt3);text-align:right;margin-top:3px">'+timeStr+(isMe?' ✓✓':'')+'</div>';
+    inner+='</div>';
+    el.innerHTML=inner;
+    area.appendChild(el);
+  });
+  if(wasBottom||!silent)chatScrollBottom();
+}
+
+function chatScrollBottom(){
+  var area=document.getElementById('chat-messages');
+  if(area)setTimeout(function(){area.scrollTop=area.scrollHeight;},50);
+}
+
+function chatSetChannel(id){
+  chatCurrentChannel=id;
+  chatLastCount=0;
+  var ch=CHAT_CHANNELS.find(function(c){return c.id===id;});
+  var hn=document.getElementById('chat-header-name');
+  var hd=document.getElementById('chat-header-desc');
+  if(hn)hn.textContent=ch?ch.label:'#'+id;
+  if(hd)hd.textContent=ch?ch.desc:'';
+  renderChatSidebar();
+  renderChatMessages();
+  chatScrollBottom();
+}
+
+// Stop chat poll when leaving chat tab
+var _origSetTab=setTab;
+setTab=function(name,el){
+  if(name!=='chat'&&chatPollInt){clearInterval(chatPollInt);chatPollInt=null;}
+  _origSetTab(name,el);
+};
+
+
+
 
 </script>
 </body>
